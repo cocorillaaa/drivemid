@@ -66,26 +66,45 @@
   color: rgba(255, 255, 255, 0.55);
 }
 
-/* --- Ilustración --- */
+/* --- Marcador de marca --- */
 .dl-hero__figure {
   position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 24rem;
   margin: 0;
+  padding: 3rem;
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.09);
+  background: linear-gradient(160deg, #1c1c1c 0%, #131313 55%, #0d0d0d 100%);
   box-shadow: 0 46px 100px -46px rgba(0, 0, 0, 0.95);
-  background: #141414;
 }
 
-.dl-hero__image {
+.dl-hero__halo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26rem;
+  height: 26rem;
+  margin: -13rem 0 0 -13rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0) 62%);
+  pointer-events: none;
+}
+
+.dl-hero__logo {
+  position: relative;
   display: block;
-  width: 100%;
+  width: auto;
+  max-width: 46%;
+  max-height: 18rem;
   height: auto;
-  transform: scale(1.01);
-  transition: transform 1.2s cubic-bezier(0.22, 0.61, 0.36, 1);
+  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.65));
+  transition: transform 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.dl-hero__figure:hover .dl-hero__image {
+.dl-hero__figure:hover .dl-hero__logo {
   transform: scale(1.035);
 }
 

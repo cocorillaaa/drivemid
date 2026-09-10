@@ -20,8 +20,11 @@ import { RevealDirective } from '../../../../shared/directives/reveal.directive'
 export class HeroComponent {
   private readonly landing = inject(LandingService);
 
-  /** Ruta de la ilustración principal. */
-  readonly heroImage = 'images/unidad-ejecutiva.svg';
+  /**
+   * Logo en su variante clara: el hero tiene fondo oscuro y la versión
+   * original (negra) no sería visible.
+   */
+  readonly heroImage = 'images/logo-claro.png';
 
   /** Pilares institucionales mostrados bajo el hero. */
   readonly pillars = this.landing.pillars;

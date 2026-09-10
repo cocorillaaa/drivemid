@@ -166,8 +166,8 @@ npx ng serve --port 4201 --host 127.0.0.1
 
 - **Header minimalista** con logotipo, navegación por anclas y botón **Acceso a Plataforma**
   que lleva a la pantalla de credenciales.
-- **Hero** con la propuesta de valor y una **ilustración propia** (`public/images/unidad-ejecutiva.svg`,
-  también en PNG). No hay panel con datos: la landing no publica información de la aplicación.
+- **Hero** con la propuesta de valor y el **logotipo** (`public/images/logo-claro.png`). No hay
+  panel con datos: la landing no publica información de la aplicación.
 - **Pilares institucionales**: cobertura, disponibilidad, conductores y unidades.
 - **Soluciones** y **canales de contacto**: contenido servido por el backend.
 - **Cobertura:** mapa Leaflet con las **zonas comerciales** donde se presta servicio, no la
@@ -337,7 +337,25 @@ actualización de telemetría, ausencia de indicadores de estado e iconografía,
 
 ---
 
-## 9. Capturas
+## 9. Identidad gráfica
+
+El logotipo vive en `frontend/public/images/` en dos variantes, más los iconos del navegador:
+
+| Archivo | Uso |
+|---|---|
+| `images/logo.png` | Variante original (negro y gris) para superficies claras |
+| `images/logo-claro.png` | Variante clara para superficies oscuras (hero, cabeceras) |
+| `images/icono-512.png` | Icono de 512 px |
+| `favicon-32.png` | Icono de la pestaña del navegador |
+| `apple-touch-icon.png` | Icono para iOS (180 px) |
+
+Los archivos se generan a partir del logotipo original recortando el espacio transparente
+sobrante y produciendo la variante clara por remapeo de tonos, de modo que el monograma se lea
+tanto sobre negro como sobre blanco.
+
+---
+
+## 10. Capturas
 
 | Acceso a la plataforma | Panel de flota (Superusuario) |
 |---|---|
@@ -353,7 +371,7 @@ actualización de telemetría, ausencia de indicadores de estado e iconografía,
 
 ---
 
-## 10. Notas
+## 11. Notas
 
 **DemoLogistics es un nombre de trabajo, no una marca.** El proyecto es un prototipo de
 demostración: los nombres, teléfonos, pólizas, VIN y matrículas son ficticios, y las
