@@ -1,0 +1,60 @@
+<!-- Ficha de contacto (modal controlado por Signals) -->
+<div
+  class="dl-modal-backdrop"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Datos de contacto"
+  (click)="close()"
+>
+  <div class="dl-modal dl-modal--compact" (click)="$event.stopPropagation()">
+    <!-- Encabezado -->
+    <header class="dl-modal__head">
+      <div>
+        <p class="dl-eyebrow mb-1">Contacto</p>
+        <h3 class="mb-1" style="font-size: 1.125rem">{{ contact().name }}</h3>
+        <p class="mb-0 dl-text-muted" style="font-size: 0.8125rem">
+          {{ contact().role }}
+          @if (contact().context) {
+            · {{ contact().context }}
+          }
+        </p>
+      </div>
+
+      <button type="button" class="dl-btn dl-btn--outline dl-btn--sm" (click)="close()">
+        Cerrar
+      </button>
+    </header>
+
+    <!-- Cuerpo -->
+    <div class="dl-modal__body">
+      @if (phoneDisplay()) {
+        <div class="dl-contact">
+          <div class="dl-contact__info">
+            <span class="dl-contact__label">Teléfono</span>
+            <span class="dl-contact__value">{{ phoneDisplay() }}</span>
+            <span class="dl-contact__hint">{{ phoneValue() }}</span>
+          </div>
+          <button type="button" class="dl-btn dl-btn--dark dl-btn--sm" (click)="copyPhone()">
+            Copiar teléfono
+          </button>
+        </div>
+      }
+
+      @if (contact().email) {
+        <div class="dl-contact">
+          <div class="dl-contact__info">
+            <span class="dl-contact__label">Correo</span>
+            <span class="dl-contact__value dl-contact__value--mail">{{ contact().email }}</span>
+          </div>
+          <button type="button" class="dl-btn dl-btn--outline dl-btn--sm" (click)="copyEmail()">
+            Copiar correo
+          </button>
+        </div>
+      }
+
+      <p class="dl-contact__note">
+        Los datos se copian al portapapeles para que pueda usarlos donde los necesite.
+      </p>
+    </div>
+  </div>
+</div>

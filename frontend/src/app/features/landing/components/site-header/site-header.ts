@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { ClipboardService } from '../../../../core/services/clipboard.service';
 import { LandingService } from '../../../../core/services/landing.service';
 
 interface NavLink {
@@ -30,6 +31,7 @@ interface NavLink {
 })
 export class SiteHeaderComponent implements OnInit, OnDestroy {
   private readonly landing = inject(LandingService);
+  private readonly clipboard = inject(ClipboardService);
 
   /** Canales de contacto institucionales (servidos por la API). */
   readonly contact = this.landing.contact;
@@ -59,6 +61,11 @@ export class SiteHeaderComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     globalThis.removeEventListener?.('scroll', this.onScroll);
+  }
+
+  /** Copia el teléfono de la mesa de servicio. */
+  copyPhone(): void {
+    this.clipboard.copy(this.contact()?.phone ?? '', 'Teléfono');
   }
 
   /** Alterna el menú móvil. */

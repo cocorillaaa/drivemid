@@ -84,7 +84,6 @@ return [
 
     'contact' => [
         'phone' => '55 5580 1234',
-        'phone_link' => '+525555801234',
         'email' => 'contacto@demologistics.mx',
         'address' => 'Av. Paseo de la Reforma 505, piso 32 · Cuauhtémoc, 06500, Ciudad de México',
         'hours' => 'Lunes a viernes 08:00 – 19:00 · Operación 24/7',

@@ -72,6 +72,22 @@
   color: var(--dl-white);
 }
 
+.dl-footer__action {
+  appearance: none;
+  padding: 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s ease;
+}
+
+.dl-footer__action:hover {
+  color: var(--dl-white);
+}
+
 .dl-footer__contact {
   display: flex;
   align-items: flex-start;

@@ -10,6 +10,11 @@ import { FleetMapMarker, Vehicle } from '../../../core/models/fleet.models';
 import { FleetRow, FleetService } from '../../../core/services/fleet.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { toFleetMarker } from '../../../core/utils/map-markers';
+import { ClipboardService } from '../../../core/services/clipboard.service';
+import {
+  ContactModalComponent,
+  ContactTarget,
+} from '../../../shared/components/contact-modal/contact-modal';
 import {
   POLICY_STATUS_BADGE,
   POLICY_STATUS_LABEL,
@@ -39,7 +44,12 @@ type FleetFilter = 'all' | 'alerts' | 'service';
  */
 @Component({
   selector: 'dl-superuser-dashboard',
-  imports: [StatCardComponent, FleetMapComponent, UnitDetailModalComponent],
+  imports: [
+    StatCardComponent,
+    FleetMapComponent,
+    UnitDetailModalComponent,
+    ContactModalComponent,
+  ],
   templateUrl: './superuser-dashboard.html',
   styleUrl: './superuser-dashboard.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,6 +57,7 @@ type FleetFilter = 'all' | 'alerts' | 'service';
 export class SuperuserDashboard {
   private readonly fleet = inject(FleetService);
   private readonly toast = inject(ToastService);
+  private readonly clipboard = inject(ClipboardService);
 
   /** Resumen agregado de la flota. */
   readonly summary = this.fleet.summary;
@@ -65,6 +76,23 @@ export class SuperuserDashboard {
 
   /** Unidad abierta en la ficha técnica (null = modal cerrado). */
   readonly detailUnitId = signal<string | null>(null);
+
+  /** Unidad cuyo contacto se está mostrando (null = modal cerrado). */
+  readonly contactUnitId = signal<string | null>(null);
+
+  /** Datos de contacto de la unidad seleccionada. */
+  readonly contactTarget = computed<ContactTarget | null>(() => {
+    const unit = this.vehicles().find((v) => v.id === this.contactUnitId());
+    if (!unit) return null;
+
+    return {
+      name: unit.driver.fullName,
+      role: `Conductor asignado · ${unit.serviceTier}`,
+      context: `${unit.unitCode} · ${unit.plates}`,
+      phone: unit.driver.phone,
+      email: unit.driver.email,
+    };
+  });
 
   /** Unidad del modal. */
   readonly detailUnit = computed<Vehicle | null>(
@@ -146,6 +174,21 @@ export class SuperuserDashboard {
   /** Cierra la ficha técnica. */
   closeDetail(): void {
     this.detailUnitId.set(null);
+  }
+
+  /** Abre la ficha de contacto de una unidad. */
+  openContact(id: string): void {
+    this.contactUnitId.set(id);
+  }
+
+  /** Cierra la ficha de contacto. */
+  closeContact(): void {
+    this.contactUnitId.set(null);
+  }
+
+  /** Copia el teléfono del conductor sin salir de la plataforma. */
+  copyDriverPhone(phone: string): void {
+    this.clipboard.copy(`+52 ${formatPhone(phone)}`, 'Teléfono');
   }
 
   /** Exporta la tabla general a CSV (sin backend, 100% cliente). */

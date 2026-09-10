@@ -140,9 +140,14 @@
 
               <!-- Teléfono -->
               <td>
-                <a class="dl-phone" [href]="'tel:+52' + row.vehicle.driver.phone">
+                <button
+                  type="button"
+                  class="dl-phone"
+                  [attr.aria-label]="'Copiar el teléfono de ' + row.vehicle.driver.fullName"
+                  (click)="copyDriverPhone(row.vehicle.driver.phone)"
+                >
                   {{ formatPhone(row.vehicle.driver.phone) }}
-                </a>
+                </button>
               </td>
 
               <!-- Póliza -->
@@ -214,13 +219,14 @@
                   >
                     Ficha
                   </button>
-                  <a
+                  <button
+                    type="button"
                     class="dl-btn dl-btn--dark dl-btn--sm"
-                    [attr.aria-label]="'Llamar al conductor de ' + row.vehicle.unitCode"
-                    [href]="'tel:+52' + row.vehicle.driver.phone"
+                    [attr.aria-label]="'Ver el contacto de ' + row.vehicle.unitCode"
+                    (click)="openContact(row.vehicle.id)"
                   >
-                    Llamar
-                  </a>
+                    Contacto
+                  </button>
                 </div>
               </td>
             </tr>
@@ -373,6 +379,10 @@
   <!-- ===================== Ficha técnica (modal) ===================== -->
   @if (detailUnit(); as unit) {
     <dl-unit-detail-modal [vehicle]="unit" (closed)="closeDetail()" />
+  }
+
+  @if (contactTarget(); as contacto) {
+    <dl-contact-modal [contact]="contacto" (closed)="closeContact()" />
   }
 } @else {
   <div class="dl-empty">

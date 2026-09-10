@@ -41,6 +41,22 @@
   text-decoration: underline;
 }
 
+.dl-channel-action {
+  appearance: none;
+  padding: 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.dl-channel-action:hover {
+  color: var(--dl-white);
+  text-decoration: underline;
+}
+
 .dl-contact-note {
   display: flex;
   align-items: flex-start;

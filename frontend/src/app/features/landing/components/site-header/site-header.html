@@ -21,9 +21,9 @@
       <!-- Acciones -->
       <div class="d-none d-lg-flex align-items-center gap-2">
         @if (contact(); as datos) {
-          <a class="dl-header__phone" [href]="'tel:' + datos.phoneLink">
+          <button type="button" class="dl-header__phone" (click)="copyPhone()">
             <span>{{ datos.phone }}</span>
-          </a>
+          </button>
         }
         <a class="dl-btn dl-btn--light dl-btn--sm" routerLink="/acceso">
           Acceso a Plataforma

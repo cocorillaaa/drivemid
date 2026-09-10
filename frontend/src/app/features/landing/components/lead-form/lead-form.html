@@ -19,13 +19,17 @@
             <li>
               <span>
                 <em>Mesa de servicio</em>
-                <a [href]="'tel:' + datos.phoneLink">{{ datos.phone }}</a>
+                <button type="button" class="dl-channel-action" (click)="copy(datos.phone, 'Teléfono')">
+                  {{ datos.phone }}
+                </button>
               </span>
             </li>
             <li>
               <span>
                 <em>Correo corporativo</em>
-                <a [href]="'mailto:' + datos.email">{{ datos.email }}</a>
+                <button type="button" class="dl-channel-action" (click)="copy(datos.email, 'Correo')">
+                  {{ datos.email }}
+                </button>
               </span>
             </li>
             <li>

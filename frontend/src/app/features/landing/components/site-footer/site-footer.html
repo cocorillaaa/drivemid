@@ -48,10 +48,14 @@
               {{ datos.address }}
             </li>
             <li class="dl-footer__contact">
-              <a [href]="'tel:' + datos.phoneLink">{{ datos.phone }}</a>
+              <button type="button" class="dl-footer__action" (click)="copy(datos.phone, 'Teléfono')">
+                {{ datos.phone }}
+              </button>
             </li>
             <li class="dl-footer__contact">
-              <a [href]="'mailto:' + datos.email">{{ datos.email }}</a>
+              <button type="button" class="dl-footer__action" (click)="copy(datos.email, 'Correo')">
+                {{ datos.email }}
+              </button>
             </li>
             <li class="dl-footer__contact">
               {{ datos.hours }}

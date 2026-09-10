@@ -1,0 +1,64 @@
+:host {
+  display: contents;
+}
+
+/* Variante compacta del modal del sistema */
+:host ::ng-deep .dl-modal--compact {
+  width: min(30rem, 100%);
+}
+
+.dl-contact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--dl-line);
+}
+
+.dl-contact:first-child {
+  padding-top: 0;
+}
+
+.dl-contact__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.dl-contact__label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dl-slate);
+}
+
+.dl-contact__value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--dl-black);
+  font-variant-numeric: tabular-nums;
+}
+
+.dl-contact__value--mail {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  word-break: break-all;
+}
+
+.dl-contact__hint {
+  font-family: var(--dl-font-mono);
+  font-size: 0.6875rem;
+  color: var(--dl-slate-light);
+}
+
+.dl-contact__note {
+  margin: 1rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--dl-slate);
+}

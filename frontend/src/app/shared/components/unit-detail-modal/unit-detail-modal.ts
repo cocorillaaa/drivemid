@@ -3,11 +3,13 @@ import {
   Component,
   HostListener,
   computed,
+  inject,
   input,
   output,
 } from '@angular/core';
 
 import { Vehicle } from '../../../core/models/fleet.models';
+import { ClipboardService } from '../../../core/services/clipboard.service';
 import {
   POLICY_STATUS_BADGE,
   POLICY_STATUS_LABEL,
@@ -34,6 +36,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UnitDetailModalComponent {
+  private readonly clipboard = inject(ClipboardService);
+
   /** Unidad a mostrar. */
   readonly vehicle = input.required<Vehicle>();
 
@@ -71,6 +75,11 @@ export class UnitDetailModalComponent {
   readonly formatPhone = formatPhone;
   readonly relativeTime = relativeTime;
   readonly policyCountdownText = policyCountdownText;
+
+  /** Copia el teléfono del conductor al portapapeles. */
+  copyPhone(): void {
+    this.clipboard.copy(`+52 ${formatPhone(this.vehicle().driver.phone)}`, 'Teléfono');
+  }
 
   /** Cierra la ventana modal. */
   close(): void {

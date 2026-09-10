@@ -208,7 +208,6 @@ export interface LandingSolution {
 /** Canales de contacto institucionales. */
 export interface LandingContact {
   phone: string;
-  phoneLink: string;
   email: string;
   address: string;
   hours: string;

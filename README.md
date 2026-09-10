@@ -183,6 +183,10 @@ npx ng serve --port 4201 --host 127.0.0.1
 - **Formulario de captación** con dos pestañas —*Solicitar Servicio Corporativo* y *Postularse
   como Conductor*— cuyas ciudades y líneas de servicio también llegan de la API. Al enviar
   registran la solicitud en el backend y devuelven el folio (`DL-COR-…` / `DL-CON-…`).
+- **Datos de contacto mediante copiado**: no hay enlaces `tel:` ni `mailto:` en ninguna parte
+  de la aplicación. Esos esquemas hacen que el navegador muestre su propio aviso de "abrir
+  aplicación externa", que no se puede estilizar ni suprimir; en su lugar el dato se copia al
+  portapapeles con confirmación visual.
 
 ### 4.2 Acceso (`/acceso`)
 
@@ -213,6 +217,8 @@ de unidades ni acceso a ninguna otra:
   y servidor.
 - **Ficha técnica** de sólo lectura: VIN, color, capacidad, odómetro, mantenimiento preventivo,
   conductor y licencia federal.
+- **Ficha de contacto** en un modal del propio sistema, con el teléfono y el correo del
+  conductor listos para copiar sin salir de la plataforma.
 - **Estatus de la póliza** con vigencia, días restantes y aviso de renovación.
 - **Mapa individual** con la última ubicación y halo de geocerca.
 
@@ -326,6 +332,9 @@ actualización de telemetría, ausencia de indicadores de estado e iconografía,
   recompilar Angular.
 - **Privacidad en la landing:** `PublicVehicleResource` publica sólo datos operativos y el
   nombre de pila del conductor.
+- **Sin diálogos nativos:** ningún flujo depende de `alert()`, `confirm()` ni de los avisos de
+  protocolo del navegador. Las confirmaciones son toasts y las acciones que muestran
+  información usan los modales del sistema (`dl-unit-detail-modal`, `dl-contact-modal`).
 - **Mapa tolerante a fallos:** teselas de OpenStreetMap (sin API key) desaturadas por CSS para
   respetar la paleta corporativa; si no cargan, el componente degrada a una rejilla local
   manteniendo pines, popups y geocercas.
@@ -369,9 +378,13 @@ tanto sobre negro como sobre blanco.
 |---|---|
 | ![Mapa de la flota](docs/screenshots/03-mapa-flota.png) | ![Cobertura](docs/screenshots/08-cobertura.png) |
 
-| Ficha técnica | Captación de clientes |
+| Ficha técnica | Ficha de contacto |
 |---|---|
-| ![Ficha técnica](docs/screenshots/05-ficha-tecnica.png) | ![Captación](docs/screenshots/06-captacion.png) |
+| ![Ficha técnica](docs/screenshots/05-ficha-tecnica.png) | ![Contacto](docs/screenshots/09-contacto.png) |
+
+| Captación de clientes | |
+|---|---|
+| ![Captación](docs/screenshots/06-captacion.png) | |
 
 ---
 

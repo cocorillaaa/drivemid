@@ -157,9 +157,9 @@
     <!-- Pie -->
     <footer class="dl-modal__foot">
       <button type="button" class="dl-btn dl-btn--outline" (click)="close()">Cerrar</button>
-      <a class="dl-btn dl-btn--dark" [href]="'tel:+52' + vehicle().driver.phone">
-        Llamar al conductor
-      </a>
+      <button type="button" class="dl-btn dl-btn--dark" (click)="copyPhone()">
+        Copiar teléfono del conductor
+      </button>
     </footer>
   </div>
 </div>

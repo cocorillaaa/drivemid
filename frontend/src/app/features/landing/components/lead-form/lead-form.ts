@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { finalize } from 'rxjs';
 
 import { FleetService } from '../../../../core/services/fleet.service';
+import { ClipboardService } from '../../../../core/services/clipboard.service';
 import { LandingService } from '../../../../core/services/landing.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { RevealDirective } from '../../../../shared/directives/reveal.directive';
@@ -40,6 +41,7 @@ export class LeadFormComponent {
   private readonly fleet = inject(FleetService);
   private readonly landing = inject(LandingService);
   private readonly toast = inject(ToastService);
+  private readonly clipboard = inject(ClipboardService);
 
   /** Catálogos servidos por la API. */
   readonly cities = this.landing.cities;
@@ -85,6 +87,11 @@ export class LeadFormComponent {
     vehicleOwned: [false],
     message: [''],
   });
+
+  /** Copia un dato de contacto al portapapeles. */
+  copy(value: string | undefined, label: string): void {
+    this.clipboard.copy(value ?? '', label);
+  }
 
   /** Cambia de pestaña y limpia la confirmación previa. */
   setTab(tab: LeadTab): void {
