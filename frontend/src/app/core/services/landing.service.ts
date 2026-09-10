@@ -2,15 +2,20 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { catchError, finalize, of, tap, timeout } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { LandingContact, LandingMetric, LandingOverview, LandingSolution } from '../models/fleet.models';
+import {
+  CoverageZone,
+  LandingContact,
+  LandingOverview,
+  LandingPillar,
+  LandingSolution,
+} from '../models/fleet.models';
 import { LandingApiService } from './landing-api.service';
 
 /**
  * Contenido de la landing pública.
  *
- * Todo el contenido (soluciones, catálogos, contacto, indicadores y flota
- * publicada) proviene de `/api/public/overview`; el frontend no mantiene
- * copias locales.
+ * Todo lo que se muestra proviene de `/api/public/overview` y es contenido
+ * institucional: la landing no expone datos operativos de la aplicación.
  */
 @Injectable({ providedIn: 'root' })
 export class LandingService {
@@ -35,17 +40,14 @@ export class LandingService {
   /** Soluciones comerciales. */
   readonly solutions = computed<LandingSolution[]>(() => this._overview()?.solutions ?? []);
 
-  /** Indicadores institucionales. */
-  readonly metrics = computed<LandingMetric[]>(() => this._overview()?.metrics ?? []);
+  /** Pilares institucionales. */
+  readonly pillars = computed<LandingPillar[]>(() => this._overview()?.pillars ?? []);
+
+  /** Zonas comerciales de cobertura. */
+  readonly coverageZones = computed<CoverageZone[]>(() => this._overview()?.coverageZones ?? []);
 
   /** Canales de contacto. */
   readonly contact = computed<LandingContact | null>(() => this._overview()?.contact ?? null);
-
-  /** Flota publicada (sin datos personales del conductor). */
-  readonly fleet = computed(() => this._overview()?.fleet ?? []);
-
-  /** Resumen agregado de la flota. */
-  readonly summary = computed(() => this._overview()?.summary ?? null);
 
   /** Catálogo de líneas de servicio del formulario. */
   readonly serviceTypes = computed<string[]>(() => this._overview()?.serviceTypes ?? []);
@@ -65,8 +67,10 @@ export class LandingService {
           this._overview.set(overview);
           this._error.set(null);
         }),
-        catchError((error: unknown) => {
-          this._error.set(describeError(error));
+        catchError(() => {
+          this._error.set(
+            `No fue posible cargar el contenido desde ${environment.apiBaseUrl}.`,
+          );
           return of(null);
         }),
         finalize(() => this._loading.set(false)),
@@ -80,15 +84,4 @@ export class LandingService {
       this.load();
     }
   }
-}
-
-/** Mensaje legible para un fallo de carga del contenido público. */
-function describeError(error: unknown): string {
-  const status = (error as { status?: number })?.status;
-
-  if (status === 0 || status === undefined) {
-    return `No fue posible contactar el servicio en ${environment.apiBaseUrl}.`;
-  }
-
-  return 'No fue posible cargar el contenido. Intente nuevamente.';
 }

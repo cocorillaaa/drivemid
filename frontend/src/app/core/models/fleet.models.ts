@@ -176,22 +176,25 @@ export interface FleetSummary {
    Landing pública
    ------------------------------------------------------------------------ */
 
-/** Unidad tal como se publica en la landing (sin datos personales). */
-export interface PublicVehicle {
-  id: string;
-  unitCode: string;
-  make: string;
-  model: string;
-  year: number;
-  plates: string;
-  serviceTier: string;
-  capacity: number;
-  status: UnitStatus;
-  weeklyKm: number;
-  policyStatus: PolicyStatus;
-  policyDaysToExpire: number;
-  driverFirstName: string;
-  location: Omit<VehicleLocation, 'speedKmh'> & { speedKmh: number };
+/** Pilar institucional mostrado en la landing. */
+export interface LandingPillar {
+  key: string;
+  title: string;
+  description: string;
+}
+
+/**
+ * Zona comercial de cobertura.
+ *
+ * Son referencias geográficas de operación, no la posición de una unidad:
+ * la landing es pública y no publica datos operativos.
+ */
+export interface CoverageZone {
+  key: string;
+  name: string;
+  note: string;
+  lat: number;
+  lng: number;
 }
 
 /** Solución comercial mostrada en la landing. */
@@ -200,13 +203,6 @@ export interface LandingSolution {
   title: string;
   description: string;
   bullets: string[];
-}
-
-/** Indicador institucional de la landing. */
-export interface LandingMetric {
-  key: string;
-  value: string;
-  label: string;
 }
 
 /** Canales de contacto institucionales. */
@@ -218,16 +214,20 @@ export interface LandingContact {
   hours: string;
 }
 
-/** Contenido completo de la landing servido por el backend. */
+/**
+ * Contenido completo de la landing servido por el backend.
+ *
+ * No incluye datos de la aplicación: ni unidades, ni kilometrajes, ni
+ * pólizas, ni posiciones, ni información de los conductores.
+ */
 export interface LandingOverview {
   brand: { name: string; tagline: string; legalName: string };
   contact: LandingContact;
   solutions: LandingSolution[];
   serviceTypes: string[];
   cities: string[];
-  metrics: LandingMetric[];
-  summary: FleetSummary;
-  fleet: PublicVehicle[];
+  pillars: LandingPillar[];
+  coverageZones: CoverageZone[];
 }
 
 /* ---------------------------------------------------------------------------

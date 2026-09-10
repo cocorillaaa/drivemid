@@ -9,6 +9,9 @@ use Tests\TestCase;
 
 /**
  * Contenido público que alimenta la landing (sin autenticación).
+ *
+ * La landing es pública: sólo puede exponer contenido institucional, nunca
+ * datos operativos de la aplicación.
  */
 class LandingApiTest extends TestCase
 {
@@ -32,46 +35,29 @@ class LandingApiTest extends TestCase
                 'solutions' => [['key', 'title', 'description', 'bullets']],
                 'service_types',
                 'cities',
-                'metrics' => [['key', 'value', 'label']],
-                'summary' => [
-                    'total_units', 'active_units', 'on_service_units', 'available_units',
-                    'total_weekly_km', 'average_weekly_km', 'policy_alerts',
-                    'expired_policies', 'expiring_policies', 'insurance_coverage_pct',
-                ],
-                'fleet' => [[
-                    'id', 'unit_code', 'make', 'model', 'year', 'plates', 'service_tier',
-                    'capacity', 'status', 'weekly_km', 'policy_status',
-                    'policy_days_to_expire', 'driver_first_name', 'location',
-                ]],
+                'pillars' => [['key', 'title', 'description']],
+                'coverage_zones' => [['key', 'name', 'note', 'lat', 'lng']],
             ],
         ]);
     }
 
-    public function test_it_derives_the_metrics_from_the_real_fleet(): void
+    public function test_it_never_exposes_operational_data(): void
     {
         $data = $this->getJson('/api/public/overview')->json('data');
 
-        $this->assertSame(4, $data['summary']['total_units']);
-        $this->assertSame(1941, $data['summary']['total_weekly_km']);
-        $this->assertSame(75, $data['summary']['insurance_coverage_pct']);
+        // La landing no publica la flota, ni métricas de operación, ni datos
+        // de los conductores.
+        foreach (['fleet', 'summary', 'metrics', 'vehicles'] as $forbidden) {
+            $this->assertArrayNotHasKey($forbidden, $data);
+        }
 
-        $metrics = collect($data['metrics'])->keyBy('key');
-        $this->assertSame('4', $metrics['active_units']['value']);
-        $this->assertSame('1,941', $metrics['weekly_km']['value']);
-        $this->assertSame('75%', $metrics['insurance_coverage']['value']);
-    }
+        $payload = json_encode($data, JSON_UNESCAPED_UNICODE);
 
-    public function test_it_never_exposes_driver_personal_data_publicly(): void
-    {
-        $unit = $this->getJson('/api/public/overview')->json('data.fleet.0');
-
-        $this->assertArrayNotHasKey('driver_phone', $unit);
-        $this->assertArrayNotHasKey('driver_email', $unit);
-        $this->assertArrayNotHasKey('driver_name', $unit);
-        $this->assertArrayNotHasKey('vin', $unit);
-
-        // Sólo el nombre de pila del conductor.
-        $this->assertSame('Juan', $unit['driver_first_name']);
+        $this->assertStringNotContainsString('ABC-123', $payload);
+        $this->assertStringNotContainsString('DFG-456', $payload);
+        $this->assertStringNotContainsString('5548217390', $payload);
+        $this->assertStringNotContainsString('weekly_km', $payload);
+        $this->assertStringNotContainsString('policy_status', $payload);
     }
 
     public function test_it_serves_the_catalogs_used_by_the_lead_form(): void
@@ -83,5 +69,46 @@ class LandingApiTest extends TestCase
         $this->assertCount(7, $data['cities']);
         $this->assertContains('Transporte corporativo', $data['service_types']);
         $this->assertContains('Monterrey, Nuevo León', $data['cities']);
+    }
+
+    public function test_it_publishes_the_institutional_pillars(): void
+    {
+        $pillars = collect($this->getJson('/api/public/overview')->json('data.pillars'));
+
+        $this->assertCount(4, $pillars);
+        $this->assertEqualsCanonicalizing(
+            ['coverage', 'availability', 'drivers', 'units'],
+            $pillars->pluck('key')->all(),
+        );
+
+        $pillars->each(function (array $pillar): void {
+            $this->assertNotEmpty($pillar['title']);
+            $this->assertNotEmpty($pillar['description']);
+        });
+    }
+
+    public function test_it_publishes_commercial_coverage_zones_with_coordinates(): void
+    {
+        $zones = collect($this->getJson('/api/public/overview')->json('data.coverage_zones'));
+
+        $this->assertGreaterThanOrEqual(4, $zones->count());
+
+        $zones->each(function (array $zone): void {
+            $this->assertNotEmpty($zone['name']);
+            $this->assertIsNumeric($zone['lat']);
+            $this->assertIsNumeric($zone['lng']);
+            // Coordenadas dentro del Valle de México.
+            $this->assertTrue($zone['lat'] > 19.0 && $zone['lat'] < 19.8);
+            $this->assertTrue($zone['lng'] > -99.5 && $zone['lng'] < -98.8);
+        });
+    }
+
+    public function test_the_demo_accounts_are_only_exposed_with_debug_enabled(): void
+    {
+        config(['app.debug' => true]);
+        $this->assertCount(5, $this->getJson('/api/public/demo-accounts')->json('data'));
+
+        config(['app.debug' => false]);
+        $this->assertSame([], $this->getJson('/api/public/demo-accounts')->json('data'));
     }
 }

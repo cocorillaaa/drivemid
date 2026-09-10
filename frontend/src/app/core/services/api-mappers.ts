@@ -1,12 +1,12 @@
 import {
   AssignedVehicle,
   AuthUser,
+  CoverageZone,
   FleetSummary,
   LandingContact,
-  LandingMetric,
   LandingOverview,
+  LandingPillar,
   LandingSolution,
-  PublicVehicle,
   UserRole,
   Vehicle,
 } from '../models/fleet.models';
@@ -218,67 +218,14 @@ export function mapFleetSummary(raw: RawFleetSummary): FleetSummary {
    Landing pública
    ------------------------------------------------------------------------ */
 
-export interface RawPublicVehicle {
-  id: string;
-  unit_code: string;
-  make: string;
-  model: string;
-  year: number;
-  plates: string;
-  service_tier: string;
-  capacity: number;
-  status: PublicVehicle['status'];
-  weekly_km: number;
-  policy_status: PublicVehicle['policyStatus'];
-  policy_days_to_expire: number;
-  driver_first_name: string;
-  location: {
-    label: string;
-    zone: string;
-    lat: number | string;
-    lng: number | string;
-    updated_at: string;
-    speed_kmh: number;
-    heading: string;
-  };
-}
-
-export function mapPublicVehicle(raw: RawPublicVehicle): PublicVehicle {
-  return {
-    id: raw.id,
-    unitCode: raw.unit_code,
-    make: raw.make,
-    model: raw.model,
-    year: num(raw.year),
-    plates: raw.plates,
-    serviceTier: raw.service_tier,
-    capacity: num(raw.capacity),
-    status: raw.status,
-    weeklyKm: num(raw.weekly_km),
-    policyStatus: raw.policy_status,
-    policyDaysToExpire: num(raw.policy_days_to_expire),
-    driverFirstName: raw.driver_first_name,
-    location: {
-      label: raw.location.label,
-      zone: raw.location.zone,
-      lat: num(raw.location.lat),
-      lng: num(raw.location.lng),
-      lastUpdate: raw.location.updated_at,
-      speedKmh: num(raw.location.speed_kmh),
-      heading: (raw.location.heading ?? 'N') as PublicVehicle['location']['heading'],
-    },
-  };
-}
-
 export interface RawLandingOverview {
   brand: { name: string; tagline: string; legal_name: string };
   contact: LandingContact;
   solutions: LandingSolution[];
   service_types: string[];
   cities: string[];
-  metrics: LandingMetric[];
-  summary: RawFleetSummary;
-  fleet: RawPublicVehicle[];
+  pillars: LandingPillar[];
+  coverage_zones: CoverageZone[];
 }
 
 export function mapLandingOverview(raw: RawLandingOverview): LandingOverview {
@@ -292,8 +239,11 @@ export function mapLandingOverview(raw: RawLandingOverview): LandingOverview {
     solutions: raw.solutions,
     serviceTypes: raw.service_types,
     cities: raw.cities,
-    metrics: raw.metrics,
-    summary: mapFleetSummary(raw.summary),
-    fleet: raw.fleet.map(mapPublicVehicle),
+    pillars: raw.pillars,
+    coverageZones: raw.coverage_zones.map((zone) => ({
+      ...zone,
+      lat: num(zone.lat),
+      lng: num(zone.lng),
+    })),
   };
 }

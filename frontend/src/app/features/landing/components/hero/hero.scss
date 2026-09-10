@@ -9,22 +9,20 @@
   overflow: hidden;
 }
 
-/* Halo corporativo sutil, sin estridencia */
+/* Halo corporativo sutil */
 .dl-hero__glow {
   position: absolute;
-  top: -18rem;
-  right: -10rem;
-  width: 46rem;
-  height: 46rem;
+  top: -20rem;
+  right: -12rem;
+  width: 52rem;
+  height: 52rem;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0) 68%);
   pointer-events: none;
 }
 
 .dl-hero__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
+  display: inline-block;
   padding: 0.35rem 0.85rem;
   margin-bottom: 1.5rem;
   font-size: 0.6875rem;
@@ -37,12 +35,8 @@
   background: rgba(255, 255, 255, 0.035);
 }
 
-.dl-hero__eyebrow .dl-dot {
-  color: #4ade80;
-}
-
 .dl-hero__title {
-  font-size: clamp(2rem, 4vw, 3.15rem);
+  font-size: clamp(2rem, 3.8vw, 3rem);
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.035em;
@@ -61,115 +55,42 @@
 .dl-hero__assurances {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem 1.5rem;
+  gap: 0.55rem 1.5rem;
   margin: 0;
   padding-top: 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.09);
 }
 
 .dl-hero__assurances li {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
   font-size: 0.8125rem;
   color: rgba(255, 255, 255, 0.55);
 }
 
-.dl-hero__assurances i {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 0.9rem;
-}
-
-/* --- Panel ilustrativo (consola) --- */
-.dl-console {
-  border-radius: 16px;
-  background: linear-gradient(168deg, #1e1e1e 0%, #151515 100%);
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.95);
+/* --- Ilustración --- */
+.dl-hero__figure {
+  position: relative;
+  margin: 0;
+  border-radius: 18px;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 46px 100px -46px rgba(0, 0, 0, 0.95);
+  background: #141414;
 }
 
-.dl-console__body {
-  padding: 1.35rem;
-}
-
-.dl-console__heading {
-  font-size: 1.0625rem;
-  font-weight: 600;
-  color: var(--dl-white);
-  letter-spacing: -0.02em;
-}
-
-.dl-console__kpis {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.6rem;
-  margin-bottom: 1.1rem;
-}
-
-.dl-console__kpi {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  padding: 0.75rem 0.8rem;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.dl-console__kpi-label {
-  font-size: 0.625rem;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.dl-console__kpi-value {
-  font-size: 1.375rem;
-  font-weight: 600;
-  color: var(--dl-white);
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-}
-
-.dl-console__row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.62rem 0.15rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.dl-console__row-unit {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.7rem;
-  min-width: 0;
-}
-
-.dl-console__row-unit strong {
+.dl-hero__image {
   display: block;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
-  line-height: 1.25;
+  width: 100%;
+  height: auto;
+  transform: scale(1.01);
+  transition: transform 1.2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.dl-console__row-unit em {
-  display: block;
-  font-style: normal;
-  font-size: 0.6875rem;
-  color: rgba(255, 255, 255, 0.42);
-  line-height: 1.35;
+.dl-hero__figure:hover .dl-hero__image {
+  transform: scale(1.035);
 }
 
-.dl-console__row-right {
-  flex: 0 0 auto;
-}
-
-/* --- Banda de indicadores --- */
-.dl-hero__metrics {
+/* --- Pilares institucionales --- */
+.dl-hero__pillars {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1px;
@@ -180,26 +101,29 @@
   overflow: hidden;
 }
 
-.dl-hero__metric {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  padding: 1.35rem 1.5rem;
+.dl-hero__pillar {
+  padding: 1.5rem 1.5rem 1.6rem;
   background: var(--dl-black);
+  transition: background-color 0.35s ease;
 }
 
-.dl-hero__metric-value {
-  font-size: 1.75rem;
+.dl-hero__pillar:hover {
+  background: #161616;
+}
+
+.dl-hero__pillar-title {
+  font-size: 0.9375rem;
   font-weight: 600;
-  letter-spacing: -0.03em;
   color: var(--dl-white);
-  line-height: 1;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
 }
 
-.dl-hero__metric-label {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.45);
-  line-height: 1.45;
+.dl-hero__pillar-text {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
 }
 
 @media (max-width: 991.98px) {
@@ -207,14 +131,14 @@
     padding: 7rem 0 3.5rem;
   }
 
-  .dl-hero__metrics {
+  .dl-hero__pillars {
     grid-template-columns: repeat(2, 1fr);
     margin-top: 3rem;
   }
 }
 
 @media (max-width: 575.98px) {
-  .dl-console__kpis {
+  .dl-hero__pillars {
     grid-template-columns: 1fr;
   }
 }

@@ -12,7 +12,7 @@
 
     <div class="row g-3 g-lg-4">
       @for (solution of solutions(); track solution.key) {
-        <div class="col-md-6 col-xl-3">
+        <div class="col-md-6 col-xl-3" dlReveal="up" [dlRevealDelay]="$index * 90">
           <article class="dl-card dl-card--pad dl-card--hover dl-solution h-100">
 
             <h3 class="dl-solution__title">{{ solution.title }}</h3>
@@ -32,7 +32,7 @@
     @if (loading() && solutions().length === 0) {
       <div class="row g-3 g-lg-4">
         @for (placeholder of [1, 2, 3, 4]; track placeholder) {
-          <div class="col-md-6 col-xl-3">
+          <div class="col-md-6 col-xl-3" dlReveal="up" [dlRevealDelay]="$index * 90">
             <div class="dl-card dl-card--pad h-100">
               <span class="dl-skeleton d-block mb-3" style="width: 2.75rem; height: 2.75rem; border-radius: 10px"></span>
               <span class="dl-skeleton d-block mb-2" style="width: 60%; height: 1rem"></span>

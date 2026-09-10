@@ -1,0 +1,90 @@
+<!-- Cobertura operativa: zonas comerciales, sin datos de unidades -->
+<section class="dl-section dl-section--surface" id="cobertura">
+  <div class="container">
+    <div class="row align-items-end g-4 mb-4">
+      <div class="col-lg-7">
+        <span class="dl-eyebrow" dlReveal="fade">Cobertura</span>
+        <h2 class="mt-2 mb-3" style="font-size: clamp(1.6rem, 2.4vw, 2.1rem)">
+          Dónde operamos
+        </h2>
+        <p class="dl-lead mb-0" dlReveal="up" [dlRevealDelay]="80">
+          Atendemos los principales corredores corporativos del Valle de México.
+          Seleccione una zona del listado para ubicarla en el mapa.
+        </p>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="d-flex flex-wrap gap-2 justify-content-lg-end" dlReveal="up" [dlRevealDelay]="160">
+          <a class="dl-btn dl-btn--dark dl-btn--sm" href="#contacto">
+            Consultar disponibilidad
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 g-lg-4">
+      <!-- Listado de zonas -->
+      <div class="col-lg-5">
+        <div class="dl-card h-100 overflow-hidden" dlReveal="right">
+          <div class="dl-card__head">
+            <div>
+              <h3 class="dl-card__title">Zonas atendidas</h3>
+              <p class="dl-card__subtitle">Corredores corporativos con servicio permanente</p>
+            </div>
+          </div>
+
+          <ul class="list-unstyled mb-0 dl-zone-list">
+            @for (zone of zones(); track zone.key) {
+              <li>
+                <button
+                  type="button"
+                  [class]="'dl-zone' + (selectedKey() === zone.key ? ' is-active' : '')"
+                  [attr.aria-pressed]="selectedKey() === zone.key"
+                  (click)="select(zone)"
+                >
+                  <span class="dl-zone__name">{{ zone.name }}</span>
+                  <span class="dl-zone__note">{{ zone.note }}</span>
+                </button>
+              </li>
+            } @empty {
+              @for (placeholder of [1, 2, 3, 4, 5]; track placeholder) {
+                <li class="dl-zone">
+                  <span class="dl-skeleton d-block mb-2" style="width: 52%; height: 0.8rem"></span>
+                  <span class="dl-skeleton d-block" style="width: 88%; height: 0.7rem"></span>
+                </li>
+              }
+            }
+          </ul>
+
+          @if (selectedZone(); as zone) {
+            <div class="dl-card__body border-top py-3">
+              <p class="dl-eyebrow mb-1">Zona seleccionada</p>
+              <p class="mb-0 fw-semibold" style="font-size: 0.875rem">{{ zone.name }}</p>
+              <p class="mb-0 dl-text-muted" style="font-size: 0.8125rem">{{ zone.note }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Mapa de cobertura -->
+      <div class="col-lg-7">
+        <div class="dl-card h-100 overflow-hidden" dlReveal="left" [dlRevealDelay]="120">
+          <div class="dl-card__head">
+            <div>
+              <h3 class="dl-card__title">Zonas de servicio · Valle de México</h3>
+              <p class="dl-card__subtitle">Referencias geográficas de cobertura comercial</p>
+            </div>
+          </div>
+
+          <dl-fleet-map [markers]="markers()" [selectedId]="selectedKey()" height="27.5rem" />
+
+          <div class="dl-card__body py-3">
+            <p class="mb-0 dl-text-muted" style="font-size: 0.75rem">
+              Los puntos indican zonas donde se presta servicio, no la posición de una unidad.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -28,6 +28,6 @@ export class SiteFooterComponent {
     { label: 'Acceso a la plataforma', href: '/acceso' },
     { label: 'Solicitar servicio', href: '#contacto' },
     { label: 'Postularse como conductor', href: '#contacto' },
-    { label: 'Flota en vivo', href: '#flota' },
+    { label: 'Cobertura', href: '#cobertura' },
   ];
 }

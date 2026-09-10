@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { LandingService } from '../../core/services/landing.service';
-import { FleetPreviewComponent } from './components/fleet-preview/fleet-preview';
+import { CoverageComponent } from './components/coverage/coverage';
 import { HeroComponent } from './components/hero/hero';
 import { LeadFormComponent } from './components/lead-form/lead-form';
 import { SiteFooterComponent } from './components/site-footer/site-footer';
@@ -21,7 +21,7 @@ import { SolutionsComponent } from './components/solutions/solutions';
     SiteHeaderComponent,
     HeroComponent,
     SolutionsComponent,
-    FleetPreviewComponent,
+    CoverageComponent,
     LeadFormComponent,
     SiteFooterComponent,
   ],

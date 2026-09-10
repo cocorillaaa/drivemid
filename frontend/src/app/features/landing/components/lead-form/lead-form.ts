@@ -5,6 +5,7 @@ import { finalize } from 'rxjs';
 import { FleetService } from '../../../../core/services/fleet.service';
 import { LandingService } from '../../../../core/services/landing.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { RevealDirective } from '../../../../shared/directives/reveal.directive';
 
 /** Pestañas disponibles en el formulario de captación. */
 export type LeadTab = 'corporate' | 'driver';
@@ -29,7 +30,7 @@ interface SubmissionResult {
  */
 @Component({
   selector: 'dl-lead-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RevealDirective],
   templateUrl: './lead-form.html',
   styleUrl: './lead-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

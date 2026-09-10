@@ -89,7 +89,7 @@ DemoLogistics/
 │           ├── shared/components/                  toast-host · stat-card · fleet-map · ficha técnica
 │           └── features/
 │               ├── auth/login-page/                Pantalla de credenciales
-│               ├── landing/                        Header · Hero · Soluciones · Flota · Captación · Footer
+│               ├── landing/                        Header · Hero · Soluciones · Cobertura · Captación · Footer
 │               └── platform/
 │                   ├── platform-shell/             Barra de sesión y navegación por rol
 │                   ├── superuser-dashboard/        Vista global de flota
@@ -166,11 +166,20 @@ npx ng serve --port 4201 --host 127.0.0.1
 
 - **Header minimalista** con logotipo, navegación por anclas y botón **Acceso a Plataforma**
   que lleva a la pantalla de credenciales.
-- **Hero** con la propuesta de valor y un panel ilustrativo alimentado por la flota real.
+- **Hero** con la propuesta de valor y una **ilustración propia** (`public/images/unidad-ejecutiva.svg`,
+  también en PNG). No hay panel con datos: la landing no publica información de la aplicación.
+- **Pilares institucionales**: cobertura, disponibilidad, conductores y unidades.
 - **Soluciones** y **canales de contacto**: contenido servido por el backend.
-- **Flota:** mapa Leaflet con las unidades, listado de la flota y banda de cobertura.
-  La API sólo publica datos operativos y el nombre de pila del conductor: **nunca** teléfonos,
-  correos ni VIN, porque la landing no requiere autenticación.
+- **Cobertura:** mapa Leaflet con las **zonas comerciales** donde se presta servicio, no la
+  posición de las unidades, más el listado de corredores atendidos.
+- **Animaciones de entrada** al hacer scroll, con el mismo criterio que los sitios Wix
+  (IntersectionObserver + transiciones CSS), escalonadas por tarjeta y desactivadas cuando el
+  sistema pide movimiento reducido.
+
+> **La landing no expone datos operativos.** `/api/public/overview` devuelve únicamente
+> contenido institucional (marca, contacto, soluciones, catálogos, pilares y zonas de
+> cobertura). No incluye unidades, matrículas, kilometrajes, pólizas, posiciones ni datos de
+> los conductores; hay pruebas que lo verifican.
 - **Formulario de captación** con dos pestañas —*Solicitar Servicio Corporativo* y *Postularse
   como Conductor*— cuyas ciudades y líneas de servicio también llegan de la API. Al enviar
   registran la solicitud en el backend y devuelven el folio (`DL-COR-…` / `DL-CON-…`).
@@ -223,6 +232,8 @@ dígitos, pólizas con vigencia real y coordenadas coherentes del Valle de Méxi
 
 El estatus de cada póliza **se deriva de su vigencia** (umbral de aviso: 60 días), por lo que la
 demo permanece coherente sin importar cuándo se ejecute.
+
+Estos datos **sólo se ven dentro de la plataforma**, nunca en la landing pública.
 
 ---
 
@@ -300,6 +311,9 @@ actualización de telemetría, ausencia de indicadores de estado e iconografía,
   «sincronizado») ni iconografía decorativa. La información se presenta como texto y datos;
   el refresco de telemetría ocurre en segundo plano. Los pines del mapa son formas de color,
   sin glifos.
+- **Animaciones accesibles:** la directiva `dlReveal` usa un `IntersectionObserver` y un
+  *signal* (la app es zoneless, una propiedad normal no dispararía la detección de cambios).
+  Con `prefers-reduced-motion` el contenido aparece de inmediato.
 
 - **Zoneless + Signals:** todo el estado vive en Signals, así que la detección de cambios se
   dispara sólo cuando algo cambia realmente. El reloj de 1 s alimenta los textos relativos sin

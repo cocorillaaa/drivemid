@@ -5,116 +5,63 @@
   <div class="container position-relative">
     <div class="row align-items-center g-5">
       <!-- Columna de mensaje -->
-      <div class="col-lg-6">
-        <span class="dl-hero__eyebrow">
+      <div class="col-lg-5">
+        <span class="dl-hero__eyebrow" dlReveal="fade">
           Transporte privado corporativo · CDMX y zona metropolitana
         </span>
 
-        <h1 class="dl-hero__title">
+        <h1 class="dl-hero__title" dlReveal="up" [dlRevealDelay]="80">
           Movilidad ejecutiva para operaciones<br class="d-none d-md-block" />
           que no se detienen.
         </h1>
 
-        <p class="dl-hero__lead">
+        <p class="dl-hero__lead" dlReveal="up" [dlRevealDelay]="180">
           Administramos flotillas corporativas de principio a fin: asignación de unidades,
           conductores verificados, control de pólizas, kilometraje y telemetría en una sola
           plataforma ejecutiva.
         </p>
 
-        <div class="d-flex flex-wrap gap-2 mb-4">
-          <a class="dl-btn dl-btn--light" href="#contacto">
-            Solicitar servicio corporativo
-          </a>
-          <a class="dl-btn dl-btn--ghost-light" routerLink="/acceso">
-            Acceso a Plataforma
-          </a>
+        <div class="d-flex flex-wrap gap-2 mb-4" dlReveal="up" [dlRevealDelay]="280">
+          <a class="dl-btn dl-btn--light" href="#contacto">Solicitar servicio corporativo</a>
+          <a class="dl-btn dl-btn--ghost-light" routerLink="/acceso">Acceso a Plataforma</a>
         </div>
 
-        <ul class="dl-hero__assurances list-unstyled">
-          <li> Conductores con licencia federal vigente</li>
-          <li> Unidades con póliza de cobertura amplia</li>
-          <li> Monitoreo GPS y asistencia 24/7</li>
+        <ul class="dl-hero__assurances list-unstyled" dlReveal="up" [dlRevealDelay]="360">
+          <li>Conductores con licencia federal vigente</li>
+          <li>Unidades con póliza de cobertura amplia</li>
+          <li>Monitoreo satelital y asistencia 24/7</li>
         </ul>
       </div>
 
-      <!-- Panel ilustrativo del producto -->
-      <div class="col-lg-6">
-        <div class="dl-console" role="img"
-             aria-label="Vista previa del panel de control de flota de DemoLogistics">
-          <div class="dl-console__body">
-            <div class="d-flex align-items-center justify-content-between mb-3">
-              <div>
-                <span class="dl-eyebrow dl-eyebrow--onDark">Panel de control</span>
-                <p class="dl-console__heading mb-0">Resumen de la flota</p>
-              </div>
-            </div>
-
-            @if (summary(); as resumen) {
-              <div class="dl-console__kpis">
-                <div class="dl-console__kpi">
-                  <span class="dl-console__kpi-label">Unidades activas</span>
-                  <span class="dl-console__kpi-value">{{ resumen.activeUnits }}</span>
-                </div>
-                <div class="dl-console__kpi">
-                  <span class="dl-console__kpi-label">Km esta semana</span>
-                  <span class="dl-console__kpi-value">{{ formatNumber(resumen.totalWeeklyKm) }}</span>
-                </div>
-                <div class="dl-console__kpi">
-                  <span class="dl-console__kpi-label">Pólizas por atender</span>
-                  <span class="dl-console__kpi-value">{{ resumen.policyAlerts }}</span>
-                </div>
-              </div>
-            } @else {
-              <div class="dl-console__kpis">
-                @for (placeholder of [1, 2, 3]; track placeholder) {
-                  <div class="dl-console__kpi">
-                    <span class="dl-skeleton d-block" style="width: 70%; height: 0.6rem"></span>
-                    <span class="dl-skeleton d-block mt-2" style="width: 45%; height: 1.2rem"></span>
-                  </div>
-                }
-              </div>
-            }
-
-            <ul class="dl-console__list list-unstyled mb-0">
-              @for (unit of units(); track unit.id) {
-                <li class="dl-console__row">
-                  <span class="dl-console__row-unit">
-                    <span>
-                      <strong>{{ unit.unitCode }}</strong>
-                      <em>{{ unit.make }} {{ unit.model }} · {{ unit.plates }}</em>
-                    </span>
-                  </span>
-                  <span class="dl-console__row-right">
-                    <span [class]="unitStatusBadge[unit.status]">{{ unitStatusLabel[unit.status] }}</span>
-                  </span>
-                </li>
-              } @empty {
-                @for (placeholder of [1, 2, 3, 4]; track placeholder) {
-                  <li class="dl-console__row">
-                    <span class="dl-console__row-unit">
-                      <span class="dl-skeleton d-block" style="width: 13rem; height: 1rem"></span>
-                    </span>
-                  </li>
-                }
-              }
-            </ul>
-          </div>
-        </div>
+      <!-- Ilustración -->
+      <div class="col-lg-7">
+        <figure class="dl-hero__figure" dlReveal="zoom" [dlRevealDelay]="200">
+          <img
+            class="dl-hero__image"
+            [src]="heroImage"
+            width="900"
+            height="560"
+            alt="Unidad ejecutiva de la flota en operación nocturna"
+            loading="eager"
+            decoding="async"
+          />
+        </figure>
       </div>
     </div>
 
-    <!-- Banda de indicadores -->
-    <div class="dl-hero__metrics">
-      @for (metric of metrics(); track metric.key) {
-        <div class="dl-hero__metric">
-          <span class="dl-hero__metric-value">{{ metric.value }}</span>
-          <span class="dl-hero__metric-label">{{ metric.label }}</span>
-        </div>
+    <!-- Pilares institucionales -->
+    <div class="dl-hero__pillars">
+      @for (pillar of pillars(); track pillar.key; let i = $index) {
+        <article class="dl-hero__pillar" dlReveal="up" [dlRevealDelay]="120 + i * 90">
+          <h2 class="dl-hero__pillar-title">{{ pillar.title }}</h2>
+          <p class="dl-hero__pillar-text">{{ pillar.description }}</p>
+        </article>
       } @empty {
         @for (placeholder of [1, 2, 3, 4]; track placeholder) {
-          <div class="dl-hero__metric">
-            <span class="dl-skeleton d-block mb-2" style="width: 3.5rem; height: 1.6rem"></span>
-            <span class="dl-skeleton d-block" style="width: 80%; height: 0.7rem"></span>
+          <div class="dl-hero__pillar">
+            <span class="dl-skeleton d-block mb-2" style="width: 45%; height: 0.9rem"></span>
+            <span class="dl-skeleton d-block" style="width: 100%; height: 0.7rem"></span>
+            <span class="dl-skeleton d-block mt-2" style="width: 80%; height: 0.7rem"></span>
           </div>
         }
       }

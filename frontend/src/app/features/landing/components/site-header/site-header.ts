@@ -37,7 +37,6 @@ export class SiteHeaderComponent implements OnInit, OnDestroy {
   /** Enlaces de navegación por ancla. */
   readonly navLinks: readonly NavLink[] = [
     { label: 'Soluciones', href: '#soluciones' },
-    { label: 'Flota en vivo', href: '#flota' },
     { label: 'Cobertura', href: '#cobertura' },
     { label: 'Contacto', href: '#contacto' },
   ];

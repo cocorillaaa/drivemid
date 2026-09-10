@@ -834,6 +834,14 @@ a {
   background: var(--dl-danger);
 }
 
+/* Zona comercial de cobertura (landing) */
+.dl-marker--neutral {
+  background: var(--dl-white);
+  border-color: var(--dl-black);
+  border-width: 3px;
+  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.75);
+}
+
 .dl-marker--selected {
   outline: 3px solid rgba(17, 17, 17, 0.22);
   outline-offset: 2px;
@@ -1083,6 +1091,71 @@ a {
   gap: 0.5rem;
   /* Se mantiene a la derecha aunque salte de línea bajo el título */
   margin-left: auto;
+}
+
+/* -----------------------------------------------------------------------------
+   Animaciones de entrada al hacer scroll
+   Mismo criterio que los sitios Wix (uride.mx): IntersectionObserver + CSS.
+   -------------------------------------------------------------------------- */
+
+.dl-reveal {
+  opacity: 0;
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.95s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: var(--dl-reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.dl-reveal[data-reveal='up'] {
+  transform: translate3d(0, 32px, 0);
+}
+
+.dl-reveal[data-reveal='left'] {
+  transform: translate3d(38px, 0, 0);
+}
+
+.dl-reveal[data-reveal='right'] {
+  transform: translate3d(-38px, 0, 0);
+}
+
+.dl-reveal[data-reveal='zoom'] {
+  transform: scale(0.955);
+}
+
+.dl-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* Aparición del encabezado fijo */
+@keyframes dl-header-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Latido lento del halo del hero */
+@keyframes dl-glow-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(-2%, 3%, 0) scale(1.06); }
+}
+
+.dl-hero__glow {
+  animation: dl-glow-drift 18s ease-in-out infinite;
+}
+
+/* Desplazamiento suave de los enlaces internos */
+@media (prefers-reduced-motion: reduce) {
+  .dl-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .dl-hero__glow {
+    animation: none;
+  }
 }
 
 /* -----------------------------------------------------------------------------

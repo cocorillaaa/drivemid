@@ -3,7 +3,7 @@
   <div class="container">
     <div class="row g-5">
       <!-- Columna informativa -->
-      <div class="col-lg-5">
+      <div class="col-lg-5" dlReveal="right">
         <span class="dl-eyebrow dl-eyebrow--onDark">Contacto</span>
         <h2 class="mt-3 mb-3" style="font-size: clamp(1.7rem, 2.6vw, 2.25rem)">
           Hablemos de su operación de transporte
@@ -52,7 +52,7 @@
       </div>
 
       <!-- Tarjeta de formulario -->
-      <div class="col-lg-7">
+      <div class="col-lg-7" dlReveal="left" [dlRevealDelay]="120">
         <div class="dl-lead-card">
           @if (result(); as res) {
             <!-- Confirmación -->
@@ -71,7 +71,7 @@
                 <button type="button" class="dl-btn dl-btn--dark" (click)="resetForm()">
                   Registrar otra solicitud
                 </button>
-                <a class="dl-btn dl-btn--outline" href="#flota">
+                <a class="dl-btn dl-btn--outline" href="#cobertura">
                   Ver flota en vivo
                 </a>
               </div>

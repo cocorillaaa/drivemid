@@ -96,10 +96,81 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'static_metrics' => [
+    'pillars' => [
         [
-            'value' => '24/7',
-            'label' => 'Monitoreo GPS y asistencia vial',
+            'key' => 'coverage',
+            'title' => 'Cobertura',
+            'description' => 'Ciudad de México y zona metropolitana, con corredores corporativos atendidos de forma permanente.',
+        ],
+        [
+            'key' => 'availability',
+            'title' => 'Disponibilidad',
+            'description' => 'Mesa de servicio, monitoreo satelital y asistencia vial los 365 días del año.',
+        ],
+        [
+            'key' => 'drivers',
+            'title' => 'Conductores',
+            'description' => 'Licencia federal vigente, verificación documental y capacitación en trato ejecutivo.',
+        ],
+        [
+            'key' => 'units',
+            'title' => 'Unidades',
+            'description' => 'Sedanes ejecutivos para traslado individual y vans de siete plazas para grupos.',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Zonas de cobertura publicadas en la landing
+    |--------------------------------------------------------------------------
+    |
+    | Son zonas comerciales de referencia, no la posición de ninguna unidad:
+    | la landing es pública y no publica datos operativos.
+    |
+    */
+
+    'coverage_zones' => [
+        [
+            'key' => 'centro',
+            'name' => 'Centro y Reforma',
+            'note' => 'Corredor corporativo y sede de oficinas centrales.',
+            'lat' => 19.4326,
+            'lng' => -99.1332,
+        ],
+        [
+            'key' => 'polanco',
+            'name' => 'Polanco',
+            'note' => 'Zona hotelera y de despachos financieros.',
+            'lat' => 19.4330,
+            'lng' => -99.1990,
+        ],
+        [
+            'key' => 'santafe',
+            'name' => 'Santa Fe',
+            'note' => 'Parques corporativos y conectividad con Toluca.',
+            'lat' => 19.3667,
+            'lng' => -99.2667,
+        ],
+        [
+            'key' => 'aeropuerto',
+            'name' => 'Aeropuerto AICM',
+            'note' => 'Traslados ejecutivos de llegada y salida.',
+            'lat' => 19.4200,
+            'lng' => -99.0800,
+        ],
+        [
+            'key' => 'interlomas',
+            'name' => 'Interlomas',
+            'note' => 'Corporativos del poniente y zona residencial alta.',
+            'lat' => 19.3970,
+            'lng' => -99.2870,
+        ],
+        [
+            'key' => 'sur',
+            'name' => 'Insurgentes Sur',
+            'note' => 'Centros de negocios y hospitales de referencia.',
+            'lat' => 19.3550,
+            'lng' => -99.1800,
         ],
     ],
 

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { LandingService } from '../../../../core/services/landing.service';
+import { RevealDirective } from '../../../../shared/directives/reveal.directive';
 
 /**
  * Sección de soluciones: las líneas de servicio ejecutivo que ofrece
@@ -8,6 +9,7 @@ import { LandingService } from '../../../../core/services/landing.service';
  */
 @Component({
   selector: 'dl-solutions',
+  imports: [RevealDirective],
   templateUrl: './solutions.html',
   styleUrl: './solutions.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
