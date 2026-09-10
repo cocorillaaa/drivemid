@@ -8,6 +8,7 @@ gestión de flota. La documentación completa del proyecto está en el
 npm install
 npx ng serve --port 4201 --host 127.0.0.1   # http://localhost:4201
 npx ng build                                 # build de producción → dist/frontend
+npx ng test --watch=false                    # pruebas unitarias (vitest)
 ```
 
 ## Estructura

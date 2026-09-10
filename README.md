@@ -222,17 +222,24 @@ curl -X PATCH http://127.0.0.1:8001/api/vehicles/unit-01/telemetry \
 ## 6. Pruebas
 
 ```bash
-cd backend && php artisan test --compact    # 14 pruebas · 83 aserciones
-cd frontend && npx ng build                 # compilación de producción
+cd backend  && php artisan test --compact      # 14 pruebas · 83 aserciones
+cd frontend && npx ng test --watch=false       # 3 pruebas del guard de rol
+cd frontend && npx ng build                    # compilación de producción
 ```
 
-`tests/Feature/FleetApiTest.php` cubre el contrato completo que consume el frontend: listado
-y detalle de unidades, agregados de flota, actualización de telemetría (incluida la
+`backend/tests/Feature/FleetApiTest.php` cubre el contrato completo que consume el frontend:
+listado y detalle de unidades, agregados de flota, actualización de telemetría (incluida la
 redistribución de la serie diaria), validaciones 422 y alta de prospectos.
+
+`frontend/src/app/core/guards/role.guard.spec.ts` protege la regla "una vista = un rol":
+el guard debe redirigir siempre a la vista del rol **activo**, nunca a la ruta vigilada
+(redirigir a la misma ruta produciría un ciclo infinito de navegación al abrir un enlace
+directo a `/plataforma/unidad`).
 
 Además se realizó una **verificación visual automatizada** (navegador headless) recorriendo
 la landing, los dos dashboards, el cambio de rol, los formularios, los filtros, el modal de
-ficha técnica y los mapas: **0 errores de consola y 0 errores de página**.
+ficha técnica, los mapas y el enlace directo a cada ruta: **0 errores de consola y 0 errores
+de página**.
 
 ---
 
@@ -243,9 +250,11 @@ ficha técnica y los mapas: **0 errores de consola y 0 errores de página**.
   valor como Signal (`toSignal`) para mantener la reactividad.
 - **Sin el JavaScript de Bootstrap:** los modales y desplegables se controlan con Signals y
   CSS de Bootstrap, evitando conflictos con la detección de cambios zoneless.
-- **Mapa tolerante a fallos:** si la capa base de teselas no puede descargarse, el componente
-  degrada a una rejilla local y mantiene pines, popups y geocercas operativos. La capa base
-  se desatura por CSS para respetar la paleta corporativa.
+- **Mapa tolerante a fallos:** la capa base son teselas de OpenStreetMap (sin API key),
+  desaturadas por CSS para respetar la paleta corporativa. Si no pueden descargarse, el
+  componente degrada a una rejilla local y mantiene pines, popups y geocercas operativos.
+- **Guard de rol sin ciclos:** `roleGuard` redirige a la vista del rol *activo*, no a la ruta
+  solicitada; cubierto por una prueba de regresión.
 - **Paridad front/back:** el `VehicleSeeder` replica exactamente el dataset de
   `fleet-mock.data.ts`, y `VehicleResource` expone el contrato snake_case que el cliente
   normaliza a su modelo de dominio.
