@@ -1,126 +1,175 @@
-<!-- Shell de la plataforma ejecutiva -->
-<div class="vf-shell">
-  <!-- Barra superior: marca + selector de roles + usuario -->
-  <header class="vf-shell__topbar">
-    <div class="vf-shell__container">
-      <div class="vf-shell__topbar-inner">
-        <a class="vf-shell__brand" routerLink="/" title="Ir al sitio público">
-          <span class="vf-shell__mark" aria-hidden="true">
-            <svg viewBox="0 0 32 32" width="20" height="20" focusable="false">
-              <path d="M6 8 L16 25 L26 8" fill="none" stroke="currentColor" stroke-width="3"
-                    stroke-linecap="square" />
-            </svg>
-          </span>
-          <span class="vf-shell__brand-text">
-            <span class="vf-shell__brand-name">VANGUARD<span>FLEET</span></span>
-            <span class="vf-shell__brand-sub">Plataforma ejecutiva</span>
-          </span>
-        </a>
+@if (user(); as usuario) {
+  <div class="vf-shell">
+    <!-- Barra superior: marca, contexto de sesión y menú de usuario -->
+    <header class="vf-shell__topbar">
+      <div class="vf-shell__container">
+        <div class="vf-shell__topbar-inner">
+          <a class="vf-shell__brand" routerLink="/" title="Ir al sitio público">
+            <span class="vf-shell__mark" aria-hidden="true">
+              <svg viewBox="0 0 32 32" width="20" height="20" focusable="false">
+                <path d="M6 8 L16 25 L26 8" fill="none" stroke="currentColor" stroke-width="3"
+                      stroke-linecap="square" />
+              </svg>
+            </span>
+            <span class="vf-shell__brand-text">
+              <span class="vf-shell__brand-name">VANGUARD<span>FLEET</span></span>
+              <span class="vf-shell__brand-sub">Plataforma ejecutiva</span>
+            </span>
+          </a>
 
-        <vf-role-switcher />
+          <!-- Contexto de la sesión -->
+          <div class="vf-shell__session">
+            <span [class]="'vf-shell__role' + (isSuperuser() ? ' vf-shell__role--global' : '')">
+              <i [class]="isSuperuser() ? 'bi bi-shield-lock' : 'bi bi-person-vcard'" aria-hidden="true"></i>
+              {{ usuario.roleLabel }}
+            </span>
 
-        <div class="vf-shell__user">
-          <span class="vf-shell__avatar" aria-hidden="true">{{ initials(profile().userName) }}</span>
-          <span class="vf-shell__user-text d-none d-md-flex">
-            <strong>{{ profile().userName }}</strong>
-            <em>{{ profile().scope }}</em>
-          </span>
+            @if (usuario.vehicle; as unidad) {
+              <span class="vf-shell__scope">
+                <span class="vf-plate">{{ unidad.plates }}</span>
+                {{ unidad.unitCode }} · {{ unidad.make }} {{ unidad.model }}
+              </span>
+            } @else {
+              <span class="vf-shell__scope vf-shell__scope--global">
+                <i class="bi bi-diagram-3" aria-hidden="true"></i>
+                Acceso a todas las unidades de la flota
+              </span>
+            }
+          </div>
+
+          <!-- Menú de usuario -->
+          <div class="vf-shell__userwrap">
+            <button
+              type="button"
+              class="vf-shell__user"
+              [class.is-open]="menuOpen()"
+              [attr.aria-expanded]="menuOpen()"
+              aria-haspopup="menu"
+              (click)="toggleMenu()"
+            >
+              <span class="vf-shell__avatar" aria-hidden="true">{{ usuario.initials }}</span>
+              <span class="vf-shell__user-text d-none d-md-flex">
+                <strong>{{ usuario.name }}</strong>
+                <em>{{ usuario.jobTitle }}</em>
+              </span>
+              <i class="bi bi-chevron-down vf-shell__user-caret" aria-hidden="true"></i>
+            </button>
+
+            @if (menuOpen()) {
+              <div class="vf-shell__menu-backdrop" (click)="closeMenu()"></div>
+
+              <div class="vf-shell__menu" role="menu">
+                <div class="vf-shell__menu-head">
+                  <p class="vf-shell__menu-name">{{ usuario.name }}</p>
+                  <p class="vf-shell__menu-mail">{{ usuario.email }}</p>
+                  <p class="vf-shell__menu-role">{{ usuario.roleLabel }}</p>
+                </div>
+
+                <button type="button" class="vf-shell__menu-item" role="menuitem" routerLink="/" (click)="closeMenu()">
+                  <i class="bi bi-globe2" aria-hidden="true"></i>
+                  Ver sitio público
+                </button>
+
+                <button type="button" class="vf-shell__menu-item is-danger" role="menuitem" (click)="logout()">
+                  <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+                  Cerrar sesión
+                </button>
+              </div>
+            }
+          </div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <!-- Sub-barra: navegación de vistas + contexto operativo -->
-  <nav class="vf-shell__subbar" aria-label="Vistas de la plataforma">
-    <div class="vf-shell__container">
-      <div class="vf-shell__subbar-inner">
-        <ul class="vf-shell__viewnav list-unstyled">
-          <li>
-            <button
-              type="button"
-              [class]="'vf-shell__viewlink' + (view() === 'fleet' ? ' is-active' : '')"
-              [attr.aria-current]="view() === 'fleet' ? 'page' : null"
-              (click)="go('fleet')"
-            >
-              <i class="bi bi-grid-1x2" aria-hidden="true"></i>
-              Panel de flota
-              <span class="vf-shell__viewlink-tag">Superusuario</span>
-            </button>
-          </li>
-          <li>
-            <button
-              type="button"
-              [class]="'vf-shell__viewlink' + (view() === 'unit' ? ' is-active' : '')"
-              [attr.aria-current]="view() === 'unit' ? 'page' : null"
-              (click)="go('unit')"
-            >
-              <i class="bi bi-car-front" aria-hidden="true"></i>
-              Mi unidad
-              <span class="vf-shell__viewlink-tag">Admin. de Unidad</span>
-            </button>
-          </li>
-        </ul>
+    <!-- Sub-barra: vista activa y estado de sincronización -->
+    <nav class="vf-shell__subbar" aria-label="Vista de la plataforma">
+      <div class="vf-shell__container">
+        <div class="vf-shell__subbar-inner">
+          <ul class="vf-shell__viewnav list-unstyled">
+            @if (isSuperuser()) {
+              <li>
+                <a class="vf-shell__viewlink is-active" [routerLink]="homeRoute()" aria-current="page">
+                  <i class="bi bi-grid-1x2" aria-hidden="true"></i>
+                  Panel de flota
+                </a>
+              </li>
+              @if (summary(); as resumen) {
+                <li class="vf-shell__viewmeta d-none d-xl-flex">
+                  {{ resumen.totalUnits }} unidades · {{ formatNumber(resumen.totalWeeklyKm) }} km esta semana
+                </li>
+              }
+            } @else {
+              <li>
+                <a class="vf-shell__viewlink is-active" [routerLink]="homeRoute()" aria-current="page">
+                  <i class="bi bi-car-front" aria-hidden="true"></i>
+                  Mi unidad
+                </a>
+              </li>
+              @if (usuario.vehicle; as unidad) {
+                <li class="vf-shell__viewmeta d-none d-xl-flex">
+                  {{ unidad.unitCode }} · {{ unidad.plates }}
+                </li>
+              }
+            }
+          </ul>
 
-        <div class="vf-shell__meta">
-          @if (dataSource() === 'mock') {
-            <span class="vf-badge vf-badge--warn" title="La API de Laravel no respondió; se usa el dataset local">
-              <i class="bi bi-cloud-slash" aria-hidden="true"></i>
-              Modo demo · dataset local
+          <div class="vf-shell__meta">
+            <!-- Indicador de sincronización: avanza cada segundo -->
+            <span
+              [class]="'vf-sync' + (syncFresh() ? ' is-fresh' : '')"
+              [title]="'La telemetría se actualiza automáticamente cada ' + refreshSeconds + ' segundos'"
+            >
+              <span class="vf-pulse" aria-hidden="true"></span>
+              Sincronizado <strong>{{ syncAgo() }}</strong>
+              <span class="vf-shell__sync-auto d-none d-lg-inline">
+                · auto cada {{ refreshSeconds }} s
+              </span>
             </span>
-          } @else {
+
+            <button
+              type="button"
+              class="vf-btn vf-btn--outline vf-btn--icon"
+              [disabled]="refreshing()"
+              aria-label="Actualizar telemetría ahora"
+              title="Actualizar telemetría ahora"
+              (click)="refresh()"
+            >
+              <i [class]="refreshing() ? 'bi bi-arrow-repeat vf-spin' : 'bi bi-arrow-repeat'"
+                 aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Contenido de la vista activa -->
+    <main class="vf-shell__main">
+      <div class="vf-shell__container">
+        <router-outlet />
+      </div>
+    </main>
+
+    <!-- Pie de la plataforma -->
+    <footer class="vf-shell__footer">
+      <div class="vf-shell__container">
+        <div class="vf-shell__footer-inner">
+          <span>Vanguard Fleet · Plataforma ejecutiva de gestión de flota.</span>
+          <span class="d-flex align-items-center gap-3">
+            <a routerLink="/">Sitio público</a>
+            <span class="vf-shell__dot" aria-hidden="true"></span>
+            <span>Sesión: {{ usuario.email }}</span>
             <span class="vf-badge vf-badge--ok">
-              <i class="bi bi-cloud-check" aria-hidden="true"></i>
-              API Laravel · :8001
+              <span class="vf-pulse" style="color: currentColor"></span> Operativo
             </span>
-          }
-
-          <span class="vf-badge vf-badge--neutral d-none d-lg-inline-flex">
-            <i class="bi bi-activity" aria-hidden="true"></i>
-            {{ summary().activeUnits }} activas · {{ formatNumber(summary().totalWeeklyKm) }} km
           </span>
-
-          <span class="vf-shell__sync d-none d-xl-inline-flex">
-            <i class="bi bi-clock-history" aria-hidden="true"></i>
-            Sincronizado {{ relativeTime(lastSync()) }}
-          </span>
-
-          <button
-            type="button"
-            class="vf-btn vf-btn--outline vf-btn--icon"
-            [disabled]="loading()"
-            aria-label="Actualizar telemetría"
-            title="Actualizar telemetría"
-            (click)="refresh()"
-          >
-            <i [class]="loading() ? 'bi bi-arrow-repeat vf-spin' : 'bi bi-arrow-repeat'"
-               aria-hidden="true"></i>
-          </button>
         </div>
       </div>
-    </div>
-  </nav>
-
-  <!-- Contenido de la vista activa -->
-  <main class="vf-shell__main">
-    <div class="vf-shell__container">
-      <router-outlet />
-    </div>
-  </main>
-
-  <!-- Pie de la plataforma -->
-  <footer class="vf-shell__footer">
-    <div class="vf-shell__container">
-      <div class="vf-shell__footer-inner">
-        <span>Vanguard Fleet · Prototipo de demostración con datos simulados.</span>
-        <span class="d-flex align-items-center gap-3">
-          <a routerLink="/">Sitio público</a>
-          <span class="vf-shell__dot" aria-hidden="true"></span>
-          <span>Servicios en línea</span>
-          <span class="vf-badge vf-badge--ok">
-            <span class="vf-pulse" style="color: currentColor"></span> Operativo
-          </span>
-        </span>
-      </div>
-    </div>
-  </footer>
-</div>
+    </footer>
+  </div>
+} @else {
+  <!-- Sesión en proceso de restauración -->
+  <div class="vf-shell__booting">
+    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+    <p class="mb-0">Restaurando sesión…</p>
+  </div>
+}

@@ -1,4 +1,4 @@
-import { FleetMapMarker, Vehicle } from '../models/fleet.models';
+import { FleetMapMarker, PublicVehicle, Vehicle } from '../models/fleet.models';
 import {
   POLICY_STATUS_LABEL,
   UNIT_STATUS_LABEL,
@@ -16,10 +16,9 @@ const POLICY_TONE: Record<Vehicle['policy']['status'], FleetMapMarker['tone']> =
 };
 
 /**
- * Construye el marcador del mapa a partir de una unidad de la flota.
+ * Marcador de una unidad autenticada (panel de flota y vista de unidad).
  *
- * Reutilizado por la vista Superusuario (4 marcadores) y por la vista de
- * Administrador de Unidad (marcador único con geocerca).
+ * Incluye los datos de contacto del conductor, disponibles sólo con sesión.
  */
 export function toFleetMarker(
   vehicle: Vehicle,
@@ -48,5 +47,38 @@ export function toFleetMarker(
       { label: 'Reporte GPS', value: relativeTime(vehicle.location.lastUpdate) },
     ],
     accuracyRadiusM: opts.withZone ? 850 : undefined,
+  };
+}
+
+/**
+ * Marcador de una unidad publicada en la landing.
+ *
+ * La landing no requiere autenticación, así que el popup sólo expone los datos
+ * operativos y el nombre de pila del conductor.
+ */
+export function toPublicFleetMarker(unit: PublicVehicle): FleetMapMarker {
+  return {
+    id: unit.id,
+    title: `${unit.unitCode} · ${unit.make} ${unit.model}`,
+    subtitle: `${unit.plates} · ${unit.serviceTier}`,
+    lat: unit.location.lat,
+    lng: unit.location.lng,
+    tone: POLICY_TONE[unit.policyStatus],
+    icon: 'bi-truck-front-fill',
+    rows: [
+      { label: 'Servicio', value: unit.serviceTier },
+      { label: 'Conductor', value: unit.driverFirstName },
+      { label: 'Estatus', value: UNIT_STATUS_LABEL[unit.status] },
+      {
+        label: 'Póliza',
+        value: `${POLICY_STATUS_LABEL[unit.policyStatus]} · ${policyCountdownText(
+          unit.policyDaysToExpire,
+        )}`,
+      },
+      { label: 'Km semana', value: formatKm(unit.weeklyKm) },
+      { label: 'Capacidad', value: `${unit.capacity} pasajeros` },
+      { label: 'Ubicación', value: unit.location.label },
+      { label: 'Reporte GPS', value: relativeTime(unit.location.lastUpdate) },
+    ],
   };
 }

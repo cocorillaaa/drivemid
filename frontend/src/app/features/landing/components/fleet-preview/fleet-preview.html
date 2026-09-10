@@ -5,7 +5,7 @@
       <div class="col-lg-7">
         <span class="vf-eyebrow">Flota en vivo</span>
         <h2 class="mt-2 mb-3" style="font-size: clamp(1.6rem, 2.4vw, 2.1rem)">
-          Cuatro unidades ejecutivas, supervisadas en tiempo real
+          Unidades ejecutivas supervisadas en tiempo real
         </h2>
         <p class="vf-lead mb-0">
           Cada unidad reporta ubicación, kilometraje semanal y vigencia de póliza.
@@ -15,17 +15,19 @@
 
       <div class="col-lg-5">
         <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-          <span class="vf-badge vf-badge--neutral">
-            <i class="bi bi-database-check" aria-hidden="true"></i>
-            Fuente: {{ dataSource() === 'api' ? 'API Laravel · :8001' : 'Dataset demo' }}
-          </span>
-          <span class="vf-badge vf-badge--neutral">
-            <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
-            {{ formatNumber(summary().totalWeeklyKm) }} km esta semana
-          </span>
-          <a class="vf-btn vf-btn--dark vf-btn--sm" routerLink="/plataforma">
-            <i class="bi bi-speedometer2" aria-hidden="true"></i>
-            Abrir plataforma
+          @if (summary(); as resumen) {
+            <span class="vf-badge vf-badge--neutral">
+              <i class="bi bi-truck-front" aria-hidden="true"></i>
+              {{ resumen.activeUnits }} unidades en operación
+            </span>
+            <span class="vf-badge vf-badge--neutral">
+              <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+              {{ formatNumber(resumen.totalWeeklyKm) }} km esta semana
+            </span>
+          }
+          <a class="vf-btn vf-btn--dark vf-btn--sm" routerLink="/acceso">
+            <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+            Acceder a la plataforma
           </a>
         </div>
       </div>
@@ -39,7 +41,11 @@
             <div>
               <h3 class="vf-card__title">Unidades asignadas</h3>
               <p class="vf-card__subtitle">
-                {{ summary().onServiceUnits }} en servicio · {{ summary().availableUnits }} disponibles
+                @if (summary(); as resumen) {
+                  {{ resumen.onServiceUnits }} en servicio · {{ resumen.availableUnits }} disponibles
+                } @else {
+                  Consultando la flota…
+                }
               </p>
             </div>
             <span class="vf-badge vf-badge--ok">
@@ -48,7 +54,7 @@
           </div>
 
           <ul class="list-unstyled mb-0 vf-fleet-list">
-            @for (unit of vehicles(); track unit.id) {
+            @for (unit of units(); track unit.id) {
               <li>
                 <button
                   type="button"
@@ -66,7 +72,7 @@
                     </span>
                     <span class="d-block vf-unit-meta">
                       <span class="vf-plate">{{ unit.plates }}</span>
-                      · {{ unit.driver.fullName }}
+                      · {{ unit.serviceTier }}
                     </span>
                     <span class="d-block vf-unit-meta mt-1">
                       <i class="bi bi-geo-alt" aria-hidden="true"></i>
@@ -80,31 +86,47 @@
                     <span class="d-block fw-semibold" style="font-size: 0.8125rem">
                       {{ formatKm(unit.weeklyKm) }}
                     </span>
-                    <span [class]="policyBadge[unit.policy.status] + ' mt-1'">
-                      {{ policyLabel[unit.policy.status] }}
+                    <span [class]="policyBadge[unit.policyStatus] + ' mt-1'">
+                      {{ policyLabel[unit.policyStatus] }}
                     </span>
                   </span>
                 </button>
               </li>
+            } @empty {
+              @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+                <li class="vf-fleet-item">
+                  <span class="vf-skeleton" style="width: 2.75rem; height: 2.75rem; border-radius: 7px"></span>
+                  <span class="flex-grow-1">
+                    <span class="vf-skeleton d-block mb-2" style="width: 60%; height: 0.8rem"></span>
+                    <span class="vf-skeleton d-block" style="width: 85%; height: 0.7rem"></span>
+                  </span>
+                </li>
+              }
             }
           </ul>
 
-          <div class="vf-card__body border-top pt-3 pb-3">
-            <div class="vf-dl">
-              <div class="vf-dl__row">
-                <dt>Conductor de la unidad seleccionada</dt>
-                <dd>
-                  {{ selectedUnit()?.driver?.fullName ?? vehicles()[0]?.driver?.fullName }}
-                </dd>
-              </div>
-              <div class="vf-dl__row">
-                <dt>Teléfono de contacto</dt>
-                <dd>
-                  {{ formatPhone(selectedUnit()?.driver?.phone ?? vehicles()[0]?.driver?.phone ?? '') }}
-                </dd>
+          @if (highlightedUnit(); as unidad) {
+            <div class="vf-card__body border-top pt-3 pb-3">
+              <div class="vf-dl">
+                <div class="vf-dl__row">
+                  <dt>Servicio asignado</dt>
+                  <dd>{{ unidad.serviceTier }}</dd>
+                </div>
+                <div class="vf-dl__row">
+                  <dt>Capacidad</dt>
+                  <dd>{{ unidad.capacity }} pasajeros</dd>
+                </div>
+                <div class="vf-dl__row">
+                  <dt>Conductor</dt>
+                  <dd>{{ unidad.driverFirstName }} · perfil verificado</dd>
+                </div>
+                <div class="vf-dl__row">
+                  <dt>Corredor</dt>
+                  <dd>{{ unidad.location.zone }}</dd>
+                </div>
               </div>
             </div>
-          </div>
+          }
         </div>
       </div>
 
@@ -122,7 +144,7 @@
             [markers]="markers()"
             [selectedId]="selectedId()"
             height="27.5rem"
-            [overlayLabel]="summary().activeUnits + ' unidades monitoreadas'"
+            [overlayLabel]="(summary()?.activeUnits ?? 0) + ' unidades monitoreadas'"
           />
 
           <div class="vf-card__body py-3">

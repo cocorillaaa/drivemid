@@ -14,36 +14,38 @@
           en menos de 24 horas hábiles.
         </p>
 
-        <ul class="vf-contact-channels list-unstyled mb-4">
-          <li>
-            <i class="bi bi-telephone" aria-hidden="true"></i>
-            <span>
-              <em>Mesa de servicio</em>
-              <a href="tel:+525555801234">55 5580 1234</a>
-            </span>
-          </li>
-          <li>
-            <i class="bi bi-envelope" aria-hidden="true"></i>
-            <span>
-              <em>Correo corporativo</em>
-              <a href="mailto:contacto@vanguardfleet.mx">contacto@vanguardfleet.mx</a>
-            </span>
-          </li>
-          <li>
-            <i class="bi bi-geo-alt" aria-hidden="true"></i>
-            <span>
-              <em>Oficinas corporativas</em>
-              Av. Paseo de la Reforma 505, piso 32 · Cuauhtémoc, CDMX
-            </span>
-          </li>
-          <li>
-            <i class="bi bi-clock" aria-hidden="true"></i>
-            <span>
-              <em>Horario de atención</em>
-              Lunes a viernes 08:00 – 19:00 · Operación 24/7
-            </span>
-          </li>
-        </ul>
+        @if (contact(); as datos) {
+          <ul class="vf-contact-channels list-unstyled mb-4">
+            <li>
+              <i class="bi bi-telephone" aria-hidden="true"></i>
+              <span>
+                <em>Mesa de servicio</em>
+                <a [href]="'tel:' + datos.phoneLink">{{ datos.phone }}</a>
+              </span>
+            </li>
+            <li>
+              <i class="bi bi-envelope" aria-hidden="true"></i>
+              <span>
+                <em>Correo corporativo</em>
+                <a [href]="'mailto:' + datos.email">{{ datos.email }}</a>
+              </span>
+            </li>
+            <li>
+              <i class="bi bi-geo-alt" aria-hidden="true"></i>
+              <span>
+                <em>Oficinas corporativas</em>
+                {{ datos.address }}
+              </span>
+            </li>
+            <li>
+              <i class="bi bi-clock" aria-hidden="true"></i>
+              <span>
+                <em>Horario de atención</em>
+                {{ datos.hours }}
+              </span>
+            </li>
+          </ul>
+        }
 
         <div class="vf-contact-note">
           <i class="bi bi-shield-lock" aria-hidden="true"></i>
@@ -187,7 +189,7 @@
                         [class.is-invalid]="showError(corporateForm, 'serviceType')"
                       >
                         <option value="" disabled>Seleccione una opción</option>
-                        @for (service of serviceTypes; track service) {
+                        @for (service of serviceTypes(); track service) {
                           <option [value]="service">{{ service }}</option>
                         }
                       </select>
@@ -221,7 +223,7 @@
                         [class.is-invalid]="showError(corporateForm, 'city')"
                       >
                         <option value="" disabled>Seleccione una ciudad</option>
-                        @for (city of cities; track city) {
+                        @for (city of cities(); track city) {
                           <option [value]="city">{{ city }}</option>
                         }
                       </select>
@@ -322,7 +324,7 @@
                         [class.is-invalid]="showError(driverForm, 'city')"
                       >
                         <option value="" disabled>Seleccione una ciudad</option>
-                        @for (city of cities; track city) {
+                        @for (city of cities(); track city) {
                           <option [value]="city">{{ city }}</option>
                         }
                       </select>

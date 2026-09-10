@@ -4,17 +4,9 @@
     <nav class="vf-header__bar" aria-label="Navegación principal">
       <!-- Marca -->
       <a class="vf-brand" routerLink="/" (click)="closeMenu()" aria-label="Vanguard Fleet, inicio">
-        <span class="vf-brand__mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" width="26" height="26" focusable="false">
-            <path d="M6 8 L16 25 L26 8" fill="none" stroke="currentColor" stroke-width="2.6"
-                  stroke-linecap="square" />
-            <path d="M11.5 8 L16 15.5 L20.5 8" fill="none" stroke="rgba(255,255,255,.5)"
-                  stroke-width="1.6" stroke-linecap="square" />
-          </svg>
-        </span>
         <span class="vf-brand__text">
-          <span class="vf-brand__name">VANGUARD<span class="vf-brand__name-alt">FLEET</span></span>
-          <span class="vf-brand__tag">Movilidad ejecutiva corporativa</span>
+          <span class="vf-brand__name">Demo<span class="vf-brand__name-alt">Logistics</span></span>
+          <span class="vf-brand__tag">Movilidad ejecutiva</span>
         </span>
       </a>
 
@@ -27,11 +19,13 @@
 
       <!-- Acciones -->
       <div class="d-none d-lg-flex align-items-center gap-2">
-        <a class="vf-header__phone" href="tel:+525555801234">
-          <i class="bi bi-telephone" aria-hidden="true"></i>
-          <span>55 5580 1234</span>
-        </a>
-        <a class="vf-btn vf-btn--light vf-btn--sm" routerLink="/plataforma">
+        @if (contact(); as datos) {
+          <a class="vf-header__phone" [href]="'tel:' + datos.phoneLink">
+            <i class="bi bi-telephone" aria-hidden="true"></i>
+            <span>{{ datos.phone }}</span>
+          </a>
+        }
+        <a class="vf-btn vf-btn--light vf-btn--sm" routerLink="/acceso">
           <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
           Acceso a Plataforma
         </a>
@@ -65,7 +59,7 @@
             </li>
           }
         </ul>
-        <a class="vf-btn vf-btn--light vf-btn--block" routerLink="/plataforma" (click)="closeMenu()">
+        <a class="vf-btn vf-btn--light vf-btn--block" routerLink="/acceso" (click)="closeMenu()">
           <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
           Acceso a Plataforma
         </a>

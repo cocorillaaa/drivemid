@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { LANDING_METRICS } from '../../../../core/data/fleet-mock.data';
-import { FleetService } from '../../../../core/services/fleet.service';
+import { LandingService } from '../../../../core/services/landing.service';
 import {
   UNIT_STATUS_BADGE,
   UNIT_STATUS_LABEL,
@@ -10,8 +9,8 @@ import {
 } from '../../../../core/utils/fleet-format';
 
 /**
- * Hero de la landing: propuesta de valor de movilidad ejecutiva,
- * llamado a la acción y panel ilustrativo alimentado por la flota real.
+ * Hero de la landing: propuesta de valor de movilidad ejecutiva, llamado a la
+ * acción y panel ilustrativo con la flota real publicada por el backend.
  */
 @Component({
   selector: 'vf-hero',
@@ -21,23 +20,22 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeroComponent {
-  private readonly fleet = inject(FleetService);
+  private readonly landing = inject(LandingService);
 
-  /** Indicadores institucionales mostrados al pie del hero. */
-  readonly metrics = LANDING_METRICS;
+  /** Indicadores institucionales. */
+  readonly metrics = this.landing.metrics;
 
-  /** Unidades que se listan en el panel ilustrativo. */
-  readonly units = this.fleet.vehicles;
+  /** Resumen agregado de la flota. */
+  readonly summary = this.landing.summary;
 
-  /** Métricas agregadas para las mini-tarjetas del panel. */
-  readonly summary = this.fleet.summary;
+  /** Flota publicada (sin datos personales). */
+  readonly units = this.landing.fleet;
 
-  /** Formateador de miles reutilizable en la plantilla. */
+  /** `true` mientras el contenido se carga. */
+  readonly loading = this.landing.loading;
+
+  /** Helpers expuestos a la plantilla. */
   readonly formatNumber = formatNumber;
-
-  /** Etiqueta del estatus operativo. */
   readonly unitStatusLabel = UNIT_STATUS_LABEL;
-
-  /** Clases de la insignia de estatus operativo. */
   readonly unitStatusBadge = UNIT_STATUS_BADGE;
 }

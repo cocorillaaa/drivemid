@@ -1,6 +1,6 @@
 /**
  * Modelo de dominio de la plataforma Vanguard Fleet.
- * Contrato único compartido entre `FleetApiService`, `FleetService` y las vistas.
+ * Contrato único compartido entre los servicios de datos y las vistas.
  */
 
 /** Estatus operativo de la unidad. */
@@ -9,14 +9,80 @@ export type UnitStatus = 'en_servicio' | 'disponible' | 'mantenimiento';
 /** Estatus de la póliza de seguro. */
 export type PolicyStatus = 'vigente' | 'por_vencer' | 'vencida';
 
-/** Origen de los datos mostrados en la interfaz. */
-export type DataSource = 'api' | 'mock';
+/** Roles de la plataforma. */
+export type UserRole = 'superuser' | 'unit_admin';
 
 /** Coordenada geográfica. */
 export interface GeoPoint {
   lat: number;
   lng: number;
 }
+
+/* ---------------------------------------------------------------------------
+   Sesión y usuarios
+   ------------------------------------------------------------------------ */
+
+/** Unidad resumida que acompaña al perfil del Administrador de Unidad. */
+export interface AssignedVehicle {
+  id: string;
+  unitCode: string;
+  plates: string;
+  make: string;
+  model: string;
+}
+
+/** Permisos que el backend calcula para el usuario autenticado. */
+export interface UserPermissions {
+  viewGlobalFleet: boolean;
+  viewAllUnits: boolean;
+  managePolicies: boolean;
+  updateAssignedUnit: boolean;
+}
+
+/** Usuario autenticado. */
+export interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
+  role: UserRole;
+  roleLabel: string;
+  jobTitle: string | null;
+  phone: string | null;
+  initials: string;
+  vehicleId: string | null;
+  vehicle: AssignedVehicle | null;
+  permissions: UserPermissions;
+}
+
+/** Credenciales de acceso. */
+export interface LoginPayload {
+  email: string;
+  password: string;
+  deviceName?: string;
+}
+
+/** Respuesta del inicio de sesión. */
+export interface SessionPayload {
+  token: string;
+  tokenType: string;
+  user: AuthUser;
+}
+
+/**
+ * Cuenta de demostración publicada por el backend.
+ * Sólo llega con `APP_DEBUG` activo.
+ */
+export interface DemoAccount {
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+  scope: string;
+}
+
+/* ---------------------------------------------------------------------------
+   Flota
+   ------------------------------------------------------------------------ */
 
 /** Ubicación reportada por el GPS de la unidad. */
 export interface VehicleLocation extends GeoPoint {
@@ -106,7 +172,70 @@ export interface FleetSummary {
   lastTelemetryAt: string;
 }
 
-/** Alta de solicitud de servicio corporativo (landing). */
+/* ---------------------------------------------------------------------------
+   Landing pública
+   ------------------------------------------------------------------------ */
+
+/** Unidad tal como se publica en la landing (sin datos personales). */
+export interface PublicVehicle {
+  id: string;
+  unitCode: string;
+  make: string;
+  model: string;
+  year: number;
+  plates: string;
+  serviceTier: string;
+  capacity: number;
+  status: UnitStatus;
+  weeklyKm: number;
+  policyStatus: PolicyStatus;
+  policyDaysToExpire: number;
+  driverFirstName: string;
+  location: Omit<VehicleLocation, 'speedKmh'> & { speedKmh: number };
+}
+
+/** Solución comercial mostrada en la landing. */
+export interface LandingSolution {
+  key: string;
+  icon: string;
+  title: string;
+  description: string;
+  bullets: string[];
+}
+
+/** Indicador institucional de la landing. */
+export interface LandingMetric {
+  key: string;
+  value: string;
+  label: string;
+}
+
+/** Canales de contacto institucionales. */
+export interface LandingContact {
+  phone: string;
+  phoneLink: string;
+  email: string;
+  address: string;
+  hours: string;
+}
+
+/** Contenido completo de la landing servido por el backend. */
+export interface LandingOverview {
+  brand: { name: string; tagline: string; legalName: string };
+  contact: LandingContact;
+  solutions: LandingSolution[];
+  serviceTypes: string[];
+  cities: string[];
+  metrics: LandingMetric[];
+  summary: FleetSummary;
+  fleet: PublicVehicle[];
+}
+
+/* ---------------------------------------------------------------------------
+   Captación
+   ------------------------------------------------------------------------ */
+
+/** Alta de solicitud de servicio corporativo. */
 export interface CorporateLeadPayload {
   company: string;
   contactName: string;
@@ -118,7 +247,7 @@ export interface CorporateLeadPayload {
   message?: string;
 }
 
-/** Alta de postulación de conductor (landing). */
+/** Alta de postulación de conductor. */
 export interface DriverApplicationPayload {
   fullName: string;
   email: string;
@@ -134,6 +263,12 @@ export interface DriverApplicationPayload {
 export interface ApiResponse<T> {
   data: T;
   message?: string;
+}
+
+/** Error de validación devuelto por Laravel (HTTP 422). */
+export interface ApiValidationError {
+  message: string;
+  errors?: Record<string, string[]>;
 }
 
 /** Payload aceptado por el formulario rápido del Administrador de Unidad. */

@@ -3,9 +3,12 @@ import {
   Component,
   OnDestroy,
   OnInit,
+  inject,
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+
+import { LandingService } from '../../../../core/services/landing.service';
 
 interface NavLink {
   label: string;
@@ -15,8 +18,8 @@ interface NavLink {
 /**
  * Encabezado minimalista de la landing pública.
  *
- * Se mantiene fijo sobre el hero oscuro y gana un fondo translúcido al
- * hacer scroll. El acceso a la plataforma es directo, sin login.
+ * Se mantiene fijo sobre el hero oscuro y gana un fondo translúcido al hacer
+ * scroll. El acceso a la plataforma lleva a la pantalla de credenciales.
  */
 @Component({
   selector: 'vf-site-header',
@@ -26,6 +29,11 @@ interface NavLink {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SiteHeaderComponent implements OnInit, OnDestroy {
+  private readonly landing = inject(LandingService);
+
+  /** Canales de contacto institucionales (servidos por la API). */
+  readonly contact = this.landing.contact;
+
   /** Enlaces de navegación por ancla. */
   readonly navLinks: readonly NavLink[] = [
     { label: 'Soluciones', href: '#soluciones' },

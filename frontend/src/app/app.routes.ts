@@ -1,14 +1,17 @@
 import { Routes } from '@angular/router';
 
+import { authGuard, guestGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 
 /**
  * Mapa de rutas de Vanguard Fleet.
  *
- * - `/` landing pública con formulario de captación.
- * - `/plataforma` shell autenticado con el selector de roles.
- *   - `/plataforma/flota`  → dashboard de Superusuario (vista global).
- *   - `/plataforma/unidad` → dashboard de Administrador de Unidad.
+ * - `/`            landing pública.
+ * - `/acceso`      pantalla de credenciales.
+ * - `/plataforma`  shell protegido; la vista interna depende del rol que el
+ *                  backend asigne al token.
+ *   - `/plataforma/flota`  → Superusuario (vista global).
+ *   - `/plataforma/unidad` → Administrador de Unidad (sólo su unidad).
  */
 export const routes: Routes = [
   {
@@ -17,7 +20,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/landing/landing-page').then((m) => m.LandingPage),
   },
   {
+    path: 'acceso',
+    title: 'Acceso a la plataforma · Vanguard Fleet',
+    canActivate: [guestGuard],
+    loadComponent: () => import('./features/auth/login-page/login-page').then((m) => m.LoginPage),
+  },
+  {
     path: 'plataforma',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/platform/platform-shell/platform-shell').then((m) => m.PlatformShell),
     children: [

@@ -6,38 +6,60 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateVehicleTelemetryRequest;
 use App\Http\Resources\VehicleResource;
 use App\Models\Vehicle;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Gate;
 
 /**
- * Endpoints de consulta y actualización de las unidades de la flota.
+ * Unidades de la flota.
+ *
+ * El alcance de cada endpoint depende del rol del usuario autenticado:
+ *
+ * - **Superusuario**: ve y opera sobre todas las unidades.
+ * - **Administrador de Unidad**: única y exclusivamente su unidad asignada.
  */
 class VehicleController extends Controller
 {
     /**
-     * Listado completo de la flota ordenado por código de unidad.
+     * Listado de unidades visibles para el usuario autenticado.
      */
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $vehicles = Vehicle::query()->orderBy('unit_code')->get();
+        Gate::authorize('viewAny', Vehicle::class);
+
+        $user = $request->user();
+
+        $vehicles = Vehicle::query()
+            ->when(
+                $user->isUnitAdmin(),
+                fn (Builder $query): Builder => $query->whereKey($user->vehicle_id),
+            )
+            ->orderBy('unit_code')
+            ->get();
 
         return VehicleResource::collection($vehicles);
     }
 
     /**
-     * Detalle de una unidad (route model binding por `id`).
+     * Detalle de una unidad (autorizado por `VehiclePolicy`).
      */
     public function show(Vehicle $vehicle): VehicleResource
     {
+        Gate::authorize('view', $vehicle);
+
         return new VehicleResource($vehicle);
     }
 
     /**
-     * Métricas agregadas de la flota para el dashboard de Superusuario.
+     * Métricas agregadas de la flota. Exclusivo de la vista de Superusuario.
      */
     public function summary(): JsonResponse
     {
-        $totalUnits = Vehicle::count();
+        Gate::authorize('viewFleetSummary', Vehicle::class);
+
+        $totalUnits = Vehicle::query()->count();
         $expiredPolicies = Vehicle::query()->whereDate('policy_valid_to', '<', today())->count();
         $expiringPolicies = Vehicle::query()
             ->whereDate('policy_valid_to', '>=', today())
@@ -60,7 +82,7 @@ class VehicleController extends Controller
                 'insurance_coverage_pct' => $totalUnits > 0
                     ? (int) round((($totalUnits - $expiredPolicies) / $totalUnits) * 100)
                     : 0,
-                'last_telemetry_at' => now()->toIso8601String(),
+                'last_telemetry_at' => Vehicle::query()->max('location_updated_at'),
             ],
         ]);
     }
@@ -70,6 +92,8 @@ class VehicleController extends Controller
      */
     public function updateTelemetry(UpdateVehicleTelemetryRequest $request, Vehicle $vehicle): JsonResponse
     {
+        Gate::authorize('updateTelemetry', $vehicle);
+
         $validated = $request->validated();
 
         if (array_key_exists('weekly_km', $validated)) {

@@ -1,0 +1,312 @@
+:host {
+  display: block;
+}
+
+.vf-login {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+  background: var(--vf-black);
+  overflow: hidden;
+}
+
+.vf-login__glow {
+  position: absolute;
+  top: -22rem;
+  left: 50%;
+  width: 52rem;
+  height: 52rem;
+  margin-left: -26rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 68%);
+  pointer-events: none;
+}
+
+.vf-login__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 25rem) minmax(0, 31rem);
+  gap: 4rem;
+  align-items: center;
+  width: 100%;
+  max-width: 72rem;
+}
+
+/* --- Columna de marca --- */
+.vf-login__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 2.5rem;
+  color: var(--vf-white);
+}
+
+.vf-login__mark {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  flex: 0 0 auto;
+}
+
+.vf-login__brand > span:last-child {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.vf-login__brand-name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--vf-white);
+}
+
+.vf-login__brand-name span {
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.72);
+  margin-left: 0.28rem;
+}
+
+.vf-login__brand-tag {
+  font-size: 0.625rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 0.15rem;
+}
+
+.vf-login__title {
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+  color: var(--vf-white);
+  margin-bottom: 1.1rem;
+}
+
+.vf-login__text {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 2rem;
+}
+
+.vf-login__points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.55);
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.vf-login__points i {
+  margin-top: 0.15rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.vf-login__points strong {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
+.vf-login__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 2.25rem;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.vf-login__back:hover {
+  color: var(--vf-white);
+}
+
+/* --- Tarjeta de acceso --- */
+.vf-login__card {
+  padding: 2.25rem;
+  background: var(--vf-white);
+  border-radius: var(--vf-radius);
+  box-shadow: var(--vf-shadow-lg);
+}
+
+.vf-login__card-title {
+  font-size: 1.5rem;
+  letter-spacing: -0.025em;
+  margin: 0.6rem 0 0.35rem;
+}
+
+.vf-login__card-sub {
+  font-size: 0.875rem;
+  color: var(--vf-slate);
+  margin-bottom: 1.5rem;
+}
+
+.vf-login__notice,
+.vf-login__error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.75rem 0.9rem;
+  margin-bottom: 1.25rem;
+  border-radius: var(--vf-radius-xs);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.vf-login__notice {
+  background: var(--vf-surface-2);
+  border: 1px solid var(--vf-line-strong);
+  color: var(--vf-graphite);
+}
+
+.vf-login__error {
+  background: var(--vf-danger-bg);
+  border: 1px solid rgba(164, 38, 44, 0.22);
+  color: var(--vf-danger);
+}
+
+/* --- Cuentas de prueba --- */
+.vf-login__demo {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed var(--vf-line-strong);
+}
+
+.vf-login__demo-rule {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--vf-line);
+}
+
+.vf-login__demo-note {
+  font-size: 0.75rem;
+  color: var(--vf-slate);
+  margin-bottom: 0.85rem;
+}
+
+.vf-login__accounts {
+  max-height: 17rem;
+  overflow-y: auto;
+}
+
+.vf-login__account {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  margin-bottom: 0.35rem;
+  background: var(--vf-surface);
+  border: 1px solid var(--vf-line);
+  border-radius: var(--vf-radius-xs);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.16s ease, background-color 0.16s ease;
+}
+
+.vf-login__account:hover:not(:disabled) {
+  background: var(--vf-surface-2);
+  border-color: var(--vf-line-strong);
+}
+
+.vf-login__account:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.vf-login__account-role {
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  flex: 0 0 auto;
+  border-radius: 6px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.vf-login__account-role--superuser {
+  background: var(--vf-black);
+  color: var(--vf-white);
+}
+
+.vf-login__account-role--unit_admin {
+  background: var(--vf-surface-2);
+  border: 1px solid var(--vf-line-strong);
+  color: var(--vf-graphite);
+}
+
+.vf-login__account-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+}
+
+.vf-login__account-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--vf-black);
+  line-height: 1.3;
+}
+
+.vf-login__account-scope {
+  font-size: 0.6875rem;
+  color: var(--vf-slate);
+  line-height: 1.35;
+}
+
+.vf-login__account-credentials {
+  margin-top: 0.15rem;
+  font-family: var(--vf-font-mono);
+  font-size: 0.6875rem;
+  color: var(--vf-slate-light);
+  letter-spacing: -0.01em;
+  word-break: break-all;
+}
+
+.vf-login__account-go {
+  flex: 0 0 auto;
+  font-size: 1.15rem;
+  color: var(--vf-slate-light);
+  line-height: 1;
+}
+
+.vf-login__account:hover:not(:disabled) .vf-login__account-go {
+  color: var(--vf-black);
+}
+
+@media (max-width: 991.98px) {
+  .vf-login__inner {
+    grid-template-columns: minmax(0, 31rem);
+    justify-content: center;
+    gap: 2.5rem;
+  }
+
+  .vf-login__aside {
+    display: none;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .vf-login {
+    padding: 2rem 1rem;
+  }
+
+  .vf-login__card {
+    padding: 1.5rem 1.25rem;
+  }
+}

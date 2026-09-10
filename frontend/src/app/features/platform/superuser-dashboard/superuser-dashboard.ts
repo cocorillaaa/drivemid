@@ -8,7 +8,6 @@ import {
 
 import { FleetMapMarker, Vehicle } from '../../../core/models/fleet.models';
 import { FleetRow, FleetService } from '../../../core/services/fleet.service';
-import { PlatformNavService } from '../../../core/services/platform-nav.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { toFleetMarker } from '../../../core/utils/map-markers';
 import {
@@ -47,7 +46,6 @@ type FleetFilter = 'all' | 'alerts' | 'service';
 })
 export class SuperuserDashboard {
   private readonly fleet = inject(FleetService);
-  private readonly nav = inject(PlatformNavService);
   private readonly toast = inject(ToastService);
 
   /** Resumen agregado de la flota. */
@@ -62,8 +60,11 @@ export class SuperuserDashboard {
   /** Estado de carga de la telemetría. */
   readonly fleetLoading = this.fleet.loading;
 
-  /** Marca del último refresco. */
-  readonly lastSync = this.fleet.lastSync;
+  /** Texto "hace X" del indicador de sincronización (avanza cada segundo). */
+  readonly syncAgo = this.fleet.syncAgo;
+
+  /** `true` si la última sincronización es reciente. */
+  readonly syncFresh = this.fleet.syncFresh;
 
   /** Filtro activo de la tabla. */
   readonly filter = signal<FleetFilter>('all');
@@ -160,12 +161,6 @@ export class SuperuserDashboard {
   /** Cierra la ficha técnica. */
   closeDetail(): void {
     this.detailUnitId.set(null);
-  }
-
-  /** Cambia al rol Administrador de Unidad con la unidad indicada. */
-  viewAsUnitAdmin(unitId: string): void {
-    this.closeDetail();
-    this.nav.switchView('unit', { unitId });
   }
 
   /** Exporta la tabla general a CSV (sin backend, 100% cliente). */

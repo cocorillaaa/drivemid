@@ -27,8 +27,8 @@
             <i class="bi bi-building-check" aria-hidden="true"></i>
             Solicitar servicio corporativo
           </a>
-          <a class="vf-btn vf-btn--ghost-light" routerLink="/plataforma">
-            <i class="bi bi-speedometer2" aria-hidden="true"></i>
+          <a class="vf-btn vf-btn--ghost-light" routerLink="/acceso">
+            <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
             Acceso a Plataforma
           </a>
         </div>
@@ -55,25 +55,36 @@
                 <span class="vf-eyebrow vf-eyebrow--onDark">Panel de control</span>
                 <p class="vf-console__heading mb-0">Flota en operación</p>
               </div>
-              <span class="vf-badge vf-badge--dark" style="background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.16)">
-                <span class="vf-pulse" style="color: #4ade80"></span> En vivo
+              <span class="vf-sync vf-sync--onDark is-fresh">
+                <span class="vf-pulse" aria-hidden="true"></span> En vivo
               </span>
             </div>
 
-            <div class="vf-console__kpis">
-              <div class="vf-console__kpi">
-                <span class="vf-console__kpi-label">Unidades activas</span>
-                <span class="vf-console__kpi-value">{{ summary().activeUnits }}</span>
+            @if (summary(); as resumen) {
+              <div class="vf-console__kpis">
+                <div class="vf-console__kpi">
+                  <span class="vf-console__kpi-label">Unidades activas</span>
+                  <span class="vf-console__kpi-value">{{ resumen.activeUnits }}</span>
+                </div>
+                <div class="vf-console__kpi">
+                  <span class="vf-console__kpi-label">Km esta semana</span>
+                  <span class="vf-console__kpi-value">{{ formatNumber(resumen.totalWeeklyKm) }}</span>
+                </div>
+                <div class="vf-console__kpi">
+                  <span class="vf-console__kpi-label">Pólizas por atender</span>
+                  <span class="vf-console__kpi-value">{{ resumen.policyAlerts }}</span>
+                </div>
               </div>
-              <div class="vf-console__kpi">
-                <span class="vf-console__kpi-label">Km esta semana</span>
-                <span class="vf-console__kpi-value">{{ formatNumber(summary().totalWeeklyKm) }}</span>
+            } @else {
+              <div class="vf-console__kpis">
+                @for (placeholder of [1, 2, 3]; track placeholder) {
+                  <div class="vf-console__kpi">
+                    <span class="vf-skeleton d-block" style="width: 70%; height: 0.6rem"></span>
+                    <span class="vf-skeleton d-block mt-2" style="width: 45%; height: 1.2rem"></span>
+                  </div>
+                }
               </div>
-              <div class="vf-console__kpi">
-                <span class="vf-console__kpi-label">Pólizas por atender</span>
-                <span class="vf-console__kpi-value">{{ summary().policyAlerts }}</span>
-              </div>
-            </div>
+            }
 
             <ul class="vf-console__list list-unstyled mb-0">
               @for (unit of units(); track unit.id) {
@@ -89,6 +100,14 @@
                     <span [class]="unitStatusBadge[unit.status]">{{ unitStatusLabel[unit.status] }}</span>
                   </span>
                 </li>
+              } @empty {
+                @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+                  <li class="vf-console__row">
+                    <span class="vf-console__row-unit">
+                      <span class="vf-skeleton d-block" style="width: 13rem; height: 1rem"></span>
+                    </span>
+                  </li>
+                }
               }
             </ul>
           </div>
@@ -98,11 +117,18 @@
 
     <!-- Banda de indicadores -->
     <div class="vf-hero__metrics">
-      @for (metric of metrics; track metric.label) {
+      @for (metric of metrics(); track metric.key) {
         <div class="vf-hero__metric">
           <span class="vf-hero__metric-value">{{ metric.value }}</span>
           <span class="vf-hero__metric-label">{{ metric.label }}</span>
         </div>
+      } @empty {
+        @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+          <div class="vf-hero__metric">
+            <span class="vf-skeleton d-block mb-2" style="width: 3.5rem; height: 1.6rem"></span>
+            <span class="vf-skeleton d-block" style="width: 80%; height: 0.7rem"></span>
+          </div>
+        }
       }
     </div>
   </div>

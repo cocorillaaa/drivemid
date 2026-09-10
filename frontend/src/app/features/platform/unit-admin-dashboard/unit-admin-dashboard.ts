@@ -10,8 +10,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { finalize, startWith } from 'rxjs';
 
 import { FleetMapMarker, Vehicle } from '../../../core/models/fleet.models';
+import { AuthService } from '../../../core/services/auth.service';
 import { FleetService } from '../../../core/services/fleet.service';
-import { SessionService } from '../../../core/services/session.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { toFleetMarker } from '../../../core/utils/map-markers';
 import {
@@ -32,10 +32,10 @@ import { StatCardComponent } from '../../../shared/components/stat-card/stat-car
 /**
  * Dashboard del rol "Administrador de Unidad".
  *
- * Vista restringida a una única unidad asignada (por defecto
- * Unidad 01 · Dodge Attitude / ABC-123): formulario rápido de
- * kilometraje y teléfono, ficha técnica, estatus de la póliza y mapa
- * con la última ubicación reportada.
+ * La unidad que se muestra es, siempre, la que el backend tiene asociada al
+ * usuario autenticado (`users.vehicle_id`): no existe selector de unidades ni
+ * forma de consultar otra. El formulario rápido actualiza el kilometraje
+ * semanal y el teléfono de contacto de esa única unidad.
  */
 @Component({
   selector: 'vf-unit-admin-dashboard',
@@ -46,15 +46,24 @@ import { StatCardComponent } from '../../../shared/components/stat-card/stat-car
 })
 export class UnitAdminDashboard {
   private readonly fleet = inject(FleetService);
-  private readonly session = inject(SessionService);
+  private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
   private readonly fb = inject(FormBuilder);
 
-  /** Unidad asignada a la sesión. */
-  readonly unit = computed<Vehicle | null>(() => {
-    const id = this.session.activeUnitId();
-    return this.fleet.getById(id) ?? this.fleet.vehicles()[0] ?? null;
-  });
+  /** Usuario autenticado (Administrador de Unidad). */
+  readonly user = this.auth.user;
+
+  /** Unidad asignada a la sesión; la determina el backend. */
+  readonly unit = this.fleet.assignedUnit;
+
+  /** `true` mientras la flota se carga por primera vez. */
+  readonly loading = this.fleet.loading;
+
+  /** Texto "hace X" del indicador de sincronización. */
+  readonly syncAgo = this.fleet.syncAgo;
+
+  /** `true` si la última sincronización es reciente. */
+  readonly syncFresh = this.fleet.syncFresh;
 
   /** Marcador único con halo de geocerca. */
   readonly markers = computed<FleetMapMarker[]>(() => {
@@ -65,11 +74,8 @@ export class UnitAdminDashboard {
   /** Id de la unidad que se está guardando. */
   readonly savingUnitId = this.fleet.savingUnitId;
 
-  /** `true` mientras se guarda la unidad activa. */
+  /** `true` mientras se guarda la unidad asignada. */
   readonly saving = computed(() => this.savingUnitId() === this.unit()?.id);
-
-  /** Origen de datos actual. */
-  readonly dataSource = this.fleet.dataSource;
 
   /** Km restantes para el siguiente servicio preventivo. */
   readonly kmToService = computed(() => {
@@ -81,6 +87,7 @@ export class UnitAdminDashboard {
   readonly servicePct = computed(() => {
     const u = this.unit();
     if (!u) return 0;
+
     const span = Math.max(u.nextServiceKm - u.lastServiceKm, 1);
     return Math.min(100, Math.max(0, Math.round(((u.odometerKm - u.lastServiceKm) / span) * 100)));
   });
@@ -110,6 +117,7 @@ export class UnitAdminDashboard {
   readonly hasChanges = computed(() => {
     const current = this.unit();
     if (!current) return false;
+
     const { weeklyKm, phone } = this.formValue();
     return Number(weeklyKm) !== current.weeklyKm || String(phone) !== current.driver.phone;
   });
@@ -127,10 +135,13 @@ export class UnitAdminDashboard {
   readonly policyCountdownText = policyCountdownText;
 
   constructor() {
-    // Mantiene el formulario sincronizado con la unidad asignada.
+    // Mantiene el formulario sincronizado con la unidad asignada, sin
+    // sobrescribir lo que el usuario esté escribiendo ni lo que llega por el
+    // refresco automático de telemetría.
     effect(() => {
       const current = this.unit();
-      if (!current) return;
+      if (!current || !this.updateForm.pristine) return;
+
       this.updateForm.patchValue(
         { weeklyKm: current.weeklyKm, phone: current.driver.phone },
         { emitEvent: false },
@@ -156,15 +167,13 @@ export class UnitAdminDashboard {
     }
 
     const { weeklyKm, phone } = this.updateForm.getRawValue();
-    const payload = { weeklyKm: Number(weeklyKm), phone: String(phone) };
-
-    console.log(`[Vanguard Fleet] Actualización de ${current.unitCode}`, payload);
 
     this.fleet
-      .updateUnit(current.id, payload)
+      .updateUnit(current.id, { weeklyKm: Number(weeklyKm), phone: String(phone) })
       .pipe(finalize(() => this.updateForm.markAsPristine()))
       .subscribe({
         next: () => this.updateForm.markAsPristine(),
+        error: () => this.updateForm.markAsDirty(),
       });
   }
 
@@ -184,9 +193,13 @@ export class UnitAdminDashboard {
     if (!current) return;
 
     const text = `${current.location.lat.toFixed(5)}, ${current.location.lng.toFixed(5)}`;
+
     void globalThis.navigator?.clipboard
       ?.writeText(text)
       .then(() => this.toast.success('Coordenadas copiadas', text))
       .catch(() => this.toast.info('Coordenadas', text));
   }
 }
+
+/** Tipo auxiliar para la plantilla. */
+export type AssignedVehicle = Vehicle;

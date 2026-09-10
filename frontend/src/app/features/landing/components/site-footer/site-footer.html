@@ -21,10 +21,10 @@
         </p>
 
         <div class="d-flex gap-2">
-          <a class="vf-footer__social" href="tel:+525555801234" aria-label="Teléfono">
+          <a class="vf-footer__social" [href]="'tel:' + (contact()?.phoneLink ?? '')" aria-label="Teléfono">
             <i class="bi bi-telephone" aria-hidden="true"></i>
           </a>
-          <a class="vf-footer__social" href="mailto:contacto@vanguardfleet.mx" aria-label="Correo">
+          <a class="vf-footer__social" [href]="'mailto:' + (contact()?.email ?? '')" aria-label="Correo">
             <i class="bi bi-envelope" aria-hidden="true"></i>
           </a>
           <a class="vf-footer__social" href="#contacto" aria-label="Contacto">
@@ -37,7 +37,7 @@
       <div class="col-6 col-lg-2">
         <h4 class="vf-footer__heading">Soluciones</h4>
         <ul class="vf-footer__list list-unstyled">
-          @for (item of solutions; track item) {
+          @for (item of solutions(); track item) {
             <li><a href="#soluciones">{{ item }}</a></li>
           }
         </ul>
@@ -56,20 +56,26 @@
       <!-- Contacto -->
       <div class="col-lg-4">
         <h4 class="vf-footer__heading">Contacto</h4>
-        <ul class="vf-footer__list list-unstyled">
-          <li class="vf-footer__contact">
-            <i class="bi bi-building" aria-hidden="true"></i>
-            Av. Paseo de la Reforma 505, piso 32<br />Cuauhtémoc, 06500 · Ciudad de México
-          </li>
-          <li class="vf-footer__contact">
-            <i class="bi bi-telephone" aria-hidden="true"></i>
-            <a href="tel:+525555801234">55 5580 1234</a>
-          </li>
-          <li class="vf-footer__contact">
-            <i class="bi bi-envelope" aria-hidden="true"></i>
-            <a href="mailto:contacto@vanguardfleet.mx">contacto@vanguardfleet.mx</a>
-          </li>
-        </ul>
+        @if (contact(); as datos) {
+          <ul class="vf-footer__list list-unstyled">
+            <li class="vf-footer__contact">
+              <i class="bi bi-building" aria-hidden="true"></i>
+              {{ datos.address }}
+            </li>
+            <li class="vf-footer__contact">
+              <i class="bi bi-telephone" aria-hidden="true"></i>
+              <a [href]="'tel:' + datos.phoneLink">{{ datos.phone }}</a>
+            </li>
+            <li class="vf-footer__contact">
+              <i class="bi bi-envelope" aria-hidden="true"></i>
+              <a [href]="'mailto:' + datos.email">{{ datos.email }}</a>
+            </li>
+            <li class="vf-footer__contact">
+              <i class="bi bi-clock" aria-hidden="true"></i>
+              {{ datos.hours }}
+            </li>
+          </ul>
+        }
       </div>
     </div>
 
@@ -85,7 +91,7 @@
         <span class="mx-2" aria-hidden="true">·</span>
         <a href="#inicio">Términos de servicio</a>
         <span class="mx-2" aria-hidden="true">·</span>
-        <a routerLink="/plataforma">Acceso a Plataforma</a>
+        <a routerLink="/acceso">Acceso a Plataforma</a>
       </p>
     </div>
   </div>

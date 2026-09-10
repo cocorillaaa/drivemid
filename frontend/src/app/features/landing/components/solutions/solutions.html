@@ -11,7 +11,7 @@
     </div>
 
     <div class="row g-3 g-lg-4">
-      @for (solution of solutions; track solution.title) {
+      @for (solution of solutions(); track solution.key) {
         <div class="col-md-6 col-xl-3">
           <article class="vf-card vf-card--pad vf-card--hover vf-solution h-100">
             <span class="vf-solution__icon">
@@ -33,5 +33,19 @@
         </div>
       }
     </div>
+    @if (loading() && solutions().length === 0) {
+      <div class="row g-3 g-lg-4">
+        @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+          <div class="col-md-6 col-xl-3">
+            <div class="vf-card vf-card--pad h-100">
+              <span class="vf-skeleton d-block mb-3" style="width: 2.75rem; height: 2.75rem; border-radius: 10px"></span>
+              <span class="vf-skeleton d-block mb-2" style="width: 60%; height: 1rem"></span>
+              <span class="vf-skeleton d-block mb-2" style="width: 100%; height: 0.7rem"></span>
+              <span class="vf-skeleton d-block" style="width: 80%; height: 0.7rem"></span>
+            </div>
+          </div>
+        }
+      </div>
+    }
   </div>
 </section>

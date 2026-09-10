@@ -1,16 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { FleetMapMarker, Vehicle } from '../../../../core/models/fleet.models';
-import { FleetService } from '../../../../core/services/fleet.service';
-import { toFleetMarker } from '../../../../core/utils/map-markers';
+import { FleetMapMarker, PublicVehicle } from '../../../../core/models/fleet.models';
+import { LandingService } from '../../../../core/services/landing.service';
+import { toPublicFleetMarker } from '../../../../core/utils/map-markers';
 import {
   POLICY_STATUS_BADGE,
   POLICY_STATUS_LABEL,
   UNIT_STATUS_LABEL,
   formatKm,
   formatNumber,
-  formatPhone,
   relativeTime,
 } from '../../../../core/utils/fleet-format';
 import { FleetMapComponent } from '../../../../shared/components/fleet-map/fleet-map';
@@ -40,8 +39,11 @@ const COVERAGE_ITEMS = [
 ] as const;
 
 /**
- * Sección pública "Flota en vivo": mapa interactivo con las unidades
- * activas, listado sincronizado y banda de cobertura operativa.
+ * Sección pública "Flota en vivo".
+ *
+ * Consume la vista pública de la flota: la API entrega únicamente los datos
+ * operativos y el nombre de pila del conductor, nunca su información de
+ * contacto, porque la landing no requiere autenticación.
  */
 @Component({
   selector: 'vf-fleet-preview',
@@ -51,16 +53,16 @@ const COVERAGE_ITEMS = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FleetPreviewComponent {
-  private readonly fleet = inject(FleetService);
+  private readonly landing = inject(LandingService);
 
-  /** Unidades de la flota. */
-  readonly vehicles = this.fleet.vehicles;
+  /** Flota publicada por la API. */
+  readonly units = this.landing.fleet;
 
-  /** Resumen agregado. */
-  readonly summary = this.fleet.summary;
+  /** Resumen agregado de la flota. */
+  readonly summary = this.landing.summary;
 
-  /** Origen de los datos (API o mock). */
-  readonly dataSource = this.fleet.dataSource;
+  /** `true` mientras el contenido se carga. */
+  readonly loading = this.landing.loading;
 
   /** Garantías operativas. */
   readonly coverage = COVERAGE_ITEMS;
@@ -68,14 +70,19 @@ export class FleetPreviewComponent {
   /** Unidad resaltada en el mapa. */
   readonly selectedId = signal<string | null>(null);
 
-  /** Marcadores del mapa derivados de la flota. */
+  /** Marcadores del mapa derivados de la flota pública. */
   readonly markers = computed<FleetMapMarker[]>(() =>
-    this.vehicles().map((vehicle) => toFleetMarker(vehicle)),
+    this.units().map((unit) => toPublicFleetMarker(unit)),
   );
 
   /** Unidad seleccionada actualmente. */
-  readonly selectedUnit = computed<Vehicle | null>(
-    () => this.vehicles().find((v) => v.id === this.selectedId()) ?? null,
+  readonly selectedUnit = computed<PublicVehicle | null>(
+    () => this.units().find((u) => u.id === this.selectedId()) ?? null,
+  );
+
+  /** Unidad mostrada en el resumen inferior del listado. */
+  readonly highlightedUnit = computed<PublicVehicle | null>(
+    () => this.selectedUnit() ?? this.units()[0] ?? null,
   );
 
   // Helpers expuestos a la plantilla
@@ -84,11 +91,10 @@ export class FleetPreviewComponent {
   readonly unitStatusLabel = UNIT_STATUS_LABEL;
   readonly formatKm = formatKm;
   readonly formatNumber = formatNumber;
-  readonly formatPhone = formatPhone;
   readonly relativeTime = relativeTime;
 
   /** Resalta una unidad en el mapa. */
-  select(vehicle: Vehicle): void {
-    this.selectedId.set(vehicle.id);
+  select(unit: PublicVehicle): void {
+    this.selectedId.set(unit.id);
   }
 }

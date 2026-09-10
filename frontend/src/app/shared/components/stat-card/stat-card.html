@@ -1,11 +1,6 @@
 <!-- Tarjeta ejecutiva de métrica -->
 <article [class]="'vf-stat' + (accent() ? ' vf-stat--accent' : '')">
-  <header class="vf-stat__top">
-    <p class="vf-stat__label">{{ label() }}</p>
-    <span [class]="'vf-stat__icon vf-stat__icon--' + tone()">
-      <i [class]="'bi ' + icon()" aria-hidden="true"></i>
-    </span>
-  </header>
+  <p class="vf-stat__label">{{ label() }}</p>
 
   <p class="vf-stat__value">
     {{ value() }}

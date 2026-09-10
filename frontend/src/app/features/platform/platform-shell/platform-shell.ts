@@ -1,76 +1,104 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  OnDestroy,
   computed,
   inject,
+  signal,
 } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 
+import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../core/services/auth.service';
 import { FleetService } from '../../../core/services/fleet.service';
-import { PlatformNavService, PlatformView } from '../../../core/services/platform-nav.service';
-import { SessionService } from '../../../core/services/session.service';
 import { ToastService } from '../../../core/services/toast.service';
-import { formatNumber, initials, relativeTime } from '../../../core/utils/fleet-format';
-import { RoleSwitcherComponent } from '../components/role-switcher/role-switcher';
+import { formatNumber } from '../../../core/utils/fleet-format';
+import { homeRouteFor } from '../../../core/utils/role-routes';
 
 /**
  * Shell de la plataforma ejecutiva.
  *
- * Contiene la barra superior con el selector de roles (simulación de sesión),
- * la navegación entre la vista global de flota y la vista de unidad asignada,
- * y el indicador de origen de datos / última sincronización.
+ * Muestra la identidad de la sesión (usuario, rol y unidad asignada), el
+ * estado de sincronización de la telemetría —que se refresca solo— y la
+ * navegación propia del rol. No existe selector de roles: el alcance de la
+ * sesión lo determina el backend a partir del token.
  */
 @Component({
   selector: 'vf-platform-shell',
-  imports: [RouterOutlet, RouterLink, RoleSwitcherComponent],
+  imports: [RouterOutlet, RouterLink],
   templateUrl: './platform-shell.html',
   styleUrl: './platform-shell.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlatformShell {
+export class PlatformShell implements OnDestroy {
+  private readonly auth = inject(AuthService);
   private readonly fleet = inject(FleetService);
-  private readonly session = inject(SessionService);
-  private readonly nav = inject(PlatformNavService);
+  private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
 
-  /** Rol activo. */
-  readonly role = this.session.role;
+  /** Usuario autenticado. */
+  readonly user = this.auth.user;
 
-  /** Vista activa derivada del rol. */
-  readonly view = computed<PlatformView>(() => this.nav.viewFor(this.role()));
+  /** `true` cuando la sesión tiene vista global de flota. */
+  readonly isSuperuser = this.auth.isSuperuser;
 
-  /** Perfil del usuario en sesión. */
-  readonly profile = this.session.profile;
-
-  /** Resumen de flota para las píldoras de contexto. */
+  /** Resumen de flota (sólo Superusuario). */
   readonly summary = this.fleet.summary;
 
-  /** Origen de datos actual. */
-  readonly dataSource = this.fleet.dataSource;
+  /** `true` mientras se refresca la telemetría. */
+  readonly refreshing = this.fleet.refreshing;
 
-  /** Marca del último refresco. */
-  readonly lastSync = this.fleet.lastSync;
+  /** Texto "hace X" que avanza cada segundo. */
+  readonly syncAgo = this.fleet.syncAgo;
 
-  /** Estado de carga. */
-  readonly loading = this.fleet.loading;
+  /** `true` si la última sincronización es reciente. */
+  readonly syncFresh = this.fleet.syncFresh;
 
-  /** Helpers de formato expuestos a la plantilla. */
+  /** Cadencia del refresco automático, en segundos. */
+  readonly refreshSeconds = Math.round(environment.telemetryRefreshMs / 1000);
+
+  /** Ruta de inicio del rol autenticado. */
+  readonly homeRoute = computed(() => homeRouteFor(this.auth.role()));
+
+  /** `true` cuando el menú de usuario está desplegado. */
+  readonly menuOpen = signal(false);
+
+  /** Helper de formato expuesto a la plantilla. */
   readonly formatNumber = formatNumber;
-  readonly initials = initials;
-  readonly relativeTime = relativeTime;
 
   constructor() {
-    this.fleet.ensureLoaded();
+    // Carga inicial + refresco automático de telemetría.
+    this.fleet.load();
+    this.fleet.startAutoRefresh();
   }
 
-  /** Navega entre las dos vistas de la plataforma. */
-  go(view: PlatformView): void {
-    this.nav.switchView(view);
+  ngOnDestroy(): void {
+    this.fleet.stopAutoRefresh();
   }
 
-  /** Fuerza un refresco de la telemetría. */
+  /** Alterna el menú de usuario. */
+  toggleMenu(): void {
+    this.menuOpen.update((open) => !open);
+  }
+
+  /** Cierra el menú de usuario. */
+  closeMenu(): void {
+    this.menuOpen.set(false);
+  }
+
+  /** Fuerza un refresco manual de la telemetría. */
   refresh(): void {
     this.fleet.refresh();
-    this.toast.info('Telemetría actualizada', 'Se consultaron las posiciones más recientes.');
+  }
+
+  /** Cierra la sesión y vuelve a la pantalla de acceso. */
+  logout(): void {
+    this.closeMenu();
+
+    const name = this.user()?.name ?? '';
+    this.auth.logout();
+    this.toast.info('Sesión finalizada', `${name} cerró la sesión correctamente.`);
+
+    void this.router.navigate(['/acceso']);
   }
 }

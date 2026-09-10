@@ -6,20 +6,23 @@
       <span class="vf-eyebrow">Administrador de Unidad · Vista individual</span>
       <h1 class="vf-page-head__title">{{ u.unitCode }} · {{ u.make }} {{ u.model }} {{ u.year }}</h1>
       <p class="vf-page-head__sub">
-        Acceso restringido a una sola unidad de la flota. Actualice el kilometraje semanal y el
-        teléfono de contacto del conductor; el resto de la ficha es de solo lectura.
+        Sesión de {{ user()?.name }}. La unidad mostrada es la que tiene asignada en la
+        plataforma; no es posible consultar ni modificar ninguna otra. Actualice el kilometraje
+        semanal y el teléfono de contacto del conductor: el resto de la ficha es de solo lectura.
       </p>
     </div>
 
     <div class="vf-page-head__actions">
       <span class="vf-badge vf-badge--neutral">
         <i class="bi bi-lock" aria-hidden="true"></i>
-        Permisos: 1 unidad
+        Acceso limitado a 1 unidad
       </span>
-      <span class="vf-badge vf-badge--neutral">
-        <i class="bi bi-hdd-network" aria-hidden="true"></i>
-        {{ dataSource() === 'api' ? 'API Laravel · :8001' : 'Dataset demo' }}
-      </span>
+      @if (user()?.jobTitle; as puesto) {
+        <span class="vf-badge vf-badge--neutral">
+          <i class="bi bi-person-badge" aria-hidden="true"></i>
+          {{ puesto }}
+        </span>
+      }
     </div>
   </header>
 
@@ -69,7 +72,6 @@
     <div class="col-sm-6 col-xl-3">
       <vf-stat-card
         [accent]="true"
-        icon="bi-speedometer2"
         label="Km de la semana"
         [value]="u.weeklyKm"
         unit="km"
@@ -78,8 +80,6 @@
     </div>
     <div class="col-sm-6 col-xl-3">
       <vf-stat-card
-        icon="bi-tools"
-        [tone]="kmToService() <= 1500 ? 'warn' : 'default'"
         label="Próximo servicio"
         [value]="formatKm(kmToService())"
         [hint]="'Programado a los ' + formatKm(u.nextServiceKm)"
@@ -87,8 +87,6 @@
     </div>
     <div class="col-sm-6 col-xl-3">
       <vf-stat-card
-        icon="bi-shield-check"
-        [tone]="u.policy.status === 'vigente' ? 'ok' : (u.policy.status === 'por_vencer' ? 'warn' : 'danger')"
         label="Días de póliza"
         [value]="u.policy.daysToExpire"
         unit="días"
@@ -97,12 +95,9 @@
     </div>
     <div class="col-sm-6 col-xl-3">
       <vf-stat-card
-        icon="bi-star"
-        tone="default"
-        label="Calificación del conductor"
-        [value]="u.driver.rating"
-        unit="/ 5"
-        [hint]="u.driver.fullName"
+        label="Odómetro acumulado"
+        [value]="formatKm(u.odometerKm)"
+        [hint]="'Último servicio a los ' + formatKm(u.lastServiceKm)"
       />
     </div>
   </section>

@@ -40,9 +40,6 @@ export class UnitDetailModalComponent {
   /** Se emite al cerrar la ventana. */
   readonly closed = output<void>();
 
-  /** Se emite cuando el usuario quiere abrir la vista de esa unidad. */
-  readonly openUnit = output<string>();
-
   /** Porcentaje de avance hacia el siguiente servicio preventivo. */
   readonly servicePct = computed(() => {
     const v = this.vehicle();
@@ -78,11 +75,6 @@ export class UnitDetailModalComponent {
   /** Cierra la ventana modal. */
   close(): void {
     this.closed.emit();
-  }
-
-  /** Abre la vista de Administrador de Unidad para esta unidad. */
-  openAsUnitAdmin(): void {
-    this.openUnit.emit(this.vehicle().id);
   }
 
   /** Cierra con la tecla Escape. */

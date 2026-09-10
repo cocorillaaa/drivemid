@@ -1,82 +1,122 @@
 # Vanguard Fleet · Plataforma ejecutiva de gestión de flota
 
-Demo/prototipo interactivo de una plataforma de **movilidad ejecutiva y transporte
-corporativo privado**: administración de unidades, conductores verificados, control de
-pólizas de seguro, kilometraje y telemetría GPS.
+Aplicación de **movilidad ejecutiva y transporte corporativo privado**: administración de
+unidades, conductores verificados, control de pólizas de seguro, kilometraje y telemetría GPS.
 
-El proyecto no simula una arrendadora de autos: se presenta como un **operador de flota
-corporativa**, con una estética sobria en negro, gris oscuro, blanco y acentos mínimos
-sobre gris claro (`#111`, `#1e1e1e`, `#f8f9fa`).
+No simula una arrendadora de autos: se presenta como un **operador de flota corporativa**, con
+una estética sobria en negro, gris oscuro, blanco y acentos mínimos sobre gris claro
+(`#111`, `#1e1e1e`, `#f8f9fa`).
 
 | | |
 |---|---|
 | **Frontend** | Angular 22 (standalone + zoneless + Signals) · Bootstrap 5 · Leaflet · SCSS · puerto **4201** |
-| **Backend** | Laravel 13 · API REST JSON · MySQL/MariaDB · puerto **8001** |
-| **Datos** | 4 unidades ejecutivas mexicanas con mock data y seeder equivalentes |
+| **Backend** | Laravel 13 · API REST JSON · Sanctum · MySQL/MariaDB · puerto **8001** |
+| **Datos** | Todo servido por el backend: 4 unidades ejecutivas y 5 cuentas de acceso creadas por seeders |
 
 ---
 
-## 1. Arquitectura
+## 1. Autenticación y control de acceso
+
+El acceso a la plataforma se realiza con **credenciales reales** validadas contra la base de
+datos. La API emite un token de Laravel Sanctum que el frontend adjunta como `Bearer` en cada
+petición; el rol y la unidad asignada **nunca** se deciden en el cliente.
+
+### Cuentas del seeder
+
+| Rol | Correo | Contraseña | Alcance |
+|---|---|---|---|
+| Superusuario | `superadmin@vanguardfleet.mx` | `admin1234` | Vista global de la flota (4 unidades) |
+| Administrador de Unidad 01 | `unidad01@vanguardfleet.mx` | `unidad123` | Sólo Unidad 01 · ABC-123 |
+| Administrador de Unidad 02 | `unidad02@vanguardfleet.mx` | `unidad123` | Sólo Unidad 02 · DFG-456 |
+| Administrador de Unidad 03 | `unidad03@vanguardfleet.mx` | `unidad123` | Sólo Unidad 03 · HIJ-789 |
+| Administrador de Unidad 04 | `unidad04@vanguardfleet.mx` | `unidad123` | Sólo Unidad 04 · KLM-012 |
+
+Las cuentas se declaran **una sola vez** en `backend/config/vanguard.php`; de ahí las toma el
+`UserSeeder` para crearlas y `LandingController` para mostrarlas como atajos en la pantalla de
+acceso. Ese endpoint sólo responde con `APP_DEBUG=true`, así que en un entorno real la lista
+llega vacía y la pantalla no muestra credenciales.
+
+### Matriz de autorización
+
+Aplicada en el backend con `VehiclePolicy` y *route model binding*:
+
+| Recurso | Superusuario | Administrador de Unidad |
+|---|---|---|
+| `GET /api/vehicles` | 4 unidades | **sólo la suya** |
+| `GET /api/vehicles/{id}` | cualquiera | la suya · **403** en las demás |
+| `PATCH /api/vehicles/{id}/telemetry` | cualquiera | la suya · **403** en las demás |
+| `GET /api/fleet/summary` | 200 | **403** |
+| `GET /api/leads` | 200 | **403** |
+
+En el frontend, `authGuard` exige sesión, `roleGuard` mantiene la URL alineada con el rol y el
+interceptor HTTP cierra la sesión y devuelve al acceso ante un `401`. No existe ningún selector
+de roles: el alcance se deriva del token.
+
+---
+
+## 2. Arquitectura
 
 ```
 DemoLogistics/
-├── frontend/                                Angular 22 · :4201
+├── frontend/                                       Angular 22 · :4201
 │   └── src/
-│       ├── environments/environment.ts      URL base de la API
-│       ├── styles.scss                      Sistema de diseño (paleta corporativa)
+│       ├── environments/environment.ts             URL de la API, intervalos de refresco
+│       ├── styles.scss                             Sistema de diseño (paleta corporativa)
 │       └── app/
-│           ├── app.ts | app.html            Raíz: router-outlet + contenedor de toasts
-│           ├── app.config.ts                provideRouter + provideHttpClient(withFetch)
-│           ├── app.routes.ts                Rutas y carga diferida por vista
+│           ├── app.config.ts                       Router + HttpClient + interceptor
+│           ├── app.routes.ts                       / · /acceso · /plataforma/{flota,unidad}
 │           ├── core/
-│           │   ├── models/fleet.models.ts   Modelo de dominio (Vehicle, Driver, Policy…)
-│           │   ├── data/fleet-mock.data.ts  Dataset mock + resumen agregado
+│           │   ├── models/fleet.models.ts          Modelo de dominio
+│           │   ├── interceptors/auth.interceptor.ts  Bearer token · Accept JSON · 401
+│           │   ├── guards/auth.guard.ts            authGuard · guestGuard
+│           │   ├── guards/role.guard.ts            Coherencia ruta ↔ rol
 │           │   ├── services/
-│           │   │   ├── fleet.service.ts         Store central con Signals
-│           │   │   ├── fleet-api.service.ts     Cliente HTTP de la API Laravel
-│           │   │   ├── session.service.ts       Rol simulado (Superusuario / Unidad)
-│           │   │   ├── platform-nav.service.ts  Regla "una vista = un rol"
-│           │   │   └── toast.service.ts         Notificaciones no bloqueantes
-│           │   ├── guards/role.guard.ts     Guard funcional por rol
-│           │   └── utils/                   Formateadores y fábrica de marcadores
-│           ├── shared/components/           toast-host · stat-card · fleet-map · unit-detail-modal
+│           │   │   ├── auth.service.ts             Sesión, rol y permisos (Signals)
+│           │   │   ├── auth-api.service.ts         /auth/login · me · logout
+│           │   │   ├── token-storage.service.ts    Persistencia del token
+│           │   │   ├── fleet.service.ts            Estado de flota + refresco automático
+│           │   │   ├── fleet-api.service.ts        /vehicles · /fleet/summary · /leads
+│           │   │   ├── landing.service.ts          Contenido público
+│           │   │   ├── landing-api.service.ts      /public/overview · demo-accounts
+│           │   │   ├── clock.service.ts            Reloj de 1 s para los "hace X"
+│           │   │   ├── api-mappers.ts              Traducción snake_case → camelCase
+│           │   │   └── toast.service.ts            Notificaciones
+│           │   └── utils/                          Formateadores · marcadores · rutas por rol
+│           ├── shared/components/                  toast-host · stat-card · fleet-map · ficha técnica
 │           └── features/
-│               ├── landing/                 Header · Hero · Solutions · FleetPreview · LeadForm · Footer
+│               ├── auth/login-page/                Pantalla de credenciales
+│               ├── landing/                        Header · Hero · Soluciones · Flota · Captación · Footer
 │               └── platform/
-│                   ├── platform-shell/      Barra superior + selector de roles
-│                   ├── components/role-switcher/
-│                   ├── superuser-dashboard/ Vista global de flota
-│                   └── unit-admin-dashboard/Vista de una sola unidad
-└── backend/                                 Laravel 13 · :8001
-    ├── routes/api.php                       Endpoints REST
-    ├── app/Models/                          Vehicle · CorporateLead · DriverApplication
-    ├── app/Http/Controllers/Api/            VehicleController · LeadController
-    ├── app/Http/Requests/                   Validación (Form Requests)
-    ├── app/Http/Resources/VehicleResource   Contrato JSON snake_case
-    ├── database/migrations/                 3 migraciones
-    ├── database/seeders/VehicleSeeder.php   Mismo dataset que el mock del frontend
-    └── database/factories/                  Factories para pruebas
+│                   ├── platform-shell/             Barra de sesión + sincronización en vivo
+│                   ├── superuser-dashboard/        Vista global de flota
+│                   └── unit-admin-dashboard/       Vista de la unidad asignada
+└── backend/                                        Laravel 13 · :8001
+    ├── routes/api.php                              Endpoints públicos y protegidos
+    ├── config/vanguard.php                         Contenido comercial + cuentas demo
+    ├── app/Models/                                 Vehicle · User · CorporateLead · DriverApplication
+    ├── app/Policies/VehiclePolicy.php              Reglas de acceso por rol
+    ├── app/Http/Controllers/Api/                   Auth · Vehicle · Landing · Lead
+    ├── app/Http/Requests/                          Validación de entrada
+    ├── app/Http/Resources/                         VehicleResource · PublicVehicleResource · UserResource
+    ├── database/migrations/                        6 migraciones
+    ├── database/seeders/                           VehicleSeeder · UserSeeder
+    └── database/factories/                         Factories para pruebas
 ```
 
-### Estado con Signals
+### Estado y sincronización
 
-`FleetService` es la única fuente de verdad del frontend. Expone Signals de solo lectura y
-métricas derivadas que se recalculan de forma reactiva:
+`FleetService` es la única fuente de verdad del panel. Expone Signals de sólo lectura y:
 
-```ts
-readonly vehicles   = this._vehicles.asReadonly();
-readonly summary    = computed(() => buildFleetSummary(this._vehicles(), this._lastSync()));
-readonly rows       = computed(() => this._vehicles().map(toFleetRow));
-readonly policyAlerts = computed(() => this.summary().policyAlerts);
-```
-
-**Degradación elegante:** si la API del puerto 8001 no responde (timeout de 4 s),
-`FleetService.load()` cae automáticamente al dataset mock local y avisa al usuario. La demo
-nunca se queda en blanco, y la barra superior indica el origen de datos activo.
+- Carga la flota y —sólo para el Superusuario— las métricas globales.
+- **Refresca la telemetría automáticamente** cada 30 s (`environment.telemetryRefreshMs`).
+- Deriva `syncAgo` de un reloj compartido de 1 s, por lo que el indicador
+  «Sincronizado hace *X*» avanza solo, sin recargar datos ni la página.
+- Aplica las actualizaciones de unidad de forma **optimista** y las revierte si la API las
+  rechaza, informando al usuario.
 
 ---
 
-## 2. Puesta en marcha
+## 3. Puesta en marcha
 
 ### Requisitos
 
@@ -91,10 +131,9 @@ cd backend
 composer install
 cp .env.example .env && php artisan key:generate
 
-# Crear la base de datos
 mysql -u root -p -e "CREATE DATABASE vanguard_fleet CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-
 # Ajustar credenciales en .env (DB_DATABASE=vanguard_fleet, DB_USERNAME, DB_PASSWORD)
+
 php artisan migrate:fresh --seed
 php artisan serve --host=127.0.0.1 --port=8001
 ```
@@ -110,178 +149,187 @@ npx ng serve --port 4201 --host 127.0.0.1
 | Servicio | URL |
 |---|---|
 | Landing pública | http://localhost:4201/ |
-| Plataforma (Superusuario) | http://localhost:4201/plataforma/flota |
-| Plataforma (Administrador de Unidad) | http://localhost:4201/plataforma/unidad |
+| Acceso a la plataforma | http://localhost:4201/acceso |
+| Panel de flota (Superusuario) | http://localhost:4201/plataforma/flota |
+| Mi unidad (Administrador de Unidad) | http://localhost:4201/plataforma/unidad |
 | API Laravel | http://127.0.0.1:8001/api/health |
 
 ---
 
-## 3. Vistas
+## 4. Vistas
 
-### 3.1 Landing pública (`/`)
+### 4.1 Landing pública (`/`)
 
-- **Header minimalista** con logotipo ficticio *Vanguard Fleet*, navegación por anclas y
-  botón **Acceso a Plataforma**.
-- **Hero** con la propuesta de valor de movilidad ejecutiva y un panel ilustrativo que
-  consume la flota real del servicio.
-- **Soluciones:** transporte corporativo, traslado ejecutivo, gestión integral de flota y
-  grupos/eventos.
-- **Flota en vivo:** mapa Leaflet con las 4 unidades, listado sincronizado y banda de
-  cobertura operativa.
-- **Formulario de captación** con dos pestañas:
-  - *Solicitar Servicio Corporativo* — razón social, contacto, correo, teléfono a 10
-    dígitos, línea de servicio, unidades y ciudad.
-  - *Postularse como Conductor* — datos personales, licencia federal, experiencia y
-    vehículo propio.
+- **Header minimalista** con logotipo, navegación por anclas y botón **Acceso a Plataforma**
+  que lleva a la pantalla de credenciales.
+- **Hero** con la propuesta de valor y un panel ilustrativo alimentado por la flota real.
+- **Soluciones** y **canales de contacto**: contenido servido por el backend.
+- **Flota en vivo:** mapa Leaflet con las unidades, listado sincronizado y banda de cobertura.
+  La API sólo publica datos operativos y el nombre de pila del conductor: **nunca** teléfonos,
+  correos ni VIN, porque la landing no requiere autenticación.
+- **Formulario de captación** con dos pestañas —*Solicitar Servicio Corporativo* y *Postularse
+  como Conductor*— cuyas ciudades y líneas de servicio también llegan de la API. Al enviar
+  registran la solicitud en el backend y devuelven el folio (`VF-COR-…` / `VF-CON-…`).
 
-  Ambos validan en cliente, imprimen el payload en consola, registran la solicitud en la API
-  y muestran un **toast de éxito** junto con el folio de seguimiento (`VF-COR-XXXXX` /
-  `VF-CON-XXXXX`).
+### 4.2 Acceso (`/acceso`)
 
-### 3.2 Simulación de roles
+Pantalla de credenciales con validación contra la base de datos. Incluye atajos a las cuentas
+del seeder (sólo con `APP_DEBUG`), mensaje de error legible para credenciales inválidas y aviso
+cuando la sesión expira.
 
-Una barra superior permite alternar la sesión sin login:
-
-| Rol | Alcance |
-|---|---|
-| **Superusuario** | Vista global de la flota (4 unidades), pólizas, telemetría y métricas |
-| **Administrador de Unidad** | Vista restringida a **una** unidad asignada |
-
-El `roleGuard` mantiene la URL sincronizada con el rol activo y el selector permite
-reasignar la unidad del segundo rol. La preferencia se conserva en `localStorage`.
-
-### 3.3 Dashboard Superusuario (`/plataforma/flota`)
+### 4.3 Panel de flota · Superusuario (`/plataforma/flota`)
 
 - **Métricas clave** en tarjetas ejecutivas: vehículos activos (4), km totales semanales
   (1,941 km), alertas de pólizas (2) y cobertura de seguro (75 %).
-- **Tabla general de flota** responsiva con las columnas: Unidad (Modelo/Placas), Conductor
-  asignado, Teléfono, Póliza de seguro (estatus y vigencia), Km registrados esta semana,
-  Última ubicación y Acciones. Incluye filtros rápidos (*Todas · Con alerta · Servicio
-  próximo*), exportación a CSV y ficha técnica en modal.
-- **Mapa interactivo Leaflet** con los 4 marcadores de los vehículos activos sobre la Zona
-  Metropolitana del Valle de México, coloreados por estatus de póliza y con popups de
-  detalle.
+- **Tabla general de flota** con las columnas: Unidad (Modelo/Placas), Conductor asignado,
+  Teléfono, Póliza de seguro (estatus y vigencia), Km registrados esta semana, Última ubicación
+  y Acciones. Con filtros rápidos, exportación a CSV y ficha técnica en modal.
+- **Mapa interactivo** con las 4 unidades sobre el Valle de México, coloreadas por estatus de
+  póliza.
 - **Panel de alertas de pólizas** y distribución de kilometraje por unidad.
 
-### 3.4 Dashboard Administrador de Unidad (`/plataforma/unidad`)
+### 4.4 Mi unidad · Administrador de Unidad (`/plataforma/unidad`)
 
-Enfocado exclusivamente en una unidad (por defecto **Unidad 01 · Dodge Attitude /
-ABC-123**):
+Vista restringida a la unidad asignada en la base de datos (`users.vehicle_id`), sin selector
+de unidades ni acceso a ninguna otra:
 
-- **Formulario rápido** para ingresar los km recorridos en la semana y actualizar el
-  teléfono de contacto (validación en cliente y servidor, guardado optimista y toast).
-- **Ficha técnica** de solo lectura: VIN, color, capacidad, odómetro, mantenimiento
-  preventivo, conductor y licencia federal.
-- **Estatus de la póliza de seguro** con vigencia, días restantes y aviso de renovación.
-- **Mapa individual** con la última ubicación fija del vehículo y halo de geocerca.
+- **Formulario rápido** de kilometraje semanal y teléfono de contacto, con validación en cliente
+  y servidor.
+- **Ficha técnica** de sólo lectura: VIN, color, capacidad, odómetro, mantenimiento preventivo,
+  conductor y licencia federal.
+- **Estatus de la póliza** con vigencia, días restantes y aviso de renovación.
+- **Mapa individual** con la última ubicación y halo de geocerca.
 
 ---
 
-## 4. Datos mock de prueba
+## 5. Datos de prueba
 
-Cuatro unidades ejecutivas con conductores mexicanos, teléfonos ficticios a 10 dígitos,
-pólizas con vigencia real y coordenadas coherentes del Valle de México.
+Creados por `VehicleSeeder` y `UserSeeder`: conductores mexicanos, teléfonos ficticios a 10
+dígitos, pólizas con vigencia real y coordenadas coherentes del Valle de México.
 
 | Unidad | Modelo | Placas | Conductor | Teléfono | Póliza | Vigencia | Km/semana | Ubicación |
 |---|---|---|---|---|---|---|---|---|
-| Unidad 01 | Dodge Attitude 2023 | ABC-123 | Juan Carlos Ramírez Ortega | 55 4821 7390 | Quálitas `QLT-2026-884512` | 15/01/2026 – 15/01/2027 · **Vigente** | 412 km | Centro Histórico, CDMX · `19.4326, -99.1332` |
-| Unidad 02 | Nissan Versa Sense 2024 | DFG-456 | Miguel Ángel Hernández Cruz | 55 9137 2648 | GNP `GNP-2026-339021` | 01/03/2026 – 01/03/2027 · **Vigente** | 536 km | Polanco, CDMX · `19.4330, -99.1990` |
-| Unidad 03 | Volkswagen Virtus Highline 2024 | HIJ-789 | Luis Fernando Mendoza Ríos | 81 2045 8891 | AXA `AXA-2025-117854` | 25/10/2025 – 25/10/2026 · **Por vencer** | 389 km | Santa Fe, CDMX · `19.3667, -99.2667` |
+| Unidad 01 | Dodge Attitude 2023 | ABC-123 | Juan Carlos Ramírez Ortega | 55 4821 7390 | Quálitas `QLT-2026-884512` | 15/01/2026 – 15/01/2027 · **Vigente** | 412 km | Centro Histórico · `19.4326, -99.1332` |
+| Unidad 02 | Nissan Versa Sense 2024 | DFG-456 | Miguel Ángel Hernández Cruz | 55 9137 2648 | GNP `GNP-2026-339021` | 01/03/2026 – 01/03/2027 · **Vigente** | 536 km | Polanco · `19.4330, -99.1990` |
+| Unidad 03 | Volkswagen Virtus Highline 2024 | HIJ-789 | Luis Fernando Mendoza Ríos | 81 2045 8891 | AXA `AXA-2025-117854` | 25/10/2025 – 25/10/2026 · **Por vencer** | 389 km | Santa Fe · `19.3667, -99.2667` |
 | Unidad 04 | Toyota Avanza LE 2023 | KLM-012 | Ricardo Alejandro Domínguez Peña | 33 6712 4405 | HDI `HDI-2025-556210` | 16/08/2025 – 16/08/2026 · **Vencida** | 604 km | AICM Terminal 2 · `19.4200, -99.0800` |
 
-El estatus de cada póliza **se deriva de su vigencia** (umbral de aviso: 60 días), por lo que
-la demo permanece coherente sin importar cuándo se ejecute.
+El estatus de cada póliza **se deriva de su vigencia** (umbral de aviso: 60 días), por lo que la
+demo permanece coherente sin importar cuándo se ejecute.
 
 ---
 
-## 5. API REST (puerto 8001)
+## 6. API REST (puerto 8001)
+
+### Públicos
 
 | Método | Endpoint | Descripción |
 |---|---|---|
-| `GET` | `/api/health` | Estado del servicio, versión de Laravel y de PHP |
-| `GET` | `/api/vehicles` | Listado de las unidades de la flota |
-| `GET` | `/api/vehicles/{id}` | Detalle de una unidad (`unit-01` … `unit-04`) |
-| `PATCH` | `/api/vehicles/{id}/telemetry` | Actualiza `weekly_km` y/o `driver_phone` |
-| `GET` | `/api/fleet/summary` | Métricas agregadas calculadas en SQL |
+| `GET` | `/api/health` | Estado del servicio |
+| `GET` | `/api/public/overview` | Soluciones, catálogos, contacto, indicadores y flota publicada |
+| `GET` | `/api/public/demo-accounts` | Cuentas de prueba (vacío salvo con `APP_DEBUG`) |
 | `POST` | `/api/leads/corporate` | Alta de solicitud de servicio corporativo |
 | `POST` | `/api/leads/drivers` | Alta de postulación de conductor |
-| `GET` | `/api/leads` | Bandeja de solicitudes recibidas |
 
-Todas las respuestas usan el sobre `{ "data": …, "message"?: … }` y validación mediante
-Form Requests (HTTP 422 con `errors`). CORS habilitado para `http://localhost:4201`.
+### Autenticación
+
+| Método | Endpoint | Descripción |
+|---|---|---|
+| `POST` | `/api/auth/login` | Credenciales → token Bearer (limitado a 20 intentos/min) |
+| `GET` | `/api/auth/me` | Perfil, rol, unidad asignada y permisos |
+| `POST` | `/api/auth/logout` | Revoca el token |
+
+### Protegidos (requieren `Authorization: Bearer <token>`)
+
+| Método | Endpoint | Descripción |
+|---|---|---|
+| `GET` | `/api/vehicles` | Unidades visibles según el rol |
+| `GET` | `/api/vehicles/{id}` | Detalle (403 si no corresponde) |
+| `PATCH` | `/api/vehicles/{id}/telemetry` | `weekly_km` y/o `driver_phone` |
+| `GET` | `/api/fleet/summary` | Métricas globales (sólo Superusuario) |
+| `GET` | `/api/leads` | Bandeja de solicitudes (sólo Superusuario) |
+
+Todas las respuestas usan el sobre `{ "data": …, "message"?: … }`, con validación por Form
+Requests (422) y errores de autenticación en JSON (401). CORS habilitado para
+`http://localhost:4201`.
 
 ```bash
-curl http://127.0.0.1:8001/api/vehicles | jq '.data | length'         # 4
-curl -X PATCH http://127.0.0.1:8001/api/vehicles/unit-01/telemetry \
-  -H 'Content-Type: application/json' -H 'Accept: application/json' \
-  -d '{"weekly_km":455,"driver_phone":"5599887766"}' | jq '.data.weekly_km'   # 455
+TOKEN=$(curl -s -X POST http://127.0.0.1:8001/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"unidad01@vanguardfleet.mx","password":"unidad123"}' | jq -r .data.token)
+
+curl -s http://127.0.0.1:8001/api/vehicles -H "Authorization: Bearer $TOKEN" | jq '.data | length'   # 1
+curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8001/api/vehicles/unit-02 -H "Authorization: Bearer $TOKEN"  # 403
 ```
 
 ---
 
-## 6. Pruebas
+## 7. Pruebas
 
 ```bash
-cd backend  && php artisan test --compact      # 14 pruebas · 83 aserciones
-cd frontend && npx ng test --watch=false       # 3 pruebas del guard de rol
+cd backend  && php artisan test --compact      # 32 pruebas · 203 aserciones
+cd frontend && npx ng test --watch=false       # 4 pruebas del guard de rol
 cd frontend && npx ng build                    # compilación de producción
 ```
 
-`backend/tests/Feature/FleetApiTest.php` cubre el contrato completo que consume el frontend:
-listado y detalle de unidades, agregados de flota, actualización de telemetría (incluida la
-redistribución de la serie diaria), validaciones 422 y alta de prospectos.
+- `AuthApiTest` — emisión y revocación de tokens, credenciales inválidas, validación, `401` JSON.
+- `FleetApiTest` — alcance por rol: el Superusuario ve 4 unidades y el Administrador de Unidad
+  sólo la suya, con `403` al intentar consultar o modificar otra.
+- `LandingApiTest` — contenido público e indicadores derivados de la flota real, verificando que
+  **no** se expongan datos personales del conductor.
+- `role.guard.spec.ts` — regresión del ciclo infinito de redirección.
 
-`frontend/src/app/core/guards/role.guard.spec.ts` protege la regla "una vista = un rol":
-el guard debe redirigir siempre a la vista del rol **activo**, nunca a la ruta vigilada
-(redirigir a la misma ruta produciría un ciclo infinito de navegación al abrir un enlace
-directo a `/plataforma/unidad`).
-
-Además se realizó una **verificación visual automatizada** (navegador headless) recorriendo
-la landing, los dos dashboards, el cambio de rol, los formularios, los filtros, el modal de
-ficha técnica, los mapas y el enlace directo a cada ruta: **0 errores de consola y 0 errores
-de página**.
-
----
-
-## 7. Decisiones técnicas
-
-- **Angular zoneless con Signals:** todo el estado vive en Signals, así que la detección de
-  cambios se dispara solo cuando algo cambia realmente. Los formularios reactivos exponen su
-  valor como Signal (`toSignal`) para mantener la reactividad.
-- **Sin el JavaScript de Bootstrap:** los modales y desplegables se controlan con Signals y
-  CSS de Bootstrap, evitando conflictos con la detección de cambios zoneless.
-- **Mapa tolerante a fallos:** la capa base son teselas de OpenStreetMap (sin API key),
-  desaturadas por CSS para respetar la paleta corporativa. Si no pueden descargarse, el
-  componente degrada a una rejilla local y mantiene pines, popups y geocercas operativos.
-- **Guard de rol sin ciclos:** `roleGuard` redirige a la vista del rol *activo*, no a la ruta
-  solicitada; cubierto por una prueba de regresión.
-- **Paridad front/back:** el `VehicleSeeder` replica exactamente el dataset de
-  `fleet-mock.data.ts`, y `VehicleResource` expone el contrato snake_case que el cliente
-  normaliza a su modelo de dominio.
-- **Guardado optimista:** la actualización de una unidad se refleja de inmediato y se revierte
-  si la API falla, informando al usuario sin bloquear la interfaz.
+Además se ejecutó una **verificación visual automatizada** del flujo completo (navegador
+headless): landing pública, acceso con credenciales válidas e inválidas, sesión de Superusuario,
+sesión de dos Administradores de Unidad distintos, intento de escalada de privilegios por URL,
+actualización de telemetría, sincronización en vivo y vista móvil — **29 comprobaciones, 0
+errores de página**.
 
 ---
 
-## 8. Capturas
+## 8. Decisiones técnicas
 
-| Landing pública | Panel de flota (Superusuario) |
+- **Zoneless + Signals:** todo el estado vive en Signals, así que la detección de cambios se
+  dispara sólo cuando algo cambia realmente. El reloj de 1 s alimenta los textos relativos sin
+  provocar recargas de datos.
+- **El backend es la única autoridad:** el rol, la unidad asignada y los permisos llegan en
+  `/api/auth/me`; el cliente no puede elegirlos ni ampliarlos. `VehiclePolicy` corta cualquier
+  acceso indebido aunque se manipule la URL.
+- **Sin datos hardcodeados:** la flota, el contenido comercial, los catálogos del formulario y
+  las cuentas de prueba se sirven desde la API. Editar `config/vanguard.php` no requiere
+  recompilar Angular.
+- **Privacidad en la landing:** `PublicVehicleResource` publica sólo datos operativos y el
+  nombre de pila del conductor.
+- **Mapa tolerante a fallos:** teselas de OpenStreetMap (sin API key) desaturadas por CSS para
+  respetar la paleta corporativa; si no cargan, el componente degrada a una rejilla local
+  manteniendo pines, popups y geocercas.
+- **Guard de rol sin ciclos:** `roleGuard` redirige a la vista del rol *activo*, nunca a la ruta
+  solicitada, con prueba de regresión.
+- **Formularios que no se pisan:** el formulario del Administrador de Unidad sólo se sincroniza
+  con la telemetría cuando está intacto, para que el refresco automático no borre lo que el
+  usuario escribe.
+
+---
+
+## 9. Capturas
+
+| Acceso a la plataforma | Panel de flota (Superusuario) |
 |---|---|
-| ![Landing](docs/screenshots/01-landing.png) | ![Panel de flota](docs/screenshots/02-panel-flota.png) |
+| ![Acceso](docs/screenshots/07-acceso.png) | ![Panel de flota](docs/screenshots/02-panel-flota.png) |
 
-| Mapa de operación | Administrador de Unidad |
+| Mapa de operación | Mi unidad (Administrador de Unidad) |
 |---|---|
 | ![Mapa](docs/screenshots/03-mapa-flota.png) | ![Unidad](docs/screenshots/04-unidad-admin.png) |
 
-| Ficha técnica | Formulario de captación |
+| Ficha técnica | Captación de clientes |
 |---|---|
-| ![Ficha técnica](docs/screenshots/05-ficha-tecnica.png) | ![Formulario](docs/screenshots/06-captacion.png) |
+| ![Ficha técnica](docs/screenshots/05-ficha-tecnica.png) | ![Captación](docs/screenshots/06-captacion.png) |
 
 ---
 
-## 9. Notas
+## 10. Notas
 
-Proyecto de **demostración**. Los nombres, teléfonos, pólizas, VIN y matrículas son ficticios
-y las coordenadas corresponden a ubicaciones públicas de la Ciudad de México usadas como
-referencia geográfica. El acceso a la plataforma es un selector de rol, sin autenticación
-real.
+Proyecto de **demostración**. Los nombres, teléfonos, pólizas, VIN y matrículas son ficticios y
+las coordenadas corresponden a ubicaciones públicas de la Ciudad de México usadas como
+referencia geográfica. Las contraseñas del seeder son deliberadamente simples y la lista de
+cuentas sólo se publica con `APP_DEBUG` activo.

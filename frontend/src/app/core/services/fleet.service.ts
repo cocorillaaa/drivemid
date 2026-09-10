@@ -1,18 +1,13 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
-import { Observable, catchError, finalize, map, of, tap, throwError, timeout } from 'rxjs';
+import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
+import { Observable, catchError, finalize, forkJoin, map, of, tap, throwError, timeout } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { MOCK_VEHICLES, buildFleetSummary } from '../data/fleet-mock.data';
-import {
-  CorporateLeadPayload,
-  DataSource,
-  DriverApplicationPayload,
-  FleetSummary,
-  UnitUpdatePayload,
-  Vehicle,
-} from '../models/fleet.models';
+import { FleetSummary, UnitUpdatePayload, Vehicle } from '../models/fleet.models';
 import { FleetApiService } from './fleet-api.service';
+import { AuthService } from './auth.service';
+import { ClockService } from './clock.service';
 import { ToastService } from './toast.service';
+import { relativeTime } from '../utils/fleet-format';
 
 /** Fila enriquecida de la tabla general de flota. */
 export interface FleetRow {
@@ -29,152 +24,180 @@ export interface FleetRow {
   needsPolicyAction: boolean;
 }
 
+/** Opciones de carga. */
+interface LoadOptions {
+  /** Evita notificaciones cuando el refresco es automático. */
+  silent?: boolean;
+}
+
 /**
- * Servicio central de la flota.
+ * Estado de la flota en el frontend.
  *
- * Expone el estado como Signals de solo lectura y concentra la lógica de
- * negocio de la demo:
+ * Todos los datos provienen de la API; el backend decide qué unidades ve cada
+ * usuario según su rol. El servicio:
  *
- * - Carga la flota desde la API de Laravel (puerto 8001).
- * - Si la API no está disponible, degrada automáticamente al dataset mock
- *   local para que el prototipo siempre sea navegable.
- * - Mantiene métricas derivadas (`summary`) recalculadas de forma reactiva.
- * - Permite al Administrador de Unidad actualizar kilometraje y teléfono.
+ * - Carga la flota (y las métricas globales si el rol es Superusuario).
+ * - Refresca la telemetría automáticamente cada `telemetryRefreshMs`.
+ * - Expone `syncAgo`, que se recalcula cada segundo gracias a `ClockService`,
+ *   para que el indicador de sincronización avance solo.
  */
 @Injectable({ providedIn: 'root' })
 export class FleetService {
   private readonly api = inject(FleetApiService);
+  private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
+  private readonly clock = inject(ClockService);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly _vehicles = signal<Vehicle[]>([]);
+  private readonly _summary = signal<FleetSummary | null>(null);
   private readonly _loading = signal(false);
-  private readonly _source = signal<DataSource>('mock');
-  private readonly _lastSync = signal<string>(new Date().toISOString());
+  private readonly _refreshing = signal(false);
+  private readonly _error = signal<string | null>(null);
+  private readonly _lastSync = signal<string | null>(null);
   private readonly _savingUnitId = signal<string | null>(null);
-  private readonly _apiReachable = signal(false);
 
-  /** Unidades de la flota. */
+  private pollTimer: ReturnType<typeof setInterval> | null = null;
+
+  /** Unidades visibles para el usuario autenticado. */
   readonly vehicles = this._vehicles.asReadonly();
 
-  /** `true` mientras se consulta la API. */
+  /** Métricas agregadas (sólo disponible para el Superusuario). */
+  readonly summary = this._summary.asReadonly();
+
+  /** `true` durante la primera carga. */
   readonly loading = this._loading.asReadonly();
 
-  /** Origen de los datos actualmente en pantalla. */
-  readonly dataSource = this._source.asReadonly();
+  /** `true` durante un refresco automático o manual. */
+  readonly refreshing = this._refreshing.asReadonly();
 
-  /** Marca de tiempo del último refresco exitoso. */
+  /** Mensaje de error de la última carga, si la hubo. */
+  readonly error = this._error.asReadonly();
+
+  /** Marca del último refresco exitoso. */
   readonly lastSync = this._lastSync.asReadonly();
 
-  /** `true` cuando la API de Laravel respondió correctamente. */
-  readonly apiReachable = this._apiReachable.asReadonly();
-
-  /** Id de la unidad que se está guardando (para estados de carga por fila). */
+  /** Id de la unidad que se está guardando. */
   readonly savingUnitId = this._savingUnitId.asReadonly();
 
-  /** Métricas agregadas para las tarjetas ejecutivas del dashboard. */
-  readonly summary = computed<FleetSummary>(() =>
-    buildFleetSummary(this._vehicles(), this._lastSync()),
+  /** Fila de la unidad asignada al Administrador de Unidad. */
+  readonly assignedUnit = computed<Vehicle | null>(
+    () => this._vehicles().find((v) => v.id === this.auth.assignedVehicleId()) ?? this._vehicles()[0] ?? null,
   );
 
   /** Filas enriquecidas para la tabla general de flota. */
   readonly rows = computed<FleetRow[]>(() => this._vehicles().map((v) => toFleetRow(v)));
 
-  /** Total de vehículos activos (no en mantenimiento). */
-  readonly activeUnits = computed(() => this.summary().activeUnits);
+  /** Texto "hace X" del indicador de sincronización; se actualiza cada segundo. */
+  readonly syncAgo = computed<string>(() => {
+    const last = this._lastSync();
+    if (!last) return 'sin sincronizar';
 
-  /** Km totales recorridos por la flota en la semana. */
-  readonly totalWeeklyKm = computed(() => this.summary().totalWeeklyKm);
+    return relativeTime(last, new Date(this.clock.now()));
+  });
 
-  /** Alertas de pólizas (vencidas + por vencer). */
-  readonly policyAlerts = computed(() => this.summary().policyAlerts);
+  /** `true` cuando la telemetría está al día (menos de un minuto). */
+  readonly syncFresh = computed<boolean>(() => {
+    const last = this._lastSync();
+    if (!last) return false;
 
-  /** Unidades con póliza vencida. */
-  readonly expiredPolicyUnits = computed(() =>
-    this._vehicles().filter((v) => v.policy.status === 'vencida'),
-  );
+    return this.clock.now() - new Date(last).getTime() < 60_000;
+  });
 
-  /**
-   * Carga (o recarga) la flota.
-   *
-   * @param opts.silent evita mostrar toasts de error cuando se refresca en background.
-   */
-  load(opts: { silent?: boolean } = {}): void {
-    this._loading.set(true);
+  constructor() {
+    this.destroyRef.onDestroy(() => this.stopAutoRefresh());
+  }
 
-    this.api
-      .getVehicles()
+  /** Carga la flota y, si aplica, las métricas globales. */
+  load(options: LoadOptions = {}): void {
+    const firstLoad = this._lastSync() === null;
+
+    if (firstLoad) {
+      this._loading.set(true);
+    } else {
+      this._refreshing.set(true);
+    }
+
+    const wantsSummary = this.auth.isSuperuser();
+
+    const vehicles$ = this.api.getVehicles();
+    const summary$ = wantsSummary ? this.api.getSummary() : of(null);
+
+    forkJoin({ vehicles: vehicles$, summary: summary$ })
       .pipe(
         timeout(environment.apiTimeoutMs),
-        catchError(() => {
-          this._apiReachable.set(false);
-          this._source.set('mock');
-          if (!opts.silent) {
-            this.toast.warning(
-              'Modo demostración activo',
-              'No se pudo contactar la API en el puerto 8001. Se muestran los datos mock locales.',
-            );
-          }
-          return of(MOCK_VEHICLES);
+        tap(({ vehicles, summary }) => {
+          this._vehicles.set(vehicles);
+          if (summary) this._summary.set(summary);
+          this._error.set(null);
+          this._lastSync.set(new Date().toISOString());
         }),
-        tap((vehicles) => {
-          if (vehicles.length > 0) {
-            this._apiReachable.set(true);
-            this._source.set('api');
+        catchError((error: unknown) => {
+          const message = describeLoadError(error);
+          this._error.set(message);
+
+          if (!options.silent) {
+            this.toast.error('No se pudo cargar la flota', message);
           }
-          this._vehicles.set(vehicles.length > 0 ? vehicles : MOCK_VEHICLES);
+
+          return of(null);
         }),
         finalize(() => {
-          this._lastSync.set(new Date().toISOString());
           this._loading.set(false);
+          this._refreshing.set(false);
         }),
       )
       .subscribe();
   }
 
-  /** Refresco silencioso para el botón "Actualizar" del panel. */
+  /** Fuerza un refresco manual desde la interfaz. */
   refresh(): void {
     this.load({ silent: true });
   }
 
-  /**
-   * Carga la flota sólo si aún no hay datos en memoria.
-   * Evita peticiones duplicadas al alternar entre landing y plataforma.
-   */
-  ensureLoaded(opts: { silent?: boolean } = {}): void {
-    if (this._vehicles().length === 0 && !this._loading()) {
-      this.load(opts);
+  /** Arranca el refresco automático de telemetría. */
+  startAutoRefresh(): void {
+    this.stopAutoRefresh();
+
+    this.pollTimer = setInterval(
+      () => this.load({ silent: true }),
+      environment.telemetryRefreshMs,
+    );
+  }
+
+  /** Detiene el refresco automático. */
+  stopAutoRefresh(): void {
+    if (this.pollTimer !== null) {
+      clearInterval(this.pollTimer);
+      this.pollTimer = null;
     }
   }
 
-  /** Obtiene una unidad por id. */
+  /** Obtiene una unidad por id dentro del alcance visible. */
   getById(id: string): Vehicle | undefined {
     return this._vehicles().find((v) => v.id === id);
   }
 
-  /** Obtiene una unidad por id como señal derivada. */
-  unitById(id: () => string) {
-    return computed(() => this.getById(id()));
-  }
-
-  /** Indica si una unidad tiene póliza vencida o próxima a vencer. */
-  hasPolicyAlert(vehicle: Vehicle): boolean {
-    return vehicle.policy.status !== 'vigente';
-  }
-
   /**
-   * Actualiza el kilometraje semanal y/o el teléfono de contacto de una unidad.
-   * Aplica el cambio de forma optimista y revierte si la API falla.
+   * Actualiza kilometraje semanal y/o teléfono de contacto.
+   *
+   * Aplica el cambio de forma optimista y lo revierte si el backend rechaza
+   * la operación.
    */
   updateUnit(id: string, payload: UnitUpdatePayload): Observable<Vehicle> {
     const previous = this.getById(id);
-    if (!previous) return throwError(() => new Error(`Unidad ${id} no encontrada.`));
+
+    if (!previous) {
+      return throwError(() => new Error(`Unidad ${id} no disponible en la sesión actual.`));
+    }
 
     const optimistic: Vehicle = {
       ...previous,
       weeklyKm: payload.weeklyKm ?? previous.weeklyKm,
-      weeklyKmByDay: payload.weeklyKm != null
-        ? redistributeWeekly(previous.weeklyKmByDay, payload.weeklyKm)
-        : previous.weeklyKmByDay,
+      weeklyKmByDay:
+        payload.weeklyKm != null
+          ? redistributeWeekly(previous.weeklyKmByDay, payload.weeklyKm)
+          : previous.weeklyKmByDay,
       driver: {
         ...previous.driver,
         phone: payload.phone ?? previous.driver.phone,
@@ -187,47 +210,35 @@ export class FleetService {
     return this.api.updateUnit(id, payload).pipe(
       timeout(environment.apiTimeoutMs),
       tap((updated) => {
-        this.applyLocalUpdate({ ...updated, location: updated.location ?? previous.location });
+        this.applyLocalUpdate(updated);
         this._lastSync.set(new Date().toISOString());
         this.toast.success(
           `${updated.unitCode} actualizada`,
-          'Los datos de la unidad se sincronizaron con la plataforma.',
+          'La telemetría se sincronizó con la plataforma.',
         );
       }),
-      catchError(() => {
+      catchError((error: unknown) => {
         this.applyLocalUpdate(previous);
-        this.toast.info(
-          'Cambio guardado localmente',
-          'La API no respondió; el ajuste se conserva en la sesión de demostración.',
-        );
-        return of(optimistic);
+        this.toast.error('No se pudo guardar la actualización', describeUpdateError(error));
+
+        return throwError(() => error);
       }),
       finalize(() => this._savingUnitId.set(null)),
     );
   }
 
-  /** Registra una solicitud de servicio corporativo desde la landing. */
-  submitCorporateLead(payload: CorporateLeadPayload): Observable<{ reference: string }> {
-    return this.api.createCorporateLead(payload).pipe(
-      timeout(environment.apiTimeoutMs),
-      map((res) => ({ reference: res.reference })),
-      catchError(() => of({ reference: buildLocalReference('COR') })),
-    );
+  /** Registra una solicitud de servicio corporativo en el backend. */
+  submitCorporateLead(payload: Parameters<FleetApiService['createCorporateLead']>[0]) {
+    return this.api.createCorporateLead(payload);
   }
 
-  /** Registra una postulación de conductor desde la landing. */
-  submitDriverApplication(payload: DriverApplicationPayload): Observable<{ reference: string }> {
-    return this.api.createDriverApplication(payload).pipe(
-      timeout(environment.apiTimeoutMs),
-      map((res) => ({ reference: res.reference })),
-      catchError(() => of({ reference: buildLocalReference('CON') })),
-    );
+  /** Registra una postulación de conductor en el backend. */
+  submitDriverApplication(payload: Parameters<FleetApiService['createDriverApplication']>[0]) {
+    return this.api.createDriverApplication(payload);
   }
 
   private applyLocalUpdate(vehicle: Vehicle): void {
-    this._vehicles.update((list) =>
-      list.map((v) => (v.id === vehicle.id ? { ...vehicle } : v)),
-    );
+    this._vehicles.update((list) => list.map((v) => (v.id === vehicle.id ? { ...vehicle } : v)));
   }
 }
 
@@ -255,11 +266,41 @@ function redistributeWeekly(series: number[], total: number): number[] {
 
   const drift = total - scaled.reduce((acc, n) => acc + n, 0);
   scaled[scaled.length - 1] += drift;
+
   return scaled.map((n) => Math.max(0, n));
 }
 
-/** Folio local cuando la API no está disponible. */
-function buildLocalReference(prefix: string): string {
-  const stamp = Date.now().toString(36).toUpperCase().slice(-5);
-  return `VF-${prefix}-${stamp}`;
+/** Mensaje legible para un fallo de carga de flota. */
+function describeLoadError(error: unknown): string {
+  const status = (error as { status?: number })?.status;
+
+  if (status === 0 || status === undefined) {
+    return `No fue posible contactar el servicio en ${environment.apiBaseUrl}.`;
+  }
+
+  if (status === 403) {
+    return 'Su usuario no tiene permisos para consultar esta información.';
+  }
+
+  return 'Ocurrió un error al consultar la flota. Intente nuevamente.';
+}
+
+/** Mensaje legible para un fallo de actualización de unidad. */
+function describeUpdateError(error: unknown): string {
+  const httpError = error as { status?: number; error?: { message?: string; errors?: Record<string, string[]> } };
+
+  if (httpError?.status === 403) {
+    return 'Su usuario sólo puede modificar la unidad que tiene asignada.';
+  }
+
+  if (httpError?.status === 422 && httpError.error?.errors) {
+    const first = Object.values(httpError.error.errors)[0];
+    if (first?.length) return first[0];
+  }
+
+  if (httpError?.status === 0) {
+    return `No fue posible contactar el servicio en ${environment.apiBaseUrl}.`;
+  }
+
+  return 'El servidor rechazó la actualización. Intente nuevamente.';
 }

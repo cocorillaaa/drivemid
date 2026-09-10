@@ -1,35 +1,27 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
-import { SessionService, UserRole } from '../services/session.service';
-
-/** Ruta canónica de cada rol. */
-const ROLE_ROUTE: Record<UserRole, string> = {
-  superuser: '/plataforma/flota',
-  unit_admin: '/plataforma/unidad',
-};
+import { UserRole } from '../models/fleet.models';
+import { AuthService } from '../services/auth.service';
+import { homeRouteFor } from '../utils/role-routes';
 
 /**
- * Guard funcional que mantiene la ruta sincronizada con el rol activo.
+ * Mantiene la ruta sincronizada con el rol del usuario autenticado.
  *
- * En lugar de bloquear la navegación, redirige a la vista que corresponde
- * al rol en sesión, de modo que el selector de roles y la URL nunca queden
- * en estados contradictorios.
+ * El rol lo determina el backend a partir del token; el cliente nunca lo
+ * elige. Si un Administrador de Unidad intenta abrir el panel global (o al
+ * contrario), se le redirige a su propia vista.
  *
- * Importante: el destino de la redirección se calcula a partir del rol
- * **activo**, nunca de la ruta solicitada. Redirigir a la misma ruta
- * vigilada provocaría un ciclo infinito de navegación (y dejaría la
- * aplicación sin renderizar al abrir un enlace directo).
+ * El destino se calcula con el rol **activo**, nunca con la ruta solicitada:
+ * redirigir a la misma ruta vigilada produciría un ciclo infinito.
  */
 export function roleGuard(expected: UserRole): CanActivateFn {
   return () => {
-    const session = inject(SessionService);
+    const auth = inject(AuthService);
     const router = inject(Router);
 
-    if (session.role() === expected) return true;
+    if (auth.role() === expected) return true;
 
-    // `session.role()` es distinto de `expected`, por lo que el destino
-    // siempre está protegido por el otro guard y la navegación termina.
-    return router.parseUrl(ROLE_ROUTE[session.role()]);
+    return router.parseUrl(homeRouteFor(auth.role()));
   };
 }

@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-export type StatTone = 'default' | 'ok' | 'warn' | 'danger';
-
 /**
  * Tarjeta ejecutiva de métrica (KPI).
  *
  * Presenta un indicador con etiqueta, valor, unidad y una pista contextual.
- * La variante `accent` se usa para el indicador principal del dashboard.
+ * No usa iconografía: la jerarquía se resuelve con tipografía y la variante
+ * `accent`, que invierte la tarjeta principal del panel.
  */
 @Component({
   selector: 'vf-stat-card',
@@ -27,12 +26,6 @@ export class StatCardComponent {
   /** Texto de apoyo bajo el valor. */
   readonly hint = input<string>('');
 
-  /** Icono Bootstrap Icons. */
-  readonly icon = input<string>('bi-graph-up-arrow');
-
   /** Estilo invertido (fondo negro) para el KPI principal. */
   readonly accent = input<boolean>(false);
-
-  /** Tono del icono cuando no es `accent`. */
-  readonly tone = input<StatTone>('default');
 }

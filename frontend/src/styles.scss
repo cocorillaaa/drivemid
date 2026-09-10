@@ -266,33 +266,13 @@ a {
   box-shadow: var(--vf-shadow-sm);
 }
 
-.vf-stat__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.9rem;
-}
-
 .vf-stat__label {
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--vf-slate);
-  margin: 0;
-}
-
-.vf-stat__icon {
-  display: grid;
-  place-items: center;
-  width: 2.125rem;
-  height: 2.125rem;
-  border-radius: var(--vf-radius-xs);
-  background: var(--vf-surface-2);
-  color: var(--vf-ink);
-  font-size: 1rem;
-  flex: 0 0 auto;
+  margin: 0 0 0.9rem;
 }
 
 .vf-stat__value {
@@ -330,11 +310,6 @@ a {
 }
 
 .vf-stat--accent .vf-stat__value {
-  color: var(--vf-white);
-}
-
-.vf-stat--accent .vf-stat__icon {
-  background: rgba(255, 255, 255, 0.1);
   color: var(--vf-white);
 }
 
@@ -1093,6 +1068,75 @@ a {
   color: var(--vf-ink);
   margin: 0;
   text-align: right;
+}
+
+/* -----------------------------------------------------------------------------
+   Indicador de sincronización en vivo
+   -------------------------------------------------------------------------- */
+
+.vf-sync {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--vf-surface-2);
+  border: 1px solid var(--vf-line-strong);
+  font-size: 0.75rem;
+  color: var(--vf-slate);
+  white-space: nowrap;
+}
+
+.vf-sync .vf-pulse {
+  color: var(--vf-slate-light);
+}
+
+.vf-sync.is-fresh {
+  background: var(--vf-ok-bg);
+  border-color: rgba(31, 122, 77, 0.22);
+  color: var(--vf-ok);
+}
+
+.vf-sync.is-fresh .vf-pulse {
+  color: var(--vf-ok);
+}
+
+.vf-sync strong {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Variante sobre fondo oscuro */
+.vf-sync--onDark {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.vf-sync--onDark.is-fresh {
+  background: rgba(74, 222, 128, 0.14);
+  border-color: rgba(74, 222, 128, 0.3);
+  color: #86efac;
+}
+
+.vf-sync--onDark.is-fresh .vf-pulse {
+  color: #4ade80;
+}
+
+/* Punto compacto para subtítulos de tarjeta */
+.vf-sync-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 0.4rem;
+  border-radius: 999px;
+  background: var(--vf-slate-light);
+  vertical-align: middle;
+}
+
+.vf-sync-dot.is-fresh {
+  background: var(--vf-ok);
+  box-shadow: 0 0 0 3px rgba(31, 122, 77, 0.14);
 }
 
 /* -----------------------------------------------------------------------------

@@ -3,8 +3,9 @@ import { TestBed } from '@angular/core/testing';
 import { UrlTree, provideRouter } from '@angular/router';
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { UserRole } from '../models/fleet.models';
+import { AuthService } from '../services/auth.service';
 import { roleGuard } from './role.guard';
-import { SessionService, UserRole } from '../services/session.service';
 
 /**
  * Regresión: el guard debe redirigir siempre a la vista del rol **activo**.
@@ -14,15 +15,15 @@ import { SessionService, UserRole } from '../services/session.service';
  * enlace directo a `/plataforma/unidad` con rol de Superusuario.
  */
 describe('roleGuard', () => {
-  let currentRole: ReturnType<typeof signal<UserRole>>;
+  let currentRole: ReturnType<typeof signal<UserRole | null>>;
 
   beforeEach(() => {
-    currentRole = signal<UserRole>('superuser');
+    currentRole = signal<UserRole | null>('superuser');
 
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        { provide: SessionService, useValue: { role: currentRole } },
+        { provide: AuthService, useValue: { role: currentRole } },
       ],
     });
   });
@@ -61,5 +62,14 @@ describe('roleGuard', () => {
 
     expect(result).toBeInstanceOf(UrlTree);
     expect(String(result)).toBe('/plataforma/unidad');
+  });
+
+  it('envía al acceso cuando no hay sesión activa', () => {
+    currentRole.set(null);
+
+    const result = runGuard('superuser');
+
+    expect(result).toBeInstanceOf(UrlTree);
+    expect(String(result)).toBe('/acceso');
   });
 });

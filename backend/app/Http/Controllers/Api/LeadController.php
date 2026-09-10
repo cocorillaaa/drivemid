@@ -9,6 +9,7 @@ use App\Models\CorporateLead;
 use App\Models\DriverApplication;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 /**
@@ -19,9 +20,18 @@ class LeadController extends Controller
 {
     /**
      * Bandeja consolidada de solicitudes recibidas.
+     *
+     * Reservada a la vista de Superusuario: los administradores de unidad
+     * sólo operan sobre su propia unidad.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        abort_unless(
+            $request->user()?->isSuperuser(),
+            403,
+            'Sólo la vista de Superusuario puede consultar la bandeja de solicitudes.',
+        );
+
         return response()->json([
             'data' => [
                 'corporate_leads' => CorporateLead::query()->latest()->limit(25)->get(),

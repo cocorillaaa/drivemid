@@ -4,7 +4,7 @@
     <span class="vf-eyebrow">Superusuario · Vista global de flota</span>
     <h1 class="vf-page-head__title">Panel de control de flota</h1>
     <p class="vf-page-head__sub">
-      Monitoreo de las {{ summary().totalUnits }} unidades ejecutivas en operación:
+      Monitoreo de las {{ summary()?.totalUnits ?? '—' }} unidades ejecutivas en operación:
       kilometraje semanal, vigencia de pólizas, conductor asignado y última ubicación reportada.
     </p>
   </div>
@@ -26,397 +26,394 @@
   </div>
 </header>
 
-<!-- ===================== Métricas clave ===================== -->
-<section class="row g-3 mb-4" aria-label="Métricas clave de la flota">
-  <div class="col-sm-6 col-xl-3">
-    <vf-stat-card
-      [accent]="true"
-      icon="bi-truck-front"
-      label="Vehículos activos"
-      [value]="summary().activeUnits"
-      [hint]="'de ' + summary().totalUnits + ' unidades registradas · ' + summary().onServiceUnits + ' en servicio'"
-    />
-  </div>
-
-  <div class="col-sm-6 col-xl-3">
-    <vf-stat-card
-      icon="bi-speedometer"
-      label="Km totales semanales"
-      [value]="formatNumber(summary().totalWeeklyKm)"
-      unit="km"
-      [hint]="'Promedio de ' + formatNumber(summary().averageWeeklyKm) + ' km por unidad'"
-    />
-  </div>
-
-  <div class="col-sm-6 col-xl-3">
-    <vf-stat-card
-      icon="bi-shield-exclamation"
-      [tone]="summary().policyAlerts > 0 ? 'danger' : 'ok'"
-      label="Alertas de pólizas"
-      [value]="summary().policyAlerts"
-      [hint]="summary().expiredPolicies + ' vencida(s) · ' + summary().expiringPolicies + ' por vencer'"
-    />
-  </div>
-
-  <div class="col-sm-6 col-xl-3">
-    <vf-stat-card
-      icon="bi-patch-check"
-      [tone]="summary().insuranceCoveragePct === 100 ? 'ok' : 'warn'"
-      label="Cobertura de seguro"
-      [value]="summary().insuranceCoveragePct"
-      unit="%"
-      [hint]="(summary().totalUnits - summary().expiredPolicies) + ' de ' + summary().totalUnits + ' unidades con póliza vigente'"
-    />
-  </div>
-</section>
-
-<!-- ===================== Tabla general de la flota ===================== -->
-<section class="vf-card mb-4">
-  <div class="vf-card__head flex-wrap">
-    <div>
-      <h2 class="vf-card__title">Flota ejecutiva · {{ visibleRows().length }} de {{ rows().length }} unidades</h2>
-      <p class="vf-card__subtitle">
-        Datos de telemetría sincronizados {{ relativeTime(lastSync()) }}
-      </p>
-    </div>
-
-    <div class="vf-tabs" role="group" aria-label="Filtro de la tabla">
-      <button
-        type="button"
-        [class]="'vf-tabs__item' + (filter() === 'all' ? ' is-active' : '')"
-        (click)="setFilter('all')"
-      >
-        <i class="bi bi-list-ul" aria-hidden="true"></i> Todas
-      </button>
-      <button
-        type="button"
-        [class]="'vf-tabs__item' + (filter() === 'alerts' ? ' is-active' : '')"
-        (click)="setFilter('alerts')"
-      >
-        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i> Con alerta
-      </button>
-      <button
-        type="button"
-        [class]="'vf-tabs__item' + (filter() === 'service' ? ' is-active' : '')"
-        (click)="setFilter('service')"
-      >
-        <i class="bi bi-tools" aria-hidden="true"></i> Servicio próximo
-      </button>
-    </div>
-  </div>
-
-  <div class="table-responsive">
-    <table class="table vf-table align-middle mb-0">
-      <caption class="visually-hidden">
-        Tabla general de la flota con conductor, póliza, kilometraje y ubicación por unidad
-      </caption>
-
-      <thead>
-        <tr>
-          <th scope="col">Unidad (Modelo / Placas)</th>
-          <th scope="col">Conductor asignado</th>
-          <th scope="col">Teléfono</th>
-          <th scope="col">Póliza de seguro</th>
-          <th scope="col">Km esta semana</th>
-          <th scope="col">Última ubicación</th>
-          <th scope="col" class="text-end">Acciones</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        @for (row of visibleRows(); track row.vehicle.id) {
-          <tr [class.vf-row--selected]="selectedMapId() === row.vehicle.id">
-            <!-- Unidad -->
-            <td>
-              <div class="vf-unit-cell">
-                <span class="vf-unit-thumb" aria-hidden="true">
-                  <i class="bi bi-car-front-fill"></i>
-                </span>
-                <span>
-                  <span class="d-block vf-unit-name">
-                    {{ row.vehicle.make }} {{ row.vehicle.model }} {{ row.vehicle.year }}
-                  </span>
-                  <span class="d-block vf-unit-meta">
-                    {{ row.vehicle.unitCode }} ·
-                    <span class="vf-plate">{{ row.vehicle.plates }}</span>
-                  </span>
-                </span>
-              </div>
-            </td>
-
-            <!-- Conductor -->
-            <td>
-              <div class="d-flex align-items-center gap-2">
-                <span class="vf-avatar" aria-hidden="true">
-                  {{ row.vehicle.driver.fullName.charAt(0) }}{{ row.vehicle.driver.fullName.split(' ')[1]?.charAt(0) }}
-                </span>
-                <span>
-                  <span class="d-block fw-medium">{{ row.vehicle.driver.fullName }}</span>
-                  <span class="d-block vf-unit-meta">
-                    <i class="bi bi-star-fill" style="color: #c9a227" aria-hidden="true"></i>
-                    {{ row.vehicle.driver.rating }} · {{ row.vehicle.serviceTier }}
-                  </span>
-                </span>
-              </div>
-            </td>
-
-            <!-- Teléfono -->
-            <td>
-              <a class="vf-phone" [href]="'tel:+52' + row.vehicle.driver.phone">
-                <i class="bi bi-telephone" aria-hidden="true"></i>
-                {{ formatPhone(row.vehicle.driver.phone) }}
-              </a>
-            </td>
-
-            <!-- Póliza -->
-            <td style="min-width: 13rem">
-              <span class="d-block mb-1">
-                <span [class]="policyBadge[row.vehicle.policy.status]">
-                  {{ policyLabel[row.vehicle.policy.status] }}
-                </span>
-              </span>
-              <span class="d-block vf-unit-meta">{{ row.vehicle.policy.provider }}</span>
-              <span class="d-block vf-unit-meta vf-mono">{{ row.vehicle.policy.policyNumber }}</span>
-              <span class="d-block vf-unit-meta">
-                {{ formatDateShort(row.vehicle.policy.validFrom) }} —
-                {{ formatDateShort(row.vehicle.policy.validTo) }}
-                · <strong [style.color]="row.needsPolicyAction ? 'var(--vf-danger)' : 'inherit'">
-                  {{ policyCountdownText(row.vehicle.policy.daysToExpire) }}
-                </strong>
-              </span>
-            </td>
-
-            <!-- Km de la semana -->
-            <td style="min-width: 10rem">
-              <span class="d-block fw-semibold mb-1">{{ formatKm(row.vehicle.weeklyKm) }}</span>
-              <span class="vf-bars" aria-hidden="true">
-                @for (km of row.vehicle.weeklyKmByDay; track $index) {
-                  <span
-                    class="vf-bars__bar"
-                    [class.vf-bars__bar--today]="$index === 4"
-                    [style.height.%]="(km / maxDailyKm()) * 100"
-                  ></span>
-                }
-              </span>
-              <span class="d-block vf-unit-meta mt-1">
-                {{ row.dailyAverageKm }} km/día · {{ row.vehicle.fuelLevel }}% combustible
-              </span>
-            </td>
-
-            <!-- Ubicación -->
-            <td style="min-width: 13rem">
-              <span class="d-block fw-medium">
-                <i class="bi bi-geo-alt" aria-hidden="true"></i>
-                {{ row.vehicle.location.label }}
-              </span>
-              <span class="d-block vf-unit-meta">{{ row.vehicle.location.zone }}</span>
-              <span class="d-block vf-unit-meta vf-mono">
-                {{ row.vehicle.location.lat.toFixed(4) }}, {{ row.vehicle.location.lng.toFixed(4) }}
-                · {{ row.vehicle.location.speedKmh }} km/h
-              </span>
-              <span class="d-block vf-unit-meta">
-                <i class="bi bi-clock-history" aria-hidden="true"></i>
-                {{ relativeTime(row.vehicle.location.lastUpdate) }}
-              </span>
-            </td>
-
-            <!-- Acciones -->
-            <td class="text-end">
-              <div class="vf-row-actions">
-                <button
-                  type="button"
-                  class="vf-btn vf-btn--outline vf-btn--icon"
-                  title="Ubicar en el mapa"
-                  [attr.aria-label]="'Ubicar ' + row.vehicle.unitCode + ' en el mapa'"
-                  (click)="locateOnMap(row.vehicle)"
-                >
-                  <i class="bi bi-geo" aria-hidden="true"></i>
-                </button>
-                <button
-                  type="button"
-                  class="vf-btn vf-btn--outline vf-btn--icon"
-                  title="Ver ficha técnica"
-                  [attr.aria-label]="'Ver ficha técnica de ' + row.vehicle.unitCode"
-                  (click)="openDetail(row.vehicle.id)"
-                >
-                  <i class="bi bi-eye" aria-hidden="true"></i>
-                </button>
-                <button
-                  type="button"
-                  class="vf-btn vf-btn--dark vf-btn--icon"
-                  title="Abrir como Administrador de Unidad"
-                  [attr.aria-label]="'Abrir ' + row.vehicle.unitCode + ' como Administrador de Unidad'"
-                  (click)="viewAsUnitAdmin(row.vehicle.id)"
-                >
-                  <i class="bi bi-person-vcard" aria-hidden="true"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="7" class="text-center py-5 vf-text-muted">
-              <i class="bi bi-inbox d-block mb-2" style="font-size: 1.5rem" aria-hidden="true"></i>
-              No hay unidades que cumplan el filtro seleccionado.
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- ===================== Mapa + panel de alertas ===================== -->
-<div class="row g-4" id="vf-fleet-map-section">
-  <!-- Mapa interactivo -->
-  <div class="col-xl-8">
-    <section class="vf-card h-100 overflow-hidden">
-      <div class="vf-card__head">
-        <div>
-          <h2 class="vf-card__title">Mapa de operación · Zona Metropolitana del Valle de México</h2>
-          <p class="vf-card__subtitle">
-            {{ markers().length }} marcadores activos · telemetría GPS
-          </p>
-        </div>
-        <span class="vf-badge vf-badge--ok">
-          <span class="vf-pulse" style="color: var(--vf-ok)"></span>
-          En línea
-        </span>
-      </div>
-
-      <vf-fleet-map
-        [markers]="markers()"
-        [selectedId]="selectedMapId()"
-        height="30rem"
-        [overlayLabel]="summary().activeUnits + ' unidades rastreadas'"
+@if (summary(); as resumen) {
+  <!-- ===================== Métricas clave ===================== -->
+  <section class="row g-3 mb-4" aria-label="Métricas clave de la flota">
+    <div class="col-sm-6 col-xl-3">
+      <vf-stat-card
+        [accent]="true"
+        label="Vehículos activos"
+        [value]="resumen.activeUnits"
+        [hint]="'de ' + resumen.totalUnits + ' unidades registradas · ' + resumen.onServiceUnits + ' en servicio'"
       />
+    </div>
 
-      <div class="vf-card__body py-3">
-        <div class="vf-legend">
-          <span class="vf-legend__item">
-            <span class="vf-legend__dot" style="background: var(--vf-ok)"></span> Póliza vigente
-          </span>
-          <span class="vf-legend__item">
-            <span class="vf-legend__dot" style="background: var(--vf-warn)"></span> Póliza por vencer
-          </span>
-          <span class="vf-legend__item">
-            <span class="vf-legend__dot" style="background: var(--vf-danger)"></span> Póliza vencida
-          </span>
-          @if (selectedMapId()) {
-            <button
-              type="button"
-              class="vf-btn vf-btn--outline vf-btn--sm ms-auto"
-              (click)="selectedMapId.set(null)"
-            >
-              <i class="bi bi-x-circle" aria-hidden="true"></i> Limpiar selección
-            </button>
-          }
-        </div>
+    <div class="col-sm-6 col-xl-3">
+      <vf-stat-card
+        label="Km totales semanales"
+        [value]="formatNumber(resumen.totalWeeklyKm)"
+        unit="km"
+        [hint]="'Promedio de ' + formatNumber(resumen.averageWeeklyKm) + ' km por unidad'"
+      />
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+      <vf-stat-card
+        label="Alertas de pólizas"
+        [value]="resumen.policyAlerts"
+        [hint]="resumen.expiredPolicies + ' vencida(s) · ' + resumen.expiringPolicies + ' por vencer'"
+      />
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+      <vf-stat-card
+        label="Cobertura de seguro"
+        [value]="resumen.insuranceCoveragePct"
+        unit="%"
+        [hint]="(resumen.totalUnits - resumen.expiredPolicies) + ' de ' + resumen.totalUnits + ' unidades con póliza vigente'"
+      />
+    </div>
+  </section>
+
+  <!-- ===================== Tabla general de la flota ===================== -->
+  <section class="vf-card mb-4">
+    <div class="vf-card__head flex-wrap">
+      <div>
+        <h2 class="vf-card__title">Flota ejecutiva · {{ visibleRows().length }} de {{ rows().length }} unidades</h2>
+        <p class="vf-card__subtitle">
+          <span [class]="'vf-sync-dot' + (syncFresh() ? ' is-fresh' : '')" aria-hidden="true"></span>
+          Telemetría sincronizada {{ syncAgo() }} · se actualiza automáticamente
+        </p>
       </div>
-    </section>
-  </div>
 
-  <!-- Panel lateral -->
-  <div class="col-xl-4">
-    <div class="d-flex flex-column gap-4 h-100">
-      <!-- Alertas de pólizas -->
-      <section class="vf-card">
+      <div class="vf-tabs" role="group" aria-label="Filtro de la tabla">
+        <button
+          type="button"
+          [class]="'vf-tabs__item' + (filter() === 'all' ? ' is-active' : '')"
+          (click)="setFilter('all')"
+        >
+          <i class="bi bi-list-ul" aria-hidden="true"></i> Todas
+        </button>
+        <button
+          type="button"
+          [class]="'vf-tabs__item' + (filter() === 'alerts' ? ' is-active' : '')"
+          (click)="setFilter('alerts')"
+        >
+          <i class="bi bi-exclamation-triangle" aria-hidden="true"></i> Con alerta
+        </button>
+        <button
+          type="button"
+          [class]="'vf-tabs__item' + (filter() === 'service' ? ' is-active' : '')"
+          (click)="setFilter('service')"
+        >
+          <i class="bi bi-tools" aria-hidden="true"></i> Servicio próximo
+        </button>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table vf-table align-middle mb-0">
+        <caption class="visually-hidden">
+          Tabla general de la flota con conductor, póliza, kilometraje y ubicación por unidad
+        </caption>
+
+        <thead>
+          <tr>
+            <th scope="col">Unidad (Modelo / Placas)</th>
+            <th scope="col">Conductor asignado</th>
+            <th scope="col">Teléfono</th>
+            <th scope="col">Póliza de seguro</th>
+            <th scope="col">Km esta semana</th>
+            <th scope="col">Última ubicación</th>
+            <th scope="col" class="text-end">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (row of visibleRows(); track row.vehicle.id) {
+            <tr [class.vf-row--selected]="selectedMapId() === row.vehicle.id">
+              <!-- Unidad -->
+              <td>
+                <div class="vf-unit-cell">
+                  <span class="vf-unit-thumb" aria-hidden="true">
+                    <i class="bi bi-car-front-fill"></i>
+                  </span>
+                  <span>
+                    <span class="d-block vf-unit-name">
+                      {{ row.vehicle.make }} {{ row.vehicle.model }} {{ row.vehicle.year }}
+                    </span>
+                    <span class="d-block vf-unit-meta">
+                      {{ row.vehicle.unitCode }} ·
+                      <span class="vf-plate">{{ row.vehicle.plates }}</span>
+                    </span>
+                  </span>
+                </div>
+              </td>
+
+              <!-- Conductor -->
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="vf-avatar" aria-hidden="true">
+                    {{ row.vehicle.driver.fullName.charAt(0) }}{{ row.vehicle.driver.fullName.split(' ')[1]?.charAt(0) }}
+                  </span>
+                  <span>
+                    <span class="d-block fw-medium">{{ row.vehicle.driver.fullName }}</span>
+                    <span class="d-block vf-unit-meta">
+                      <i class="bi bi-star-fill" style="color: #c9a227" aria-hidden="true"></i>
+                      {{ row.vehicle.driver.rating }} · {{ row.vehicle.serviceTier }}
+                    </span>
+                  </span>
+                </div>
+              </td>
+
+              <!-- Teléfono -->
+              <td>
+                <a class="vf-phone" [href]="'tel:+52' + row.vehicle.driver.phone">
+                  <i class="bi bi-telephone" aria-hidden="true"></i>
+                  {{ formatPhone(row.vehicle.driver.phone) }}
+                </a>
+              </td>
+
+              <!-- Póliza -->
+              <td style="min-width: 13rem">
+                <span class="d-block mb-1">
+                  <span [class]="policyBadge[row.vehicle.policy.status]">
+                    {{ policyLabel[row.vehicle.policy.status] }}
+                  </span>
+                </span>
+                <span class="d-block vf-unit-meta">{{ row.vehicle.policy.provider }}</span>
+                <span class="d-block vf-unit-meta vf-mono">{{ row.vehicle.policy.policyNumber }}</span>
+                <span class="d-block vf-unit-meta">
+                  {{ formatDateShort(row.vehicle.policy.validFrom) }} —
+                  {{ formatDateShort(row.vehicle.policy.validTo) }}
+                  · <strong [style.color]="row.needsPolicyAction ? 'var(--vf-danger)' : 'inherit'">
+                    {{ policyCountdownText(row.vehicle.policy.daysToExpire) }}
+                  </strong>
+                </span>
+              </td>
+
+              <!-- Km de la semana -->
+              <td style="min-width: 10rem">
+                <span class="d-block fw-semibold mb-1">{{ formatKm(row.vehicle.weeklyKm) }}</span>
+                <span class="vf-bars" aria-hidden="true">
+                  @for (km of row.vehicle.weeklyKmByDay; track $index) {
+                    <span
+                      class="vf-bars__bar"
+                      [class.vf-bars__bar--today]="$index === 4"
+                      [style.height.%]="(km / maxDailyKm()) * 100"
+                    ></span>
+                  }
+                </span>
+                <span class="d-block vf-unit-meta mt-1">
+                  {{ row.dailyAverageKm }} km/día · {{ row.vehicle.fuelLevel }}% combustible
+                </span>
+              </td>
+
+              <!-- Ubicación -->
+              <td style="min-width: 13rem">
+                <span class="d-block fw-medium">
+                  <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                  {{ row.vehicle.location.label }}
+                </span>
+                <span class="d-block vf-unit-meta">{{ row.vehicle.location.zone }}</span>
+                <span class="d-block vf-unit-meta vf-mono">
+                  {{ row.vehicle.location.lat.toFixed(4) }}, {{ row.vehicle.location.lng.toFixed(4) }}
+                  · {{ row.vehicle.location.speedKmh }} km/h
+                </span>
+                <span class="d-block vf-unit-meta">
+                  <i class="bi bi-clock-history" aria-hidden="true"></i>
+                  {{ relativeTime(row.vehicle.location.lastUpdate) }}
+                </span>
+              </td>
+
+              <!-- Acciones -->
+              <td class="text-end">
+                <div class="vf-row-actions">
+                  <button
+                    type="button"
+                    class="vf-btn vf-btn--outline vf-btn--icon"
+                    title="Ubicar en el mapa"
+                    [attr.aria-label]="'Ubicar ' + row.vehicle.unitCode + ' en el mapa'"
+                    (click)="locateOnMap(row.vehicle)"
+                  >
+                    <i class="bi bi-geo" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="vf-btn vf-btn--outline vf-btn--icon"
+                    title="Ver ficha técnica"
+                    [attr.aria-label]="'Ver ficha técnica de ' + row.vehicle.unitCode"
+                    (click)="openDetail(row.vehicle.id)"
+                  >
+                    <i class="bi bi-eye" aria-hidden="true"></i>
+                  </button>
+                  <a
+                    class="vf-btn vf-btn--dark vf-btn--icon"
+                    title="Llamar al conductor"
+                    [attr.aria-label]="'Llamar al conductor de ' + row.vehicle.unitCode"
+                    [href]="'tel:+52' + row.vehicle.driver.phone"
+                  >
+                    <i class="bi bi-telephone" aria-hidden="true"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="text-center py-5 vf-text-muted">
+                <i class="bi bi-inbox d-block mb-2" style="font-size: 1.5rem" aria-hidden="true"></i>
+                No hay unidades que cumplan el filtro seleccionado.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== Mapa + panel de alertas ===================== -->
+  <div class="row g-4" id="vf-fleet-map-section">
+    <!-- Mapa interactivo -->
+    <div class="col-xl-8">
+      <section class="vf-card h-100 overflow-hidden">
         <div class="vf-card__head">
           <div>
-            <h2 class="vf-card__title">Alertas de pólizas</h2>
-            <p class="vf-card__subtitle">Unidades que requieren gestión inmediata</p>
+            <h2 class="vf-card__title">Mapa de operación · Zona Metropolitana del Valle de México</h2>
+            <p class="vf-card__subtitle">
+              {{ markers().length }} marcadores activos · telemetría GPS
+            </p>
           </div>
-          <span [class]="summary().policyAlerts > 0 ? 'vf-badge vf-badge--danger' : 'vf-badge vf-badge--ok'">
-            {{ summary().policyAlerts }} pendientes
+          <span class="vf-badge vf-badge--ok">
+            <span class="vf-pulse" style="color: var(--vf-ok)"></span>
+            En línea
           </span>
         </div>
 
-        @if (policyAlertUnits().length > 0) {
-          <ul class="list-unstyled mb-0">
-            @for (unit of policyAlertUnits(); track unit.id) {
-              <li class="vf-alert">
-                <span [class]="'vf-alert__icon vf-alert__icon--' + unit.policy.status">
-                  <i [class]="unit.policy.status === 'vencida' ? 'bi bi-shield-x' : 'bi bi-shield-exclamation'"
-                     aria-hidden="true"></i>
-                </span>
-                <div class="flex-grow-1">
-                  <p class="vf-alert__title">
-                    {{ unit.unitCode }} · <span class="vf-plate">{{ unit.plates }}</span>
-                  </p>
-                  <p class="vf-alert__text">
-                    {{ unit.policy.provider }} · {{ unit.policy.policyNumber }}<br />
-                    {{ policyCountdownText(unit.policy.daysToExpire) }} —
-                    vence el {{ formatDateShort(unit.policy.validTo) }}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  class="vf-btn vf-btn--outline vf-btn--sm"
-                  (click)="openDetail(unit.id)"
-                >
-                  Gestionar
-                </button>
-              </li>
-            }
-          </ul>
-        } @else {
-          <div class="vf-card__body text-center">
-            <i class="bi bi-shield-check d-block mb-2" style="font-size: 1.5rem; color: var(--vf-ok)"
-               aria-hidden="true"></i>
-            <p class="mb-0 vf-text-muted" style="font-size: .875rem">
-              Todas las pólizas están vigentes.
-            </p>
-          </div>
-        }
-      </section>
+        <vf-fleet-map
+          [markers]="markers()"
+          [selectedId]="selectedMapId()"
+          height="30rem"
+          [overlayLabel]="resumen.activeUnits + ' unidades rastreadas'"
+        />
 
-      <!-- Distribución de kilometraje -->
-      <section class="vf-card flex-grow-1">
-        <div class="vf-card__head">
-          <div>
-            <h2 class="vf-card__title">Kilometraje por unidad</h2>
-            <p class="vf-card__subtitle">
-              Semana en curso · {{ formatNumber(summary().totalWeeklyKm) }} km acumulados
-            </p>
+        <div class="vf-card__body py-3">
+          <div class="vf-legend">
+            <span class="vf-legend__item">
+              <span class="vf-legend__dot" style="background: var(--vf-ok)"></span> Póliza vigente
+            </span>
+            <span class="vf-legend__item">
+              <span class="vf-legend__dot" style="background: var(--vf-warn)"></span> Póliza por vencer
+            </span>
+            <span class="vf-legend__item">
+              <span class="vf-legend__dot" style="background: var(--vf-danger)"></span> Póliza vencida
+            </span>
+            @if (selectedMapId()) {
+              <button
+                type="button"
+                class="vf-btn vf-btn--outline vf-btn--sm ms-auto"
+                (click)="selectedMapId.set(null)"
+              >
+                <i class="bi bi-x-circle" aria-hidden="true"></i> Limpiar selección
+              </button>
+            }
           </div>
         </div>
+      </section>
+    </div>
 
-        <div class="vf-card__body">
-          @for (unit of vehicles(); track unit.id) {
-            <div class="vf-km-row">
-              <div class="d-flex justify-content-between align-items-baseline mb-1">
-                <span class="vf-km-row__label">
-                  {{ unit.unitCode }} · {{ unit.plates }}
-                </span>
-                <span class="vf-km-row__value">{{ formatKm(unit.weeklyKm) }}</span>
-              </div>
-              <div class="vf-progress">
-                <div
-                  [class]="'vf-progress__bar' + (unit.policy.status === 'vencida' ? ' vf-progress__bar--danger' : '')"
-                  [style.width.%]="(unit.weeklyKm / maxWeeklyKm()) * 100"
-                ></div>
-              </div>
+    <!-- Panel lateral -->
+    <div class="col-xl-4">
+      <div class="d-flex flex-column gap-4 h-100">
+        <!-- Alertas de pólizas -->
+        <section class="vf-card">
+          <div class="vf-card__head">
+            <div>
+              <h2 class="vf-card__title">Alertas de pólizas</h2>
+              <p class="vf-card__subtitle">Unidades que requieren gestión inmediata</p>
+            </div>
+            <span [class]="resumen.policyAlerts > 0 ? 'vf-badge vf-badge--danger' : 'vf-badge vf-badge--ok'">
+              {{ resumen.policyAlerts }} pendientes
+            </span>
+          </div>
+
+          @if (policyAlertUnits().length > 0) {
+            <ul class="list-unstyled mb-0">
+              @for (unit of policyAlertUnits(); track unit.id) {
+                <li class="vf-alert">
+                  <span [class]="'vf-alert__icon vf-alert__icon--' + unit.policy.status">
+                    <i [class]="unit.policy.status === 'vencida' ? 'bi bi-shield-x' : 'bi bi-shield-exclamation'"
+                       aria-hidden="true"></i>
+                  </span>
+                  <div class="flex-grow-1">
+                    <p class="vf-alert__title">
+                      {{ unit.unitCode }} · <span class="vf-plate">{{ unit.plates }}</span>
+                    </p>
+                    <p class="vf-alert__text">
+                      {{ unit.policy.provider }} · {{ unit.policy.policyNumber }}<br />
+                      {{ policyCountdownText(unit.policy.daysToExpire) }} —
+                      vence el {{ formatDateShort(unit.policy.validTo) }}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    class="vf-btn vf-btn--outline vf-btn--sm"
+                    (click)="openDetail(unit.id)"
+                  >
+                    Gestionar
+                  </button>
+                </li>
+              }
+            </ul>
+          } @else {
+            <div class="vf-card__body text-center">
+              <i class="bi bi-shield-check d-block mb-2" style="font-size: 1.5rem; color: var(--vf-ok)"
+                 aria-hidden="true"></i>
+              <p class="mb-0 vf-text-muted" style="font-size: .875rem">
+                Todas las pólizas están vigentes.
+              </p>
             </div>
           }
+        </section>
 
-          @if (topUnit(); as top) {
-            <p class="vf-help mb-0 mt-2">
-              <i class="bi bi-trophy me-1" aria-hidden="true"></i>
-              Mayor recorrido: {{ top.unitCode }} ({{ top.make }} {{ top.model }}) con
-              {{ formatKm(top.weeklyKm) }}.
-            </p>
-          }
-        </div>
-      </section>
+        <!-- Distribución de kilometraje -->
+        <section class="vf-card flex-grow-1">
+          <div class="vf-card__head">
+            <div>
+              <h2 class="vf-card__title">Kilometraje por unidad</h2>
+              <p class="vf-card__subtitle">
+                Semana en curso · {{ formatNumber(resumen.totalWeeklyKm) }} km acumulados
+              </p>
+            </div>
+          </div>
+
+          <div class="vf-card__body">
+            @for (unit of vehicles(); track unit.id) {
+              <div class="vf-km-row">
+                <div class="d-flex justify-content-between align-items-baseline mb-1">
+                  <span class="vf-km-row__label">
+                    {{ unit.unitCode }} · {{ unit.plates }}
+                  </span>
+                  <span class="vf-km-row__value">{{ formatKm(unit.weeklyKm) }}</span>
+                </div>
+                <div class="vf-progress">
+                  <div
+                    [class]="'vf-progress__bar' + (unit.policy.status === 'vencida' ? ' vf-progress__bar--danger' : '')"
+                    [style.width.%]="(unit.weeklyKm / maxWeeklyKm()) * 100"
+                  ></div>
+                </div>
+              </div>
+            }
+
+            @if (topUnit(); as top) {
+              <p class="vf-help mb-0 mt-2">
+                <i class="bi bi-trophy me-1" aria-hidden="true"></i>
+                Mayor recorrido: {{ top.unitCode }} ({{ top.make }} {{ top.model }}) con
+                {{ formatKm(top.weeklyKm) }}.
+              </p>
+            }
+          </div>
+        </section>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- ===================== Ficha técnica (modal) ===================== -->
-@if (detailUnit(); as unit) {
-  <vf-unit-detail-modal
-    [vehicle]="unit"
-    (closed)="closeDetail()"
-    (openUnit)="viewAsUnitAdmin($event)"
-  />
+  <!-- ===================== Ficha técnica (modal) ===================== -->
+  @if (detailUnit(); as unit) {
+    <vf-unit-detail-modal [vehicle]="unit" (closed)="closeDetail()" />
+  }
+} @else {
+  <div class="vf-empty">
+    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+    <p class="mb-0">Consultando las métricas de la flota…</p>
+  </div>
 }

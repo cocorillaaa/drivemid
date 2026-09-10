@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { SERVICE_SOLUTIONS } from '../../../../core/data/fleet-mock.data';
+import { LandingService } from '../../../../core/services/landing.service';
 
 /**
- * Sección de soluciones: las cuatro líneas de servicio ejecutivo
- * que ofrece Vanguard Fleet a clientes corporativos.
+ * Sección de soluciones: las líneas de servicio ejecutivo que ofrece
+ * Vanguard Fleet. El catálogo proviene del backend.
  */
 @Component({
   selector: 'vf-solutions',
@@ -13,6 +13,11 @@ import { SERVICE_SOLUTIONS } from '../../../../core/data/fleet-mock.data';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SolutionsComponent {
-  /** Catálogo de soluciones mostradas. */
-  readonly solutions = SERVICE_SOLUTIONS;
+  private readonly landing = inject(LandingService);
+
+  /** Catálogo de soluciones publicado por la API. */
+  readonly solutions = this.landing.solutions;
+
+  /** `true` mientras el contenido se carga. */
+  readonly loading = this.landing.loading;
 }

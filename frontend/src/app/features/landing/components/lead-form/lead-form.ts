@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 
 import { FleetService } from '../../../../core/services/fleet.service';
+import { LandingService } from '../../../../core/services/landing.service';
 import { ToastService } from '../../../../core/services/toast.service';
 
 /** Pestañas disponibles en el formulario de captación. */
@@ -16,25 +17,6 @@ interface SubmissionResult {
   detail: string;
 }
 
-/** Ciudades con cobertura comercial. */
-const CITIES = [
-  'Ciudad de México',
-  'Estado de México',
-  'Guadalajara, Jalisco',
-  'Monterrey, Nuevo León',
-  'Puebla, Puebla',
-  'Querétaro, Querétaro',
-  'Tijuana, Baja California',
-] as const;
-
-/** Líneas de servicio ofertadas. */
-const SERVICE_TYPES = [
-  'Transporte corporativo',
-  'Traslado ejecutivo',
-  'Gestión integral de flota',
-  'Grupos y eventos',
-] as const;
-
 /**
  * Formulario de captación de la landing.
  *
@@ -42,8 +24,8 @@ const SERVICE_TYPES = [
  *  - "Solicitar Servicio Corporativo" (empresas).
  *  - "Postularse como Conductor" (operadores).
  *
- * El envío registra la solicitud en la API de Laravel; si el backend no
- * responde, se genera un folio local y el flujo continúa sin romperse.
+ * Los catálogos de ciudades y líneas de servicio llegan del backend, y el
+ * envío registra la solicitud en la API, que devuelve el folio de seguimiento.
  */
 @Component({
   selector: 'vf-lead-form',
@@ -55,11 +37,15 @@ const SERVICE_TYPES = [
 export class LeadFormComponent {
   private readonly fb = inject(FormBuilder);
   private readonly fleet = inject(FleetService);
+  private readonly landing = inject(LandingService);
   private readonly toast = inject(ToastService);
 
-  /** Catálogos para los selectores. */
-  readonly cities = CITIES;
-  readonly serviceTypes = SERVICE_TYPES;
+  /** Catálogos servidos por la API. */
+  readonly cities = this.landing.cities;
+  readonly serviceTypes = this.landing.serviceTypes;
+
+  /** Canales de contacto institucionales. */
+  readonly contact = this.landing.contact;
 
   /** Pestaña activa. */
   readonly activeTab = signal<LeadTab>('corporate');
@@ -69,6 +55,11 @@ export class LeadFormComponent {
 
   /** Resultado del último envío (null = formulario visible). */
   readonly result = signal<SubmissionResult | null>(null);
+
+  /** `true` mientras los catálogos se cargan. */
+  readonly catalogsPending = computed(
+    () => this.cities().length === 0 || this.serviceTypes().length === 0,
+  );
 
   /** Formulario de servicio corporativo. */
   readonly corporateForm: FormGroup = this.fb.nonNullable.group({
@@ -147,24 +138,26 @@ export class LeadFormComponent {
     const value = this.corporateForm.getRawValue();
     const payload = { ...value, phone: digitsOnly(value.phone), units: Number(value.units) };
 
-    // Traza de la demo: el objeto enviado queda disponible en consola.
-    console.log('[Vanguard Fleet] Solicitud de servicio corporativo', payload);
-
     this.submitting.set(true);
     this.fleet
       .submitCorporateLead(payload)
       .pipe(finalize(() => this.submitting.set(false)))
-      .subscribe(({ reference }) => {
-        this.result.set({
-          tab: 'corporate',
-          reference,
-          headline: 'Solicitud recibida',
-          detail: `Gracias, ${payload.contactName}. Un ejecutivo de cuenta contactará a ${payload.company} en menos de 24 horas hábiles.`,
-        });
-        this.toast.success(
-          'Solicitud corporativa registrada',
-          `Folio ${reference} · ${payload.units} unidad(es) en ${payload.city}.`,
-        );
+      .subscribe({
+        next: ({ reference }) => {
+          this.result.set({
+            tab: 'corporate',
+            reference,
+            headline: 'Solicitud recibida',
+            detail: `Gracias, ${payload.contactName}. Un ejecutivo de cuenta contactará a ${payload.company} en menos de 24 horas hábiles.`,
+          });
+          this.toast.success(
+            'Solicitud corporativa registrada',
+            `Folio ${reference} · ${payload.units} unidad(es) en ${payload.city}.`,
+          );
+        },
+        error: (error: unknown) => {
+          this.toast.error('No se pudo registrar la solicitud', describeLeadError(error));
+        },
       });
   }
 
@@ -183,23 +176,23 @@ export class LeadFormComponent {
       experienceYears: Number(value.experienceYears),
     };
 
-    console.log('[Vanguard Fleet] Postulación de conductor', payload);
-
     this.submitting.set(true);
     this.fleet
       .submitDriverApplication(payload)
       .pipe(finalize(() => this.submitting.set(false)))
-      .subscribe(({ reference }) => {
-        this.result.set({
-          tab: 'driver',
-          reference,
-          headline: 'Postulación recibida',
-          detail: `Gracias, ${payload.fullName}. Revisaremos su documentación y le contactaremos para agendar la entrevista técnica.`,
-        });
-        this.toast.success(
-          'Postulación registrada',
-          `Folio ${reference} · expediente en revisión.`,
-        );
+      .subscribe({
+        next: ({ reference }) => {
+          this.result.set({
+            tab: 'driver',
+            reference,
+            headline: 'Postulación recibida',
+            detail: `Gracias, ${payload.fullName}. Revisaremos su documentación y le contactaremos para agendar la entrevista técnica.`,
+          });
+          this.toast.success('Postulación registrada', `Folio ${reference} · expediente en revisión.`);
+        },
+        error: (error: unknown) => {
+          this.toast.error('No se pudo registrar la postulación', describeLeadError(error));
+        },
       });
   }
 }
@@ -207,4 +200,23 @@ export class LeadFormComponent {
 /** Deja únicamente los dígitos de una cadena. */
 function digitsOnly(value: string): string {
   return String(value ?? '').replace(/\D/g, '').slice(0, 10);
+}
+
+/** Mensaje legible para un fallo de captación. */
+function describeLeadError(error: unknown): string {
+  const httpError = error as {
+    status?: number;
+    error?: { message?: string; errors?: Record<string, string[]> };
+  };
+
+  if (httpError?.status === 422 && httpError.error?.errors) {
+    const first = Object.values(httpError.error.errors)[0];
+    if (first?.length) return first[0];
+  }
+
+  if (httpError?.status === 0 || httpError?.status === undefined) {
+    return 'No fue posible contactar el servicio. Verifique su conexión e intente de nuevo.';
+  }
+
+  return 'El servidor rechazó la solicitud. Intente nuevamente en unos momentos.';
 }

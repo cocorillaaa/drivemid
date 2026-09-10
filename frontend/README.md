@@ -15,11 +15,12 @@ npx ng test --watch=false                    # pruebas unitarias (vitest)
 
 ```
 src/app/
-├── core/                  Modelos, datos mock, servicios (Signals), guard de rol
+├── core/                  Modelos, servicios (Signals), guards, interceptor y mappers
 ├── shared/components/     toast-host · stat-card · fleet-map · unit-detail-modal
 └── features/
+    ├── auth/              Pantalla de acceso
     ├── landing/           Landing pública (header, hero, soluciones, flota, captación, footer)
-    └── platform/          Shell + selector de roles + dashboards
+    └── platform/          Shell con la sesión + dashboards por rol
 ```
 
 ## Rutas
@@ -27,11 +28,23 @@ src/app/
 | Ruta | Vista |
 |---|---|
 | `/` | Landing pública con formulario de captación |
-| `/plataforma/flota` | Dashboard de Superusuario (vista global) |
-| `/plataforma/unidad` | Dashboard de Administrador de Unidad (una unidad) |
+| `/acceso` | Pantalla de credenciales (Laravel Sanctum) |
+| `/plataforma/flota` | Panel de flota · Superusuario (vista global) |
+| `/plataforma/unidad` | Mi unidad · Administrador de Unidad (sólo la asignada) |
+
+## Sesión
+
+El rol y la unidad asignada provienen de `GET /api/auth/me`; el cliente nunca los decide.
+`authGuard` exige sesión, `roleGuard` mantiene la URL alineada con el rol y
+`authInterceptor` adjunta el token `Bearer`, fuerza `Accept: application/json` y cierra la
+sesión ante un `401`.
+
+Credenciales del seeder: `superadmin@vanguardfleet.mx` / `admin1234` y
+`unidad0N@vanguardfleet.mx` / `unidad123` (N = 1…4).
 
 ## Configuración
 
-La URL de la API se define en `src/environments/environment.ts`
-(por defecto `http://127.0.0.1:8001/api`). Si la API no responde, la aplicación usa el
-dataset mock local de `core/data/fleet-mock.data.ts` y lo indica en la barra superior.
+La URL de la API y los intervalos de refresco se definen en
+`src/environments/environment.ts` (`apiBaseUrl` → `http://127.0.0.1:8001/api`,
+`telemetryRefreshMs` → 30 s). Todos los datos provienen del backend: no hay datasets
+locales.
