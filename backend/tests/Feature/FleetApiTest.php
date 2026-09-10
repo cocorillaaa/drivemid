@@ -41,7 +41,7 @@ class FleetApiTest extends TestCase
         $this->getJson('/api/health')
             ->assertOk()
             ->assertJsonPath('data.status', 'ok')
-            ->assertJsonPath('data.service', 'vanguard-fleet-api');
+            ->assertJsonPath('data.service', 'demologistics-api');
     }
 
     public function test_the_superuser_lists_the_four_units_with_the_frontend_contract(): void
@@ -187,7 +187,7 @@ class FleetApiTest extends TestCase
         $reference = $response->json('data.reference');
 
         $this->assertIsString($reference);
-        $this->assertStringStartsWith('VF-COR-', $reference);
+        $this->assertStringStartsWith('DL-COR-', $reference);
         $this->assertDatabaseHas('corporate_leads', [
             'company' => 'Corporativo Delta S.A. de C.V.',
             'reference' => $reference,
@@ -216,7 +216,7 @@ class FleetApiTest extends TestCase
             'vehicle_owned' => true,
         ])->assertCreated();
 
-        $this->assertStringStartsWith('VF-CON-', $response->json('data.reference'));
+        $this->assertStringStartsWith('DL-CON-', $response->json('data.reference'));
         $this->assertDatabaseHas('driver_applications', [
             'full_name' => 'Jorge Alberto Núñez Vega',
             'vehicle_owned' => true,

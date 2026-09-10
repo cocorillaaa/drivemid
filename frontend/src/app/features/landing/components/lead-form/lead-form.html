@@ -1,10 +1,10 @@
 <!-- Captación: servicio corporativo / postulación de conductor -->
-<section class="vf-section vf-section--dark" id="contacto">
+<section class="dl-section dl-section--dark" id="contacto">
   <div class="container">
     <div class="row g-5">
       <!-- Columna informativa -->
       <div class="col-lg-5">
-        <span class="vf-eyebrow vf-eyebrow--onDark">Contacto</span>
+        <span class="dl-eyebrow dl-eyebrow--onDark">Contacto</span>
         <h2 class="mt-3 mb-3" style="font-size: clamp(1.7rem, 2.6vw, 2.25rem)">
           Hablemos de su operación de transporte
         </h2>
@@ -15,7 +15,7 @@
         </p>
 
         @if (contact(); as datos) {
-          <ul class="vf-contact-channels list-unstyled mb-4">
+          <ul class="dl-contact-channels list-unstyled mb-4">
             <li>
               <i class="bi bi-telephone" aria-hidden="true"></i>
               <span>
@@ -47,7 +47,7 @@
           </ul>
         }
 
-        <div class="vf-contact-note">
+        <div class="dl-contact-note">
           <i class="bi bi-shield-lock" aria-hidden="true"></i>
           <p class="mb-0">
             La información compartida se trata de forma confidencial y se utiliza
@@ -58,27 +58,27 @@
 
       <!-- Tarjeta de formulario -->
       <div class="col-lg-7">
-        <div class="vf-lead-card">
+        <div class="dl-lead-card">
           @if (result(); as res) {
             <!-- Confirmación -->
-            <div class="vf-lead-success">
-              <span class="vf-lead-success__icon">
+            <div class="dl-lead-success">
+              <span class="dl-lead-success__icon">
                 <i class="bi bi-check-lg" aria-hidden="true"></i>
               </span>
-              <h3 class="vf-lead-success__title">{{ res.headline }}</h3>
-              <p class="vf-lead-success__text">{{ res.detail }}</p>
+              <h3 class="dl-lead-success__title">{{ res.headline }}</h3>
+              <p class="dl-lead-success__text">{{ res.detail }}</p>
 
-              <div class="vf-lead-success__folio">
-                <span class="vf-eyebrow">Folio de seguimiento</span>
-                <strong class="vf-mono">{{ res.reference }}</strong>
+              <div class="dl-lead-success__folio">
+                <span class="dl-eyebrow">Folio de seguimiento</span>
+                <strong class="dl-mono">{{ res.reference }}</strong>
               </div>
 
               <div class="d-flex flex-wrap gap-2 justify-content-center">
-                <button type="button" class="vf-btn vf-btn--dark" (click)="resetForm()">
+                <button type="button" class="dl-btn dl-btn--dark" (click)="resetForm()">
                   <i class="bi bi-plus-lg" aria-hidden="true"></i>
                   Registrar otra solicitud
                 </button>
-                <a class="vf-btn vf-btn--outline" href="#flota">
+                <a class="dl-btn dl-btn--outline" href="#flota">
                   <i class="bi bi-map" aria-hidden="true"></i>
                   Ver flota en vivo
                 </a>
@@ -86,12 +86,12 @@
             </div>
           } @else {
             <!-- Selector de tipo de solicitud -->
-            <div class="vf-lead-card__head">
-              <div class="vf-tabs d-flex w-100" role="tablist" aria-label="Tipo de solicitud">
+            <div class="dl-lead-card__head">
+              <div class="dl-tabs d-flex w-100" role="tablist" aria-label="Tipo de solicitud">
                 <button
                   type="button"
                   role="tab"
-                  class="vf-tabs__item flex-fill justify-content-center"
+                  class="dl-tabs__item flex-fill justify-content-center"
                   [class.is-active]="activeTab() === 'corporate'"
                   [attr.aria-selected]="activeTab() === 'corporate'"
                   (click)="setTab('corporate')"
@@ -102,7 +102,7 @@
                 <button
                   type="button"
                   role="tab"
-                  class="vf-tabs__item flex-fill justify-content-center"
+                  class="dl-tabs__item flex-fill justify-content-center"
                   [class.is-active]="activeTab() === 'driver'"
                   [attr.aria-selected]="activeTab() === 'driver'"
                   (click)="setTab('driver')"
@@ -113,13 +113,13 @@
               </div>
             </div>
 
-            <div class="vf-lead-card__body">
+            <div class="dl-lead-card__body">
               <!-- ============ Formulario corporativo ============ -->
               @if (activeTab() === 'corporate') {
                 <form [formGroup]="corporateForm" (ngSubmit)="submitCorporate()" novalidate>
                   <div class="row g-3">
                     <div class="col-md-6">
-                      <label class="vf-label" for="co-company">Razón social *</label>
+                      <label class="dl-label" for="co-company">Razón social *</label>
                       <input
                         id="co-company"
                         type="text"
@@ -129,12 +129,12 @@
                         [class.is-invalid]="showError(corporateForm, 'company')"
                       />
                       @if (showError(corporateForm, 'company')) {
-                        <span class="vf-error">Indique la razón social de la empresa.</span>
+                        <span class="dl-error">Indique la razón social de la empresa.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="vf-label" for="co-name">Nombre del contacto *</label>
+                      <label class="dl-label" for="co-name">Nombre del contacto *</label>
                       <input
                         id="co-name"
                         type="text"
@@ -144,12 +144,12 @@
                         [class.is-invalid]="showError(corporateForm, 'contactName')"
                       />
                       @if (showError(corporateForm, 'contactName')) {
-                        <span class="vf-error">Indique el nombre completo del responsable.</span>
+                        <span class="dl-error">Indique el nombre completo del responsable.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="vf-label" for="co-email">Correo corporativo *</label>
+                      <label class="dl-label" for="co-email">Correo corporativo *</label>
                       <input
                         id="co-email"
                         type="email"
@@ -159,12 +159,12 @@
                         [class.is-invalid]="showError(corporateForm, 'email')"
                       />
                       @if (showError(corporateForm, 'email')) {
-                        <span class="vf-error">Ingrese un correo electrónico válido.</span>
+                        <span class="dl-error">Ingrese un correo electrónico válido.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="vf-label" for="co-phone">Teléfono a 10 dígitos *</label>
+                      <label class="dl-label" for="co-phone">Teléfono a 10 dígitos *</label>
                       <input
                         id="co-phone"
                         type="tel"
@@ -176,12 +176,12 @@
                         [class.is-invalid]="showError(corporateForm, 'phone')"
                       />
                       @if (showError(corporateForm, 'phone')) {
-                        <span class="vf-error">Capture 10 dígitos, sin espacios ni guiones.</span>
+                        <span class="dl-error">Capture 10 dígitos, sin espacios ni guiones.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="vf-label" for="co-service">Línea de servicio *</label>
+                      <label class="dl-label" for="co-service">Línea de servicio *</label>
                       <select
                         id="co-service"
                         class="form-select"
@@ -194,12 +194,12 @@
                         }
                       </select>
                       @if (showError(corporateForm, 'serviceType')) {
-                        <span class="vf-error">Seleccione la línea de servicio requerida.</span>
+                        <span class="dl-error">Seleccione la línea de servicio requerida.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="vf-label" for="co-units">Unidades requeridas *</label>
+                      <label class="dl-label" for="co-units">Unidades requeridas *</label>
                       <input
                         id="co-units"
                         type="number"
@@ -210,12 +210,12 @@
                         [class.is-invalid]="showError(corporateForm, 'units')"
                       />
                       @if (showError(corporateForm, 'units')) {
-                        <span class="vf-error">Indique entre 1 y 50 unidades.</span>
+                        <span class="dl-error">Indique entre 1 y 50 unidades.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="vf-label" for="co-city">Ciudad de operación *</label>
+                      <label class="dl-label" for="co-city">Ciudad de operación *</label>
                       <select
                         id="co-city"
                         class="form-select"
@@ -228,12 +228,12 @@
                         }
                       </select>
                       @if (showError(corporateForm, 'city')) {
-                        <span class="vf-error">Seleccione la ciudad donde operará la flota.</span>
+                        <span class="dl-error">Seleccione la ciudad donde operará la flota.</span>
                       }
                     </div>
 
                     <div class="col-12">
-                      <label class="vf-label" for="co-message">Requerimientos adicionales</label>
+                      <label class="dl-label" for="co-message">Requerimientos adicionales</label>
                       <textarea
                         id="co-message"
                         rows="3"
@@ -244,14 +244,14 @@
                     </div>
                   </div>
 
-                  <hr class="vf-hairline my-4" />
+                  <hr class="dl-hairline my-4" />
 
                   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                    <p class="mb-0 vf-help">
+                    <p class="mb-0 dl-help">
                       <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
                       Respuesta de un ejecutivo de cuenta en menos de 24 horas hábiles.
                     </p>
-                    <button type="submit" class="vf-btn vf-btn--dark" [disabled]="submitting()">
+                    <button type="submit" class="dl-btn dl-btn--dark" [disabled]="submitting()">
                       @if (submitting()) {
                         <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
                         Enviando…
@@ -269,7 +269,7 @@
                 <form [formGroup]="driverForm" (ngSubmit)="submitDriver()" novalidate>
                   <div class="row g-3">
                     <div class="col-md-6">
-                      <label class="vf-label" for="dr-name">Nombre completo *</label>
+                      <label class="dl-label" for="dr-name">Nombre completo *</label>
                       <input
                         id="dr-name"
                         type="text"
@@ -279,12 +279,12 @@
                         [class.is-invalid]="showError(driverForm, 'fullName')"
                       />
                       @if (showError(driverForm, 'fullName')) {
-                        <span class="vf-error">Indique su nombre completo.</span>
+                        <span class="dl-error">Indique su nombre completo.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="vf-label" for="dr-email">Correo electrónico *</label>
+                      <label class="dl-label" for="dr-email">Correo electrónico *</label>
                       <input
                         id="dr-email"
                         type="email"
@@ -294,12 +294,12 @@
                         [class.is-invalid]="showError(driverForm, 'email')"
                       />
                       @if (showError(driverForm, 'email')) {
-                        <span class="vf-error">Ingrese un correo electrónico válido.</span>
+                        <span class="dl-error">Ingrese un correo electrónico válido.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="vf-label" for="dr-phone">Teléfono celular a 10 dígitos *</label>
+                      <label class="dl-label" for="dr-phone">Teléfono celular a 10 dígitos *</label>
                       <input
                         id="dr-phone"
                         type="tel"
@@ -311,12 +311,12 @@
                         [class.is-invalid]="showError(driverForm, 'phone')"
                       />
                       @if (showError(driverForm, 'phone')) {
-                        <span class="vf-error">Capture 10 dígitos, sin espacios ni guiones.</span>
+                        <span class="dl-error">Capture 10 dígitos, sin espacios ni guiones.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="vf-label" for="dr-city">Ciudad de residencia *</label>
+                      <label class="dl-label" for="dr-city">Ciudad de residencia *</label>
                       <select
                         id="dr-city"
                         class="form-select"
@@ -329,12 +329,12 @@
                         }
                       </select>
                       @if (showError(driverForm, 'city')) {
-                        <span class="vf-error">Seleccione su ciudad de residencia.</span>
+                        <span class="dl-error">Seleccione su ciudad de residencia.</span>
                       }
                     </div>
 
                     <div class="col-md-8">
-                      <label class="vf-label" for="dr-license">Número de licencia federal *</label>
+                      <label class="dl-label" for="dr-license">Número de licencia federal *</label>
                       <input
                         id="dr-license"
                         type="text"
@@ -344,12 +344,12 @@
                         [class.is-invalid]="showError(driverForm, 'licenseNumber')"
                       />
                       @if (showError(driverForm, 'licenseNumber')) {
-                        <span class="vf-error">Capture el número completo de su licencia federal.</span>
+                        <span class="dl-error">Capture el número completo de su licencia federal.</span>
                       }
                     </div>
 
                     <div class="col-md-4">
-                      <label class="vf-label" for="dr-exp">Años de experiencia *</label>
+                      <label class="dl-label" for="dr-exp">Años de experiencia *</label>
                       <input
                         id="dr-exp"
                         type="number"
@@ -360,7 +360,7 @@
                         [class.is-invalid]="showError(driverForm, 'experienceYears')"
                       />
                       @if (showError(driverForm, 'experienceYears')) {
-                        <span class="vf-error">Indique entre 0 y 50 años.</span>
+                        <span class="dl-error">Indique entre 0 y 50 años.</span>
                       }
                     </div>
 
@@ -379,7 +379,7 @@
                     </div>
 
                     <div class="col-12">
-                      <label class="vf-label" for="dr-message">Comentarios</label>
+                      <label class="dl-label" for="dr-message">Comentarios</label>
                       <textarea
                         id="dr-message"
                         rows="3"
@@ -390,14 +390,14 @@
                     </div>
                   </div>
 
-                  <hr class="vf-hairline my-4" />
+                  <hr class="dl-hairline my-4" />
 
                   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                    <p class="mb-0 vf-help">
+                    <p class="mb-0 dl-help">
                       <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
                       Revisión de expediente en un máximo de 5 días hábiles.
                     </p>
-                    <button type="submit" class="vf-btn vf-btn--dark" [disabled]="submitting()">
+                    <button type="submit" class="dl-btn dl-btn--dark" [disabled]="submitting()">
                       @if (submitting()) {
                         <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
                         Enviando…

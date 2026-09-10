@@ -14,7 +14,7 @@ import { ToastService } from '../../../core/services/toast.service';
  * de unidad, degradación a modo mock, etc.).
  */
 @Component({
-  selector: 'vf-toast-host',
+  selector: 'dl-toast-host',
   templateUrl: './toast-host.html',
   styleUrl: './toast-host.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

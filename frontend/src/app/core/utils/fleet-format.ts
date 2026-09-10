@@ -9,9 +9,9 @@ export const UNIT_STATUS_LABEL: Record<UnitStatus, string> = {
 
 /** Clases asociadas al estatus operativo. */
 export const UNIT_STATUS_BADGE: Record<UnitStatus, string> = {
-  en_servicio: 'vf-badge vf-badge--ok',
-  disponible: 'vf-badge vf-badge--neutral',
-  mantenimiento: 'vf-badge vf-badge--warn',
+  en_servicio: 'dl-badge dl-badge--ok',
+  disponible: 'dl-badge dl-badge--neutral',
+  mantenimiento: 'dl-badge dl-badge--warn',
 };
 
 /** Etiquetas legibles para el estatus de la póliza. */
@@ -23,9 +23,9 @@ export const POLICY_STATUS_LABEL: Record<PolicyStatus, string> = {
 
 /** Clases asociadas al estatus de la póliza. */
 export const POLICY_STATUS_BADGE: Record<PolicyStatus, string> = {
-  vigente: 'vf-badge vf-badge--ok',
-  por_vencer: 'vf-badge vf-badge--warn',
-  vencida: 'vf-badge vf-badge--danger',
+  vigente: 'dl-badge dl-badge--ok',
+  por_vencer: 'dl-badge dl-badge--warn',
+  vencida: 'dl-badge dl-badge--danger',
 };
 
 /** Formatea kilómetros con separador de miles. */

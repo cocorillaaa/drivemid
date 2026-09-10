@@ -28,7 +28,7 @@ interface SubmissionResult {
  * envío registra la solicitud en la API, que devuelve el folio de seguimiento.
  */
 @Component({
-  selector: 'vf-lead-form',
+  selector: 'dl-lead-form',
   imports: [ReactiveFormsModule],
   templateUrl: './lead-form.html',
   styleUrl: './lead-form.scss',

@@ -2,19 +2,19 @@
   display: block;
 }
 
-.vf-map__overlay--tl {
+.dl-map__overlay--tl {
   top: 0.85rem;
   left: 0.85rem;
 }
 
-.vf-map__overlay--bl {
+.dl-map__overlay--bl {
   bottom: 0.85rem;
   left: 0.85rem;
   max-width: 16rem;
 }
 
 /* Rejilla de respaldo cuando la capa base no está disponible */
-.vf-map--offline {
+.dl-map--offline {
   background-color: #eef0f2;
   background-image:
     linear-gradient(rgba(17, 17, 17, 0.05) 1px, transparent 1px),

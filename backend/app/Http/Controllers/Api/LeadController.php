@@ -102,7 +102,7 @@ class LeadController extends Controller
     private function generateReference(string $prefix, string $model): string
     {
         do {
-            $reference = sprintf('VF-%s-%s', $prefix, Str::upper(Str::random(5)));
+            $reference = sprintf('DL-%s-%s', $prefix, Str::upper(Str::random(5)));
         } while ($model::query()->where('reference', $reference)->exists());
 
         return $reference;

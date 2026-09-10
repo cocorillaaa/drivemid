@@ -35,11 +35,11 @@ class LandingController extends Controller
 
         return response()->json([
             'data' => [
-                'brand' => config('vanguard.brand'),
-                'contact' => config('vanguard.contact'),
-                'solutions' => config('vanguard.solutions'),
-                'service_types' => config('vanguard.service_types'),
-                'cities' => config('vanguard.cities'),
+                'brand' => config('demologistics.brand'),
+                'contact' => config('demologistics.contact'),
+                'solutions' => config('demologistics.solutions'),
+                'service_types' => config('demologistics.service_types'),
+                'cities' => config('demologistics.cities'),
                 'metrics' => [
                     [
                         'key' => 'active_units',
@@ -58,8 +58,8 @@ class LandingController extends Controller
                     ],
                     ...array_map(
                         fn (array $metric, int $index): array => ['key' => 'static_'.$index, ...$metric],
-                        config('vanguard.static_metrics'),
-                        array_keys(config('vanguard.static_metrics')),
+                        config('demologistics.static_metrics'),
+                        array_keys(config('demologistics.static_metrics')),
                     ),
                 ],
                 'summary' => [
@@ -97,7 +97,7 @@ class LandingController extends Controller
                     'role' => $account['role'],
                     'scope' => $account['scope'],
                 ],
-                config('vanguard.demo_accounts'),
+                config('demologistics.demo_accounts'),
             )
             : [];
 

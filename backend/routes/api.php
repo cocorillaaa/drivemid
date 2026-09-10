@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API de Vanguard Fleet (puerto 8001)
+| API de DemoLogistics (puerto 8001)
 |--------------------------------------------------------------------------
 |
 | Endpoints públicos (landing):
@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/health', fn () => response()->json([
     'data' => [
         'status' => 'ok',
-        'service' => 'vanguard-fleet-api',
+        'service' => 'demologistics-api',
         'version' => app()->version(),
         'php' => PHP_VERSION,
         'timestamp' => now()->toIso8601String(),

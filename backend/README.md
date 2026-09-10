@@ -1,4 +1,4 @@
-# Vanguard Fleet · API (Laravel 13)
+# DemoLogistics · API (Laravel 13)
 
 API REST JSON que alimenta la plataforma ejecutiva de gestión de flota. La documentación
 completa del proyecto está en el [README raíz](../README.md).
@@ -6,7 +6,7 @@ completa del proyecto está en el [README raíz](../README.md).
 ```bash
 composer install
 cp .env.example .env && php artisan key:generate
-mysql -u root -p -e "CREATE DATABASE vanguard_fleet CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -u root -p -e "CREATE DATABASE demologistics CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 php artisan migrate:fresh --seed
 php artisan serve --host=127.0.0.1 --port=8001
 php artisan test --compact
@@ -51,10 +51,10 @@ la flota y un **Administrador de Unidad** sólo sobre la unidad de `users.vehicl
 
 | Rol | Correo | Contraseña |
 |---|---|---|
-| Superusuario | `superadmin@vanguardfleet.mx` | `admin1234` |
-| Administrador de Unidad 01…04 | `unidad0N@vanguardfleet.mx` | `unidad123` |
+| Superusuario | `superadmin@demologistics.mx` | `admin1234` |
+| Administrador de Unidad 01…04 | `unidad0N@demologistics.mx` | `unidad123` |
 
-Se declaran una sola vez en `config/vanguard.php`; el mismo origen alimenta
+Se declaran una sola vez en `config/demologistics.php`; el mismo origen alimenta
 `UserSeeder` y la pantalla de acceso del frontend.
 
 ## Estructura
@@ -66,7 +66,7 @@ app/
 ├── Http/Controllers/Api/      Auth · Vehicle · Landing · Lead
 ├── Http/Requests/             Validación de entrada (Form Requests)
 └── Http/Resources/            Vehicle · PublicVehicle · User (contrato snake_case)
-config/vanguard.php            Contenido comercial + cuentas de demostración
+config/demologistics.php            Contenido comercial + cuentas de demostración
 database/
 ├── migrations/                vehicles · users(+rol y unidad) · leads · tokens
 ├── seeders/                   VehicleSeeder · UserSeeder

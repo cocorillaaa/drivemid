@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 /**
  * Usuarios de la plataforma con credenciales sencillas para la demostración.
  *
- * Las cuentas se declaran una sola vez en `config/vanguard.php`; el mismo
+ * Las cuentas se declaran una sola vez en `config/demologistics.php`; el mismo
  * origen alimenta la pantalla de acceso, de modo que no hay credenciales
  * duplicadas ni hardcodeadas en el frontend.
  *
@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        foreach (config('vanguard.demo_accounts') as $account) {
+        foreach (config('demologistics.demo_accounts') as $account) {
             User::updateOrCreate(
                 ['email' => $account['email']],
                 [

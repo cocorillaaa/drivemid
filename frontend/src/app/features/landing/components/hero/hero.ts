@@ -13,7 +13,7 @@ import {
  * acción y panel ilustrativo con la flota real publicada por el backend.
  */
 @Component({
-  selector: 'vf-hero',
+  selector: 'dl-hero',
   imports: [RouterLink],
   templateUrl: './hero.html',
   styleUrl: './hero.scss',

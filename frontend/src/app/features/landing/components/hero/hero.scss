@@ -2,15 +2,15 @@
   display: block;
 }
 
-.vf-hero {
+.dl-hero {
   position: relative;
   padding: 8.5rem 0 5rem;
-  background: var(--vf-black);
+  background: var(--dl-black);
   overflow: hidden;
 }
 
 /* Halo corporativo sutil, sin estridencia */
-.vf-hero__glow {
+.dl-hero__glow {
   position: absolute;
   top: -18rem;
   right: -10rem;
@@ -21,7 +21,7 @@
   pointer-events: none;
 }
 
-.vf-hero__eyebrow {
+.dl-hero__eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
@@ -37,20 +37,20 @@
   background: rgba(255, 255, 255, 0.035);
 }
 
-.vf-hero__eyebrow .vf-dot {
+.dl-hero__eyebrow .dl-dot {
   color: #4ade80;
 }
 
-.vf-hero__title {
+.dl-hero__title {
   font-size: clamp(2rem, 4vw, 3.15rem);
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.035em;
-  color: var(--vf-white);
+  color: var(--dl-white);
   margin-bottom: 1.35rem;
 }
 
-.vf-hero__lead {
+.dl-hero__lead {
   max-width: 34rem;
   font-size: 1.0625rem;
   line-height: 1.72;
@@ -58,7 +58,7 @@
   margin-bottom: 1.85rem;
 }
 
-.vf-hero__assurances {
+.dl-hero__assurances {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem 1.5rem;
@@ -67,7 +67,7 @@
   border-top: 1px solid rgba(255, 255, 255, 0.09);
 }
 
-.vf-hero__assurances li {
+.dl-hero__assurances li {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
@@ -75,13 +75,13 @@
   color: rgba(255, 255, 255, 0.55);
 }
 
-.vf-hero__assurances i {
+.dl-hero__assurances i {
   color: rgba(255, 255, 255, 0.4);
   font-size: 0.9rem;
 }
 
 /* --- Panel ilustrativo (consola) --- */
-.vf-console {
+.dl-console {
   border-radius: 16px;
   background: linear-gradient(168deg, #1e1e1e 0%, #151515 100%);
   border: 1px solid rgba(255, 255, 255, 0.11);
@@ -89,7 +89,7 @@
   overflow: hidden;
 }
 
-.vf-console__bar {
+.dl-console__bar {
   display: flex;
   align-items: center;
   gap: 0.85rem;
@@ -98,44 +98,44 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.vf-console__dots {
+.dl-console__dots {
   display: inline-flex;
   gap: 0.35rem;
 }
 
-.vf-console__dots i {
+.dl-console__dots i {
   width: 8px;
   height: 8px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.18);
 }
 
-.vf-console__url {
-  font-family: var(--vf-font-mono);
+.dl-console__url {
+  font-family: var(--dl-font-mono);
   font-size: 0.6875rem;
   color: rgba(255, 255, 255, 0.42);
   letter-spacing: 0.01em;
 }
 
-.vf-console__body {
+.dl-console__body {
   padding: 1.35rem;
 }
 
-.vf-console__heading {
+.dl-console__heading {
   font-size: 1.0625rem;
   font-weight: 600;
-  color: var(--vf-white);
+  color: var(--dl-white);
   letter-spacing: -0.02em;
 }
 
-.vf-console__kpis {
+.dl-console__kpis {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.6rem;
   margin-bottom: 1.1rem;
 }
 
-.vf-console__kpi {
+.dl-console__kpi {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -145,22 +145,22 @@
   border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.vf-console__kpi-label {
+.dl-console__kpi-label {
   font-size: 0.625rem;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.45);
 }
 
-.vf-console__kpi-value {
+.dl-console__kpi-value {
   font-size: 1.375rem;
   font-weight: 600;
-  color: var(--vf-white);
+  color: var(--dl-white);
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
-.vf-console__row {
+.dl-console__row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -169,14 +169,14 @@
   border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.vf-console__row-unit {
+.dl-console__row-unit {
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
   min-width: 0;
 }
 
-.vf-console__row-unit > i {
+.dl-console__row-unit > i {
   display: grid;
   place-items: center;
   width: 2rem;
@@ -188,7 +188,7 @@
   font-size: 0.85rem;
 }
 
-.vf-console__row-unit strong {
+.dl-console__row-unit strong {
   display: block;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -196,7 +196,7 @@
   line-height: 1.25;
 }
 
-.vf-console__row-unit em {
+.dl-console__row-unit em {
   display: block;
   font-style: normal;
   font-size: 0.6875rem;
@@ -204,57 +204,57 @@
   line-height: 1.35;
 }
 
-.vf-console__row-right {
+.dl-console__row-right {
   flex: 0 0 auto;
 }
 
 /* --- Banda de indicadores --- */
-.vf-hero__metrics {
+.dl-hero__metrics {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1px;
   margin-top: 4.5rem;
   background: rgba(255, 255, 255, 0.09);
   border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: var(--vf-radius);
+  border-radius: var(--dl-radius);
   overflow: hidden;
 }
 
-.vf-hero__metric {
+.dl-hero__metric {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
   padding: 1.35rem 1.5rem;
-  background: var(--vf-black);
+  background: var(--dl-black);
 }
 
-.vf-hero__metric-value {
+.dl-hero__metric-value {
   font-size: 1.75rem;
   font-weight: 600;
   letter-spacing: -0.03em;
-  color: var(--vf-white);
+  color: var(--dl-white);
   line-height: 1;
 }
 
-.vf-hero__metric-label {
+.dl-hero__metric-label {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.45);
   line-height: 1.45;
 }
 
 @media (max-width: 991.98px) {
-  .vf-hero {
+  .dl-hero {
     padding: 7rem 0 3.5rem;
   }
 
-  .vf-hero__metrics {
+  .dl-hero__metrics {
     grid-template-columns: repeat(2, 1fr);
     margin-top: 3rem;
   }
 }
 
 @media (max-width: 575.98px) {
-  .vf-console__kpis {
+  .dl-console__kpis {
     grid-template-columns: 1fr;
   }
 }

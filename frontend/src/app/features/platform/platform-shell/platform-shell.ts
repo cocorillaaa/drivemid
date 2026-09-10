@@ -24,7 +24,7 @@ import { homeRouteFor } from '../../../core/utils/role-routes';
  * sesión lo determina el backend a partir del token.
  */
 @Component({
-  selector: 'vf-platform-shell',
+  selector: 'dl-platform-shell',
   imports: [RouterOutlet, RouterLink],
   templateUrl: './platform-shell.html',
   styleUrl: './platform-shell.scss',

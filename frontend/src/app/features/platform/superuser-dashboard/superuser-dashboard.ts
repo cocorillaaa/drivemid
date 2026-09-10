@@ -38,7 +38,7 @@ type FleetFilter = 'all' | 'alerts' | 'service';
  * de pólizas.
  */
 @Component({
-  selector: 'vf-superuser-dashboard',
+  selector: 'dl-superuser-dashboard',
   imports: [StatCardComponent, FleetMapComponent, UnitDetailModalComponent],
   templateUrl: './superuser-dashboard.html',
   styleUrl: './superuser-dashboard.scss',
@@ -149,7 +149,7 @@ export class SuperuserDashboard {
   locateOnMap(vehicle: Vehicle): void {
     this.selectedMapId.set(vehicle.id);
     globalThis.document
-      ?.getElementById('vf-fleet-map-section')
+      ?.getElementById('dl-fleet-map-section')
       ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
@@ -202,7 +202,7 @@ export class SuperuserDashboard {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `vanguard-fleet-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `demo-logistics-${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
 

@@ -4,7 +4,7 @@ import { authGuard, guestGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 
 /**
- * Mapa de rutas de Vanguard Fleet.
+ * Mapa de rutas de DemoLogistics.
  *
  * - `/`            landing pública.
  * - `/acceso`      pantalla de credenciales.
@@ -16,12 +16,12 @@ import { roleGuard } from './core/guards/role.guard';
 export const routes: Routes = [
   {
     path: '',
-    title: 'Vanguard Fleet · Movilidad ejecutiva y gestión de flotillas',
+    title: 'DemoLogistics · Prototipo de demostración',
     loadComponent: () => import('./features/landing/landing-page').then((m) => m.LandingPage),
   },
   {
     path: 'acceso',
-    title: 'Acceso a la plataforma · Vanguard Fleet',
+    title: 'Acceso · DemoLogistics (demo)',
     canActivate: [guestGuard],
     loadComponent: () => import('./features/auth/login-page/login-page').then((m) => m.LoginPage),
   },
@@ -34,7 +34,7 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'flota' },
       {
         path: 'flota',
-        title: 'Panel de flota · Vanguard Fleet',
+        title: 'Panel de flota · DemoLogistics (demo)',
         canActivate: [roleGuard('superuser')],
         loadComponent: () =>
           import('./features/platform/superuser-dashboard/superuser-dashboard').then(
@@ -43,7 +43,7 @@ export const routes: Routes = [
       },
       {
         path: 'unidad',
-        title: 'Mi unidad · Vanguard Fleet',
+        title: 'Mi unidad · DemoLogistics (demo)',
         canActivate: [roleGuard('unit_admin')],
         loadComponent: () =>
           import('./features/platform/unit-admin-dashboard/unit-admin-dashboard').then(

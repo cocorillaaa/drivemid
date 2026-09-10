@@ -32,7 +32,7 @@ const TILE_ATTRIBUTION =
  *   rejilla local manteniendo los pines y los popups operativos.
  */
 @Component({
-  selector: 'vf-fleet-map',
+  selector: 'dl-fleet-map',
   templateUrl: './fleet-map.html',
   styleUrl: './fleet-map.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -181,11 +181,11 @@ export class FleetMapComponent implements AfterViewInit, OnDestroy {
 
 /** Construye el `divIcon` corporativo del pin. */
 function buildIcon(item: FleetMapMarker, selected: boolean): L.DivIcon {
-  const classes = ['vf-marker', `vf-marker--${item.tone}`];
-  if (selected) classes.push('vf-marker--selected');
+  const classes = ['dl-marker', `dl-marker--${item.tone}`];
+  if (selected) classes.push('dl-marker--selected');
 
   return L.divIcon({
-    className: 'vf-marker-wrapper',
+    className: 'dl-marker-wrapper',
     html: `<div class="${classes.join(' ')}"><i class="bi ${item.icon}" aria-hidden="true"></i></div>`,
     iconSize: [34, 34],
     iconAnchor: [17, 32],
@@ -198,16 +198,16 @@ function buildPopup(item: FleetMapMarker): string {
   const rows = item.rows
     .map(
       (row) =>
-        `<div class="vf-popup__row"><span>${escapeHtml(row.label)}</span><span>${escapeHtml(
+        `<div class="dl-popup__row"><span>${escapeHtml(row.label)}</span><span>${escapeHtml(
           row.value,
         )}</span></div>`,
     )
     .join('');
 
   return `
-    <div class="vf-popup">
-      <p class="vf-popup__title">${escapeHtml(item.title)}</p>
-      <p class="vf-popup__sub">${escapeHtml(item.subtitle)}</p>
+    <div class="dl-popup">
+      <p class="dl-popup__title">${escapeHtml(item.title)}</p>
+      <p class="dl-popup__sub">${escapeHtml(item.subtitle)}</p>
       ${rows}
     </div>
   `;

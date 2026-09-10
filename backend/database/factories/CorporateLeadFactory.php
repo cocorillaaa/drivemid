@@ -18,7 +18,7 @@ class CorporateLeadFactory extends Factory
     public function definition(): array
     {
         return [
-            'reference' => 'VF-COR-'.fake()->unique()->bothify('#####'),
+            'reference' => 'DL-COR-'.fake()->unique()->bothify('#####'),
             'company' => fake()->company(),
             'contact_name' => fake()->name(),
             'email' => fake()->unique()->companyEmail(),

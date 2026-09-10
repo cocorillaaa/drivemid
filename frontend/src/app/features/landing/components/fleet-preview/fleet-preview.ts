@@ -46,7 +46,7 @@ const COVERAGE_ITEMS = [
  * contacto, porque la landing no requiere autenticación.
  */
 @Component({
-  selector: 'vf-fleet-preview',
+  selector: 'dl-fleet-preview',
   imports: [RouterLink, FleetMapComponent],
   templateUrl: './fleet-preview.html',
   styleUrl: './fleet-preview.scss',

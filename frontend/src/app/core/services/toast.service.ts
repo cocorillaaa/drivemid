@@ -21,7 +21,7 @@ const VARIANT_ICON: Record<ToastVariant, string> = {
  * Servicio de notificaciones no bloqueantes.
  *
  * Mantiene la colección de toasts en un Signal para que el componente
- * `vf-toast-host` reaccione sin necesidad de zone.js.
+ * `dl-toast-host` reaccione sin necesidad de zone.js.
  */
 @Injectable({ providedIn: 'root' })
 export class ToastService {

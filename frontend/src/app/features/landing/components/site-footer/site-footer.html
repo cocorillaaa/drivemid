@@ -1,33 +1,33 @@
 <!-- Pie de página institucional -->
-<footer class="vf-footer">
+<footer class="dl-footer">
   <div class="container">
     <div class="row g-4 g-lg-5 pb-5">
       <!-- Marca -->
       <div class="col-lg-4">
-        <a class="vf-footer__brand" routerLink="/" aria-label="Vanguard Fleet, inicio">
-          <span class="vf-footer__mark" aria-hidden="true">
+        <a class="dl-footer__brand" routerLink="/" aria-label="DemoLogistics, inicio">
+          <span class="dl-footer__mark" aria-hidden="true">
             <svg viewBox="0 0 32 32" width="22" height="22" focusable="false">
               <path d="M6 8 L16 25 L26 8" fill="none" stroke="currentColor" stroke-width="2.8"
                     stroke-linecap="square" />
             </svg>
           </span>
-          <span class="vf-footer__name">VANGUARD<span>FLEET</span></span>
+          <span class="dl-footer__name">DEMO<span>LOGISTICS</span></span>
         </a>
 
-        <p class="vf-footer__text">
+        <p class="dl-footer__text">
           Operador de movilidad ejecutiva y gestión integral de flotillas corporativas
           en el Valle de México. Unidades propias, conductores verificados y control
           operativo en una sola plataforma.
         </p>
 
         <div class="d-flex gap-2">
-          <a class="vf-footer__social" [href]="'tel:' + (contact()?.phoneLink ?? '')" aria-label="Teléfono">
+          <a class="dl-footer__social" [href]="'tel:' + (contact()?.phoneLink ?? '')" aria-label="Teléfono">
             <i class="bi bi-telephone" aria-hidden="true"></i>
           </a>
-          <a class="vf-footer__social" [href]="'mailto:' + (contact()?.email ?? '')" aria-label="Correo">
+          <a class="dl-footer__social" [href]="'mailto:' + (contact()?.email ?? '')" aria-label="Correo">
             <i class="bi bi-envelope" aria-hidden="true"></i>
           </a>
-          <a class="vf-footer__social" href="#contacto" aria-label="Contacto">
+          <a class="dl-footer__social" href="#contacto" aria-label="Contacto">
             <i class="bi bi-geo-alt" aria-hidden="true"></i>
           </a>
         </div>
@@ -35,8 +35,8 @@
 
       <!-- Soluciones -->
       <div class="col-6 col-lg-2">
-        <h4 class="vf-footer__heading">Soluciones</h4>
-        <ul class="vf-footer__list list-unstyled">
+        <h4 class="dl-footer__heading">Soluciones</h4>
+        <ul class="dl-footer__list list-unstyled">
           @for (item of solutions(); track item) {
             <li><a href="#soluciones">{{ item }}</a></li>
           }
@@ -45,8 +45,8 @@
 
       <!-- Plataforma -->
       <div class="col-6 col-lg-2">
-        <h4 class="vf-footer__heading">Plataforma</h4>
-        <ul class="vf-footer__list list-unstyled">
+        <h4 class="dl-footer__heading">Plataforma</h4>
+        <ul class="dl-footer__list list-unstyled">
           @for (item of platform; track item.label) {
             <li><a [routerLink]="item.href">{{ item.label }}</a></li>
           }
@@ -55,22 +55,22 @@
 
       <!-- Contacto -->
       <div class="col-lg-4">
-        <h4 class="vf-footer__heading">Contacto</h4>
+        <h4 class="dl-footer__heading">Contacto</h4>
         @if (contact(); as datos) {
-          <ul class="vf-footer__list list-unstyled">
-            <li class="vf-footer__contact">
+          <ul class="dl-footer__list list-unstyled">
+            <li class="dl-footer__contact">
               <i class="bi bi-building" aria-hidden="true"></i>
               {{ datos.address }}
             </li>
-            <li class="vf-footer__contact">
+            <li class="dl-footer__contact">
               <i class="bi bi-telephone" aria-hidden="true"></i>
               <a [href]="'tel:' + datos.phoneLink">{{ datos.phone }}</a>
             </li>
-            <li class="vf-footer__contact">
+            <li class="dl-footer__contact">
               <i class="bi bi-envelope" aria-hidden="true"></i>
               <a [href]="'mailto:' + datos.email">{{ datos.email }}</a>
             </li>
-            <li class="vf-footer__contact">
+            <li class="dl-footer__contact">
               <i class="bi bi-clock" aria-hidden="true"></i>
               {{ datos.hours }}
             </li>
@@ -79,12 +79,12 @@
       </div>
     </div>
 
-    <hr class="vf-footer__rule" />
+    <hr class="dl-footer__rule" />
 
-    <div class="vf-footer__bottom">
+    <div class="dl-footer__bottom">
       <p class="mb-0">
-        © {{ year }} Vanguard Fleet · Movilidad ejecutiva corporativa.
-        Prototipo de demostración; datos simulados.
+        © {{ year }} DemoLogistics · Prototipo de demostración con datos simulados.
+        No corresponde a una empresa real.
       </p>
       <p class="mb-0">
         <a href="#inicio">Aviso de privacidad</a>

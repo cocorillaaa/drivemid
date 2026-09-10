@@ -1,32 +1,32 @@
 <!-- Acceso a la plataforma -->
-<div class="vf-login">
-  <div class="vf-login__glow" aria-hidden="true"></div>
+<div class="dl-login">
+  <div class="dl-login__glow" aria-hidden="true"></div>
 
-  <div class="vf-login__inner">
+  <div class="dl-login__inner">
     <!-- Columna de marca -->
-    <aside class="vf-login__aside">
-      <a class="vf-login__brand" routerLink="/">
-        <span class="vf-login__mark" aria-hidden="true">
+    <aside class="dl-login__aside">
+      <a class="dl-login__brand" routerLink="/">
+        <span class="dl-login__mark" aria-hidden="true">
           <svg viewBox="0 0 32 32" width="22" height="22" focusable="false">
             <path d="M6 8 L16 25 L26 8" fill="none" stroke="currentColor" stroke-width="2.8"
                   stroke-linecap="square" />
           </svg>
         </span>
         <span>
-          <span class="vf-login__brand-name">VANGUARD<span>FLEET</span></span>
-          <span class="vf-login__brand-tag">Movilidad ejecutiva corporativa</span>
+          <span class="dl-login__brand-name">DEMO<span>LOGISTICS</span></span>
+          <span class="dl-login__brand-tag">Prototipo de demostración</span>
         </span>
       </a>
 
-      <h1 class="vf-login__title">Plataforma de gestión de flota</h1>
-      <p class="vf-login__text">
+      <h1 class="dl-login__title">Plataforma de gestión de flota</h1>
+      <p class="dl-login__text">
         Acceso restringido al personal autorizado. El alcance de la sesión lo
         determina el rol del usuario: el Superusuario administra la flota
         completa y cada Administrador de Unidad opera únicamente sobre la
         unidad que tiene asignada.
       </p>
 
-      <ul class="vf-login__points list-unstyled">
+      <ul class="dl-login__points list-unstyled">
         <li>
           <i class="bi bi-shield-lock" aria-hidden="true"></i>
           <span><strong>Superusuario</strong> · vista global de la flota, pólizas y telemetría.</span>
@@ -37,30 +37,30 @@
         </li>
       </ul>
 
-      <a class="vf-login__back" routerLink="/">
+      <a class="dl-login__back" routerLink="/">
         <i class="bi bi-arrow-left" aria-hidden="true"></i>
         Volver al sitio público
       </a>
     </aside>
 
     <!-- Formulario -->
-    <main class="vf-login__panel">
-      <div class="vf-login__card">
-        <span class="vf-eyebrow">Acceso a plataforma</span>
-        <h2 class="vf-login__card-title">Inicie sesión</h2>
-        <p class="vf-login__card-sub">
+    <main class="dl-login__panel">
+      <div class="dl-login__card">
+        <span class="dl-eyebrow">Acceso a plataforma</span>
+        <h2 class="dl-login__card-title">Inicie sesión</h2>
+        <p class="dl-login__card-sub">
           Ingrese su correo corporativo y contraseña para continuar.
         </p>
 
         @if (sessionExpired()) {
-          <div class="vf-login__notice" role="status">
+          <div class="dl-login__notice" role="status">
             <i class="bi bi-clock-history" aria-hidden="true"></i>
             <p class="mb-0">Su sesión expiró o fue cerrada. Vuelva a iniciar sesión.</p>
           </div>
         }
 
         @if (errorMessage(); as message) {
-          <div class="vf-login__error" role="alert">
+          <div class="dl-login__error" role="alert">
             <i class="bi bi-exclamation-octagon-fill" aria-hidden="true"></i>
             <p class="mb-0">{{ message }}</p>
           </div>
@@ -68,23 +68,23 @@
 
         <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
           <div class="mb-3">
-            <label class="vf-label" for="login-email">Correo corporativo</label>
+            <label class="dl-label" for="login-email">Correo corporativo</label>
             <input
               id="login-email"
               type="email"
               class="form-control"
               formControlName="email"
               autocomplete="username"
-              placeholder="usuario@vanguardfleet.mx"
+              placeholder="usuario@demologistics.mx"
               [class.is-invalid]="showError('email')"
             />
             @if (showError('email')) {
-              <span class="vf-error">Ingrese un correo electrónico válido.</span>
+              <span class="dl-error">Ingrese un correo electrónico válido.</span>
             }
           </div>
 
           <div class="mb-4">
-            <label class="vf-label" for="login-password">Contraseña</label>
+            <label class="dl-label" for="login-password">Contraseña</label>
             <input
               id="login-password"
               type="password"
@@ -95,11 +95,11 @@
               [class.is-invalid]="showError('password')"
             />
             @if (showError('password')) {
-              <span class="vf-error">La contraseña debe tener al menos 6 caracteres.</span>
+              <span class="dl-error">La contraseña debe tener al menos 6 caracteres.</span>
             }
           </div>
 
-          <button type="submit" class="vf-btn vf-btn--dark vf-btn--block" [disabled]="submitting()">
+          <button type="submit" class="dl-btn dl-btn--dark dl-btn--block" [disabled]="submitting()">
             @if (submitting()) {
               <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
               Verificando credenciales…
@@ -111,38 +111,38 @@
         </form>
 
         @if (demoAccounts().length > 0) {
-          <div class="vf-login__demo">
+          <div class="dl-login__demo">
             <div class="d-flex align-items-center gap-2 mb-2">
-              <span class="vf-eyebrow mb-0">Cuentas de prueba</span>
-              <span class="vf-login__demo-rule" aria-hidden="true"></span>
+              <span class="dl-eyebrow mb-0">Cuentas de prueba</span>
+              <span class="dl-login__demo-rule" aria-hidden="true"></span>
             </div>
-            <p class="vf-login__demo-note">
+            <p class="dl-login__demo-note">
               Cuentas creadas por el seeder de la API. Seleccione una para entrar
               directamente.
             </p>
 
-            <ul class="list-unstyled mb-0 vf-login__accounts">
+            <ul class="list-unstyled mb-0 dl-login__accounts">
               @for (account of demoAccounts(); track account.email) {
                 <li>
                   <button
                     type="button"
-                    class="vf-login__account"
+                    class="dl-login__account"
                     [disabled]="submitting()"
                     (click)="useAccount(account)"
                   >
-                    <span [class]="'vf-login__account-role vf-login__account-role--' + account.role">
+                    <span [class]="'dl-login__account-role dl-login__account-role--' + account.role">
                       {{ account.role === 'superuser' ? 'SU' : 'AU' }}
                     </span>
 
-                    <span class="vf-login__account-body">
-                      <span class="vf-login__account-name">{{ account.name }}</span>
-                      <span class="vf-login__account-scope">{{ account.scope }}</span>
-                      <span class="vf-login__account-credentials">
+                    <span class="dl-login__account-body">
+                      <span class="dl-login__account-name">{{ account.name }}</span>
+                      <span class="dl-login__account-scope">{{ account.scope }}</span>
+                      <span class="dl-login__account-credentials">
                         {{ account.email }} · {{ account.password }}
                       </span>
                     </span>
 
-                    <i class="bi bi-arrow-right-short vf-login__account-go" aria-hidden="true"></i>
+                    <i class="bi bi-arrow-right-short dl-login__account-go" aria-hidden="true"></i>
                   </button>
                 </li>
               }

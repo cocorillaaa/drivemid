@@ -1,24 +1,24 @@
 <!-- Mapa interactivo de la flota (Leaflet) -->
 <div
-  [class]="'vf-map' + (tilesUnavailable() ? ' vf-map--offline' : '')"
+  [class]="'dl-map' + (tilesUnavailable() ? ' dl-map--offline' : '')"
   [style.height]="height()"
 >
-  <div #canvas class="vf-map__canvas" role="img"
+  <div #canvas class="dl-map__canvas" role="img"
        [attr.aria-label]="'Mapa de ubicación de ' + markers().length + ' unidades de la flota'"></div>
 
   @if (overlayLabel()) {
-    <div class="vf-map__overlay vf-map__overlay--tl">
-      <span class="vf-eyebrow d-block mb-1">Monitoreo GPS</span>
+    <div class="dl-map__overlay dl-map__overlay--tl">
+      <span class="dl-eyebrow d-block mb-1">Monitoreo GPS</span>
       <span class="d-flex align-items-center gap-2 fw-semibold" style="font-size: 0.8125rem">
-        <span class="vf-pulse" style="color: var(--vf-ok)"></span>
+        <span class="dl-pulse" style="color: var(--dl-ok)"></span>
         {{ overlayLabel() }}
       </span>
     </div>
   }
 
   @if (tilesUnavailable()) {
-    <div class="vf-map__overlay vf-map__overlay--bl">
-      <span style="font-size: 0.6875rem; color: var(--vf-slate)">
+    <div class="dl-map__overlay dl-map__overlay--bl">
+      <span style="font-size: 0.6875rem; color: var(--dl-slate)">
         <i class="bi bi-wifi-off me-1"></i>Capa base no disponible · coordenadas activas
       </span>
     </div>

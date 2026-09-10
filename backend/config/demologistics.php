@@ -11,9 +11,9 @@ return [
     */
 
     'brand' => [
-        'name' => 'Vanguard Fleet',
-        'tagline' => 'Movilidad ejecutiva corporativa',
-        'legal_name' => 'Vanguard Fleet · Movilidad ejecutiva corporativa',
+        'name' => 'DemoLogistics',
+        'tagline' => 'Prototipo de demostración',
+        'legal_name' => 'DemoLogistics · Prototipo de demostración',
     ],
 
     /*
@@ -89,7 +89,7 @@ return [
     'contact' => [
         'phone' => '55 5580 1234',
         'phone_link' => '+525555801234',
-        'email' => 'contacto@vanguardfleet.mx',
+        'email' => 'contacto@demologistics.mx',
         'address' => 'Av. Paseo de la Reforma 505, piso 32 · Cuauhtémoc, 06500, Ciudad de México',
         'hours' => 'Lunes a viernes 08:00 – 19:00 · Operación 24/7',
     ],
@@ -122,7 +122,7 @@ return [
     'demo_accounts' => [
         [
             'name' => 'Alejandra Fuentes Ríos',
-            'email' => 'superadmin@vanguardfleet.mx',
+            'email' => 'superadmin@demologistics.mx',
             'password' => 'admin1234',
             'role' => 'superuser',
             'vehicle_id' => null,
@@ -132,7 +132,7 @@ return [
         ],
         [
             'name' => 'Juan Carlos Ramírez Ortega',
-            'email' => 'unidad01@vanguardfleet.mx',
+            'email' => 'unidad01@demologistics.mx',
             'password' => 'unidad123',
             'role' => 'unit_admin',
             'vehicle_id' => 'unit-01',
@@ -142,7 +142,7 @@ return [
         ],
         [
             'name' => 'Miguel Ángel Hernández Cruz',
-            'email' => 'unidad02@vanguardfleet.mx',
+            'email' => 'unidad02@demologistics.mx',
             'password' => 'unidad123',
             'role' => 'unit_admin',
             'vehicle_id' => 'unit-02',
@@ -152,7 +152,7 @@ return [
         ],
         [
             'name' => 'Luis Fernando Mendoza Ríos',
-            'email' => 'unidad03@vanguardfleet.mx',
+            'email' => 'unidad03@demologistics.mx',
             'password' => 'unidad123',
             'role' => 'unit_admin',
             'vehicle_id' => 'unit-03',
@@ -162,7 +162,7 @@ return [
         ],
         [
             'name' => 'Ricardo Alejandro Domínguez Peña',
-            'email' => 'unidad04@vanguardfleet.mx',
+            'email' => 'unidad04@demologistics.mx',
             'password' => 'unidad123',
             'role' => 'unit_admin',
             'vehicle_id' => 'unit-04',

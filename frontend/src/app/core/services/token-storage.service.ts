@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-const TOKEN_KEY = 'vf.auth.token';
-const DEVICE_KEY = 'vf.auth.device';
+const TOKEN_KEY = 'dl.auth.token';
+const DEVICE_KEY = 'dl.auth.device';
 
 /**
  * Persistencia del token de acceso.

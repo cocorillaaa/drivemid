@@ -3,50 +3,50 @@
 }
 
 /* Fila resaltada tras "Ubicar en el mapa" */
-.vf-row--selected {
-  background: var(--vf-surface-2) !important;
-  box-shadow: inset 3px 0 0 var(--vf-black);
+.dl-row--selected {
+  background: var(--dl-surface-2) !important;
+  box-shadow: inset 3px 0 0 var(--dl-black);
 }
 
-.vf-row-actions {
+.dl-row-actions {
   display: inline-flex;
   gap: 0.3rem;
   justify-content: flex-end;
 }
 
-.vf-phone {
+.dl-phone {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   font-size: 0.875rem;
-  color: var(--vf-ink);
+  color: var(--dl-ink);
   white-space: nowrap;
 }
 
-.vf-phone i {
-  color: var(--vf-slate-light);
+.dl-phone i {
+  color: var(--dl-slate-light);
   font-size: 0.8rem;
 }
 
-.vf-phone:hover {
-  color: var(--vf-black);
+.dl-phone:hover {
+  color: var(--dl-black);
   text-decoration: underline;
 }
 
 /* --- Alertas de pólizas --- */
-.vf-alert {
+.dl-alert {
   display: flex;
   align-items: flex-start;
   gap: 0.8rem;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--vf-line);
+  border-bottom: 1px solid var(--dl-line);
 }
 
-.vf-alert:last-child {
+.dl-alert:last-child {
   border-bottom: 0;
 }
 
-.vf-alert__icon {
+.dl-alert__icon {
   display: grid;
   place-items: center;
   width: 2rem;
@@ -56,43 +56,43 @@
   font-size: 0.9rem;
 }
 
-.vf-alert__icon--vencida {
-  background: var(--vf-danger-bg);
-  color: var(--vf-danger);
+.dl-alert__icon--vencida {
+  background: var(--dl-danger-bg);
+  color: var(--dl-danger);
 }
 
-.vf-alert__icon--por_vencer {
-  background: var(--vf-warn-bg);
-  color: var(--vf-warn);
+.dl-alert__icon--por_vencer {
+  background: var(--dl-warn-bg);
+  color: var(--dl-warn);
 }
 
-.vf-alert__title {
+.dl-alert__title {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--vf-black);
+  color: var(--dl-black);
   margin: 0 0 0.2rem;
 }
 
-.vf-alert__text {
+.dl-alert__text {
   font-size: 0.75rem;
   line-height: 1.55;
-  color: var(--vf-slate);
+  color: var(--dl-slate);
   margin: 0;
 }
 
 /* --- Distribución de kilometraje --- */
-.vf-km-row + .vf-km-row {
+.dl-km-row + .dl-km-row {
   margin-top: 1rem;
 }
 
-.vf-km-row__label {
+.dl-km-row__label {
   font-size: 0.8125rem;
-  color: var(--vf-graphite);
+  color: var(--dl-graphite);
 }
 
-.vf-km-row__value {
+.dl-km-row__value {
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--vf-black);
+  color: var(--dl-black);
   font-variant-numeric: tabular-nums;
 }

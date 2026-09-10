@@ -3,7 +3,7 @@
 }
 
 /* --- Banda de identificación de la unidad --- */
-.vf-unit-band {
+.dl-unit-band {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -11,147 +11,147 @@
   flex-wrap: wrap;
   padding: 1.35rem 1.5rem;
   margin-bottom: 1.25rem;
-  border-radius: var(--vf-radius);
-  background: linear-gradient(120deg, var(--vf-black) 0%, #1e1e1e 62%, #262626 100%);
+  border-radius: var(--dl-radius);
+  background: linear-gradient(120deg, var(--dl-black) 0%, #1e1e1e 62%, #262626 100%);
   color: rgba(255, 255, 255, 0.75);
-  box-shadow: var(--vf-shadow-md);
+  box-shadow: var(--dl-shadow-md);
 }
 
-.vf-unit-band__main {
+.dl-unit-band__main {
   display: flex;
   align-items: center;
   gap: 1.1rem;
 }
 
-.vf-unit-band__thumb {
+.dl-unit-band__thumb {
   display: grid;
   place-items: center;
   width: 3.5rem;
   height: 3.5rem;
   flex: 0 0 auto;
-  border-radius: var(--vf-radius-sm);
+  border-radius: var(--dl-radius-sm);
   background: rgba(255, 255, 255, 0.09);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--vf-white);
+  color: var(--dl-white);
   font-size: 1.5rem;
 }
 
-.vf-unit-band__title {
+.dl-unit-band__title {
   font-size: 1.375rem;
   font-weight: 600;
-  color: var(--vf-white);
+  color: var(--dl-white);
   margin: 0 0 0.5rem;
   letter-spacing: -0.025em;
 }
 
-.vf-unit-band .vf-eyebrow {
+.dl-unit-band .dl-eyebrow {
   color: rgba(255, 255, 255, 0.5);
 }
 
-.vf-unit-band .vf-plate {
+.dl-unit-band .dl-plate {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.2);
-  color: var(--vf-white);
+  color: var(--dl-white);
 }
 
-.vf-unit-band__meta {
+.dl-unit-band__meta {
   display: flex;
   gap: 2rem;
   flex-wrap: wrap;
 }
 
-.vf-unit-band__meta-item {
+.dl-unit-band__meta-item {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
 }
 
-.vf-unit-band__meta-item strong {
+.dl-unit-band__meta-item strong {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--vf-white);
+  color: var(--dl-white);
   font-variant-numeric: tabular-nums;
 }
 
 /* --- Títulos de sección internos --- */
-.vf-mini-title {
+.dl-mini-title {
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--vf-slate);
+  color: var(--dl-slate);
   margin-bottom: 0.85rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--vf-line);
+  border-bottom: 1px solid var(--dl-line);
 }
 
 /* --- Tarjeta de póliza --- */
-.vf-policy-hero {
+.dl-policy-hero {
   padding: 1rem 1.15rem;
   margin-bottom: 1rem;
-  border-radius: var(--vf-radius-sm);
-  background: var(--vf-surface);
-  border: 1px solid var(--vf-line);
+  border-radius: var(--dl-radius-sm);
+  background: var(--dl-surface);
+  border: 1px solid var(--dl-line);
 }
 
-.vf-policy-hero__provider {
+.dl-policy-hero__provider {
   font-size: 1.0625rem;
   font-weight: 600;
-  color: var(--vf-black);
+  color: var(--dl-black);
   margin: 0.2rem 0 0.15rem;
 }
 
-.vf-policy-hero__number {
+.dl-policy-hero__number {
   margin: 0;
-  color: var(--vf-slate);
+  color: var(--dl-slate);
 }
 
-.vf-policy-alert {
+.dl-policy-alert {
   display: flex;
   align-items: flex-start;
   gap: 0.7rem;
   margin-top: 1rem;
   padding: 0.85rem 1rem;
-  border-radius: var(--vf-radius-sm);
-  background: var(--vf-danger-bg);
+  border-radius: var(--dl-radius-sm);
+  background: var(--dl-danger-bg);
   border: 1px solid rgba(164, 38, 44, 0.2);
-  color: var(--vf-danger);
+  color: var(--dl-danger);
 }
 
-.vf-policy-alert i {
+.dl-policy-alert i {
   margin-top: 0.15rem;
 }
 
-.vf-policy-alert p {
+.dl-policy-alert p {
   font-size: 0.8125rem;
   line-height: 1.55;
 }
 
 /* --- Prefijo en el grupo de entrada --- */
-:host ::ng-deep .vf-input-group__addon--prefix {
-  border-left: 1px solid var(--vf-line-strong);
+:host ::ng-deep .dl-input-group__addon--prefix {
+  border-left: 1px solid var(--dl-line-strong);
   border-right: 0;
-  border-radius: var(--vf-radius-xs) 0 0 var(--vf-radius-xs);
+  border-radius: var(--dl-radius-xs) 0 0 var(--dl-radius-xs);
 }
 
-:host ::ng-deep .vf-input-group .vf-input-group__addon--prefix + .form-control {
-  border-radius: 0 var(--vf-radius-xs) var(--vf-radius-xs) 0;
+:host ::ng-deep .dl-input-group .dl-input-group__addon--prefix + .form-control {
+  border-radius: 0 var(--dl-radius-xs) var(--dl-radius-xs) 0;
 }
 
 /* --- Estado vacío --- */
-.vf-empty {
+.dl-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
   padding: 5rem 1rem;
-  color: var(--vf-slate);
+  color: var(--dl-slate);
   font-size: 0.875rem;
 }
 
 @media (max-width: 767.98px) {
-  .vf-unit-band__meta {
+  .dl-unit-band__meta {
     gap: 1.25rem;
   }
 }

@@ -28,7 +28,7 @@ import {
  * Bootstrap): el padre decide qué unidad mostrar y escucha el cierre.
  */
 @Component({
-  selector: 'vf-unit-detail-modal',
+  selector: 'dl-unit-detail-modal',
   templateUrl: './unit-detail-modal.html',
   styleUrl: './unit-detail-modal.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

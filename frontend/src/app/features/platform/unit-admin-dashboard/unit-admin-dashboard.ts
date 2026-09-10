@@ -38,7 +38,7 @@ import { StatCardComponent } from '../../../shared/components/stat-card/stat-car
  * semanal y el teléfono de contacto de esa única unidad.
  */
 @Component({
-  selector: 'vf-unit-admin-dashboard',
+  selector: 'dl-unit-admin-dashboard',
   imports: [ReactiveFormsModule, FleetMapComponent, StatCardComponent],
   templateUrl: './unit-admin-dashboard.html',
   styleUrl: './unit-admin-dashboard.scss',

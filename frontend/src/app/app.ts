@@ -4,7 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { ToastHostComponent } from './shared/components/toast-host/toast-host';
 
 /**
- * Componente raíz de Vanguard Fleet.
+ * Componente raíz de DemoLogistics.
  *
  * Sólo hospeda el `router-outlet` (landing pública o plataforma) y el
  * contenedor global de notificaciones.

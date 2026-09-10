@@ -10,7 +10,7 @@ class DatabaseSeeder extends Seeder
     use WithoutModelEvents;
 
     /**
-     * Pobla la base de datos con el dataset de demostración de Vanguard Fleet:
+     * Pobla la base de datos con el dataset de demostración de DemoLogistics:
      * las 4 unidades ejecutivas y las cuentas de acceso a la plataforma.
      */
     public function run(): void

@@ -1,39 +1,39 @@
 <!-- Hero público: propuesta de valor ejecutiva -->
-<section class="vf-hero" id="inicio">
-  <div class="vf-hero__glow" aria-hidden="true"></div>
+<section class="dl-hero" id="inicio">
+  <div class="dl-hero__glow" aria-hidden="true"></div>
 
   <div class="container position-relative">
     <div class="row align-items-center g-5">
       <!-- Columna de mensaje -->
       <div class="col-lg-6">
-        <span class="vf-hero__eyebrow">
-          <span class="vf-dot"></span>
+        <span class="dl-hero__eyebrow">
+          <span class="dl-dot"></span>
           Transporte privado corporativo · CDMX y zona metropolitana
         </span>
 
-        <h1 class="vf-hero__title">
+        <h1 class="dl-hero__title">
           Movilidad ejecutiva para operaciones<br class="d-none d-md-block" />
           que no se detienen.
         </h1>
 
-        <p class="vf-hero__lead">
+        <p class="dl-hero__lead">
           Administramos flotillas corporativas de principio a fin: asignación de unidades,
           conductores verificados, control de pólizas, kilometraje y telemetría en una sola
           plataforma ejecutiva.
         </p>
 
         <div class="d-flex flex-wrap gap-2 mb-4">
-          <a class="vf-btn vf-btn--light" href="#contacto">
+          <a class="dl-btn dl-btn--light" href="#contacto">
             <i class="bi bi-building-check" aria-hidden="true"></i>
             Solicitar servicio corporativo
           </a>
-          <a class="vf-btn vf-btn--ghost-light" routerLink="/acceso">
+          <a class="dl-btn dl-btn--ghost-light" routerLink="/acceso">
             <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
             Acceso a Plataforma
           </a>
         </div>
 
-        <ul class="vf-hero__assurances list-unstyled">
+        <ul class="dl-hero__assurances list-unstyled">
           <li><i class="bi bi-patch-check" aria-hidden="true"></i> Conductores con licencia federal vigente</li>
           <li><i class="bi bi-shield-check" aria-hidden="true"></i> Unidades con póliza de cobertura amplia</li>
           <li><i class="bi bi-clock-history" aria-hidden="true"></i> Monitoreo GPS y asistencia 24/7</li>
@@ -42,69 +42,69 @@
 
       <!-- Panel ilustrativo del producto -->
       <div class="col-lg-6">
-        <div class="vf-console" role="img"
-             aria-label="Vista previa del panel de control de flota de Vanguard Fleet">
-          <div class="vf-console__bar">
-            <span class="vf-console__dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="vf-console__url">vanguardfleet.mx/plataforma/flota</span>
+        <div class="dl-console" role="img"
+             aria-label="Vista previa del panel de control de flota de DemoLogistics">
+          <div class="dl-console__bar">
+            <span class="dl-console__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="dl-console__url">demologistics.mx/plataforma/flota</span>
           </div>
 
-          <div class="vf-console__body">
+          <div class="dl-console__body">
             <div class="d-flex align-items-center justify-content-between mb-3">
               <div>
-                <span class="vf-eyebrow vf-eyebrow--onDark">Panel de control</span>
-                <p class="vf-console__heading mb-0">Flota en operación</p>
+                <span class="dl-eyebrow dl-eyebrow--onDark">Panel de control</span>
+                <p class="dl-console__heading mb-0">Flota en operación</p>
               </div>
-              <span class="vf-sync vf-sync--onDark is-fresh">
-                <span class="vf-pulse" aria-hidden="true"></span> En vivo
+              <span class="dl-sync dl-sync--onDark is-fresh">
+                <span class="dl-pulse" aria-hidden="true"></span> En vivo
               </span>
             </div>
 
             @if (summary(); as resumen) {
-              <div class="vf-console__kpis">
-                <div class="vf-console__kpi">
-                  <span class="vf-console__kpi-label">Unidades activas</span>
-                  <span class="vf-console__kpi-value">{{ resumen.activeUnits }}</span>
+              <div class="dl-console__kpis">
+                <div class="dl-console__kpi">
+                  <span class="dl-console__kpi-label">Unidades activas</span>
+                  <span class="dl-console__kpi-value">{{ resumen.activeUnits }}</span>
                 </div>
-                <div class="vf-console__kpi">
-                  <span class="vf-console__kpi-label">Km esta semana</span>
-                  <span class="vf-console__kpi-value">{{ formatNumber(resumen.totalWeeklyKm) }}</span>
+                <div class="dl-console__kpi">
+                  <span class="dl-console__kpi-label">Km esta semana</span>
+                  <span class="dl-console__kpi-value">{{ formatNumber(resumen.totalWeeklyKm) }}</span>
                 </div>
-                <div class="vf-console__kpi">
-                  <span class="vf-console__kpi-label">Pólizas por atender</span>
-                  <span class="vf-console__kpi-value">{{ resumen.policyAlerts }}</span>
+                <div class="dl-console__kpi">
+                  <span class="dl-console__kpi-label">Pólizas por atender</span>
+                  <span class="dl-console__kpi-value">{{ resumen.policyAlerts }}</span>
                 </div>
               </div>
             } @else {
-              <div class="vf-console__kpis">
+              <div class="dl-console__kpis">
                 @for (placeholder of [1, 2, 3]; track placeholder) {
-                  <div class="vf-console__kpi">
-                    <span class="vf-skeleton d-block" style="width: 70%; height: 0.6rem"></span>
-                    <span class="vf-skeleton d-block mt-2" style="width: 45%; height: 1.2rem"></span>
+                  <div class="dl-console__kpi">
+                    <span class="dl-skeleton d-block" style="width: 70%; height: 0.6rem"></span>
+                    <span class="dl-skeleton d-block mt-2" style="width: 45%; height: 1.2rem"></span>
                   </div>
                 }
               </div>
             }
 
-            <ul class="vf-console__list list-unstyled mb-0">
+            <ul class="dl-console__list list-unstyled mb-0">
               @for (unit of units(); track unit.id) {
-                <li class="vf-console__row">
-                  <span class="vf-console__row-unit">
+                <li class="dl-console__row">
+                  <span class="dl-console__row-unit">
                     <i class="bi bi-car-front-fill" aria-hidden="true"></i>
                     <span>
                       <strong>{{ unit.unitCode }}</strong>
                       <em>{{ unit.make }} {{ unit.model }} · {{ unit.plates }}</em>
                     </span>
                   </span>
-                  <span class="vf-console__row-right">
+                  <span class="dl-console__row-right">
                     <span [class]="unitStatusBadge[unit.status]">{{ unitStatusLabel[unit.status] }}</span>
                   </span>
                 </li>
               } @empty {
                 @for (placeholder of [1, 2, 3, 4]; track placeholder) {
-                  <li class="vf-console__row">
-                    <span class="vf-console__row-unit">
-                      <span class="vf-skeleton d-block" style="width: 13rem; height: 1rem"></span>
+                  <li class="dl-console__row">
+                    <span class="dl-console__row-unit">
+                      <span class="dl-skeleton d-block" style="width: 13rem; height: 1rem"></span>
                     </span>
                   </li>
                 }
@@ -116,17 +116,17 @@
     </div>
 
     <!-- Banda de indicadores -->
-    <div class="vf-hero__metrics">
+    <div class="dl-hero__metrics">
       @for (metric of metrics(); track metric.key) {
-        <div class="vf-hero__metric">
-          <span class="vf-hero__metric-value">{{ metric.value }}</span>
-          <span class="vf-hero__metric-label">{{ metric.label }}</span>
+        <div class="dl-hero__metric">
+          <span class="dl-hero__metric-value">{{ metric.value }}</span>
+          <span class="dl-hero__metric-label">{{ metric.label }}</span>
         </div>
       } @empty {
         @for (placeholder of [1, 2, 3, 4]; track placeholder) {
-          <div class="vf-hero__metric">
-            <span class="vf-skeleton d-block mb-2" style="width: 3.5rem; height: 1.6rem"></span>
-            <span class="vf-skeleton d-block" style="width: 80%; height: 0.7rem"></span>
+          <div class="dl-hero__metric">
+            <span class="dl-skeleton d-block mb-2" style="width: 3.5rem; height: 1.6rem"></span>
+            <span class="dl-skeleton d-block" style="width: 80%; height: 0.7rem"></span>
           </div>
         }
       }

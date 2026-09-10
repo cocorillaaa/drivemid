@@ -9,14 +9,14 @@ import { SiteHeaderComponent } from './components/site-header/site-header';
 import { SolutionsComponent } from './components/solutions/solutions';
 
 /**
- * Landing pública de Vanguard Fleet.
+ * Landing pública de DemoLogistics.
  *
  * Todo el contenido (soluciones, catálogos, contacto, indicadores y la flota
  * publicada) proviene de `/api/public/overview`: el frontend sólo se encarga
  * de la presentación.
  */
 @Component({
-  selector: 'vf-landing-page',
+  selector: 'dl-landing-page',
   imports: [
     SiteHeaderComponent,
     HeroComponent,

@@ -1,15 +1,15 @@
 <!-- Tarjeta ejecutiva de métrica -->
-<article [class]="'vf-stat' + (accent() ? ' vf-stat--accent' : '')">
-  <p class="vf-stat__label">{{ label() }}</p>
+<article [class]="'dl-stat' + (accent() ? ' dl-stat--accent' : '')">
+  <p class="dl-stat__label">{{ label() }}</p>
 
-  <p class="vf-stat__value">
+  <p class="dl-stat__value">
     {{ value() }}
     @if (unit()) {
-      <span class="vf-stat__unit">{{ unit() }}</span>
+      <span class="dl-stat__unit">{{ unit() }}</span>
     }
   </p>
 
   @if (hint()) {
-    <p class="vf-stat__hint">{{ hint() }}</p>
+    <p class="dl-stat__hint">{{ hint() }}</p>
   }
 </article>

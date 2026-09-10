@@ -4,10 +4,10 @@ import { LandingService } from '../../../../core/services/landing.service';
 
 /**
  * Sección de soluciones: las líneas de servicio ejecutivo que ofrece
- * Vanguard Fleet. El catálogo proviene del backend.
+ * DemoLogistics. El catálogo proviene del backend.
  */
 @Component({
-  selector: 'vf-solutions',
+  selector: 'dl-solutions',
   templateUrl: './solutions.html',
   styleUrl: './solutions.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

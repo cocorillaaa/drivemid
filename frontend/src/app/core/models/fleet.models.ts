@@ -1,5 +1,5 @@
 /**
- * Modelo de dominio de la plataforma Vanguard Fleet.
+ * Modelo de dominio de la plataforma DemoLogistics.
  * Contrato único compartido entre los servicios de datos y las vistas.
  */
 
@@ -277,7 +277,7 @@ export interface UnitUpdatePayload {
   phone?: string;
 }
 
-/** Marcador que el componente `vf-fleet-map` sabe pintar. */
+/** Marcador que el componente `dl-fleet-map` sabe pintar. */
 export interface FleetMapMarker {
   id: string;
   /** Título principal del popup, p. ej. "Unidad 01 · Dodge Attitude". */

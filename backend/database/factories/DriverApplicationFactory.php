@@ -18,7 +18,7 @@ class DriverApplicationFactory extends Factory
     public function definition(): array
     {
         return [
-            'reference' => 'VF-CON-'.fake()->unique()->bothify('#####'),
+            'reference' => 'DL-CON-'.fake()->unique()->bothify('#####'),
             'full_name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'phone' => fake()->numerify('##########'),

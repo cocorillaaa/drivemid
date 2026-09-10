@@ -1,31 +1,31 @@
-<!-- Encabezado público de Vanguard Fleet -->
-<header [class]="'vf-header' + (scrolled() ? ' is-scrolled' : '')">
+<!-- Encabezado público de DemoLogistics -->
+<header [class]="'dl-header' + (scrolled() ? ' is-scrolled' : '')">
   <div class="container">
-    <nav class="vf-header__bar" aria-label="Navegación principal">
+    <nav class="dl-header__bar" aria-label="Navegación principal">
       <!-- Marca -->
-      <a class="vf-brand" routerLink="/" (click)="closeMenu()" aria-label="Vanguard Fleet, inicio">
-        <span class="vf-brand__text">
-          <span class="vf-brand__name">Demo<span class="vf-brand__name-alt">Logistics</span></span>
-          <span class="vf-brand__tag">Movilidad ejecutiva</span>
+      <a class="dl-brand" routerLink="/" (click)="closeMenu()" aria-label="DemoLogistics, inicio">
+        <span class="dl-brand__text">
+          <span class="dl-brand__name">DEMO<span class="dl-brand__name-alt">LOGISTICS</span></span>
+          <span class="dl-brand__tag">Prototipo de demostración</span>
         </span>
       </a>
 
       <!-- Navegación de escritorio -->
-      <ul class="vf-nav d-none d-lg-flex">
+      <ul class="dl-nav d-none d-lg-flex">
         @for (link of navLinks; track link.href) {
-          <li><a class="vf-nav__link" [href]="link.href">{{ link.label }}</a></li>
+          <li><a class="dl-nav__link" [href]="link.href">{{ link.label }}</a></li>
         }
       </ul>
 
       <!-- Acciones -->
       <div class="d-none d-lg-flex align-items-center gap-2">
         @if (contact(); as datos) {
-          <a class="vf-header__phone" [href]="'tel:' + datos.phoneLink">
+          <a class="dl-header__phone" [href]="'tel:' + datos.phoneLink">
             <i class="bi bi-telephone" aria-hidden="true"></i>
             <span>{{ datos.phone }}</span>
           </a>
         }
-        <a class="vf-btn vf-btn--light vf-btn--sm" routerLink="/acceso">
+        <a class="dl-btn dl-btn--light dl-btn--sm" routerLink="/acceso">
           <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
           Acceso a Plataforma
         </a>
@@ -34,9 +34,9 @@
       <!-- Botón de menú móvil -->
       <button
         type="button"
-        class="vf-burger d-lg-none"
+        class="dl-burger d-lg-none"
         [attr.aria-expanded]="menuOpen()"
-        aria-controls="vf-mobile-menu"
+        aria-controls="dl-mobile-menu"
         aria-label="Abrir menú de navegación"
         (click)="toggleMenu()"
       >
@@ -47,19 +47,19 @@
 
   <!-- Menú móvil -->
   @if (menuOpen()) {
-    <div id="vf-mobile-menu" class="vf-mobile-menu d-lg-none">
+    <div id="dl-mobile-menu" class="dl-mobile-menu d-lg-none">
       <div class="container">
         <ul class="list-unstyled mb-3">
           @for (link of navLinks; track link.href) {
             <li>
-              <a class="vf-mobile-menu__link" [href]="link.href" (click)="closeMenu()">
+              <a class="dl-mobile-menu__link" [href]="link.href" (click)="closeMenu()">
                 {{ link.label }}
                 <i class="bi bi-chevron-right" aria-hidden="true"></i>
               </a>
             </li>
           }
         </ul>
-        <a class="vf-btn vf-btn--light vf-btn--block" routerLink="/acceso" (click)="closeMenu()">
+        <a class="dl-btn dl-btn--light dl-btn--block" routerLink="/acceso" (click)="closeMenu()">
           <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
           Acceso a Plataforma
         </a>

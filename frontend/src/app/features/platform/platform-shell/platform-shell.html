@@ -1,36 +1,37 @@
 @if (user(); as usuario) {
-  <div class="vf-shell">
+  <div class="dl-shell">
     <!-- Barra superior: marca, contexto de sesión y menú de usuario -->
-    <header class="vf-shell__topbar">
-      <div class="vf-shell__container">
-        <div class="vf-shell__topbar-inner">
-          <a class="vf-shell__brand" routerLink="/" title="Ir al sitio público">
-            <span class="vf-shell__mark" aria-hidden="true">
+    <header class="dl-shell__topbar">
+      <div class="dl-shell__container">
+        <div class="dl-shell__topbar-inner">
+          <a class="dl-shell__brand" routerLink="/" title="Ir al sitio público">
+            <span class="dl-shell__mark" aria-hidden="true">
               <svg viewBox="0 0 32 32" width="20" height="20" focusable="false">
                 <path d="M6 8 L16 25 L26 8" fill="none" stroke="currentColor" stroke-width="3"
                       stroke-linecap="square" />
               </svg>
             </span>
-            <span class="vf-shell__brand-text">
-              <span class="vf-shell__brand-name">VANGUARD<span>FLEET</span></span>
-              <span class="vf-shell__brand-sub">Plataforma ejecutiva</span>
+            <span class="dl-shell__brand-text">
+              <span class="dl-shell__brand-name">DEMO<span>LOGISTICS</span></span>
+              <span class="dl-shell__brand-sub">Plataforma ejecutiva</span>
             </span>
+            <span class="dl-shell__demo" title="Prototipo de demostración con datos simulados">Demo</span>
           </a>
 
           <!-- Contexto de la sesión -->
-          <div class="vf-shell__session">
-            <span [class]="'vf-shell__role' + (isSuperuser() ? ' vf-shell__role--global' : '')">
+          <div class="dl-shell__session">
+            <span [class]="'dl-shell__role' + (isSuperuser() ? ' dl-shell__role--global' : '')">
               <i [class]="isSuperuser() ? 'bi bi-shield-lock' : 'bi bi-person-vcard'" aria-hidden="true"></i>
               {{ usuario.roleLabel }}
             </span>
 
             @if (usuario.vehicle; as unidad) {
-              <span class="vf-shell__scope">
-                <span class="vf-plate">{{ unidad.plates }}</span>
+              <span class="dl-shell__scope">
+                <span class="dl-plate">{{ unidad.plates }}</span>
                 {{ unidad.unitCode }} · {{ unidad.make }} {{ unidad.model }}
               </span>
             } @else {
-              <span class="vf-shell__scope vf-shell__scope--global">
+              <span class="dl-shell__scope dl-shell__scope--global">
                 <i class="bi bi-diagram-3" aria-hidden="true"></i>
                 Acceso a todas las unidades de la flota
               </span>
@@ -38,39 +39,39 @@
           </div>
 
           <!-- Menú de usuario -->
-          <div class="vf-shell__userwrap">
+          <div class="dl-shell__userwrap">
             <button
               type="button"
-              class="vf-shell__user"
+              class="dl-shell__user"
               [class.is-open]="menuOpen()"
               [attr.aria-expanded]="menuOpen()"
               aria-haspopup="menu"
               (click)="toggleMenu()"
             >
-              <span class="vf-shell__avatar" aria-hidden="true">{{ usuario.initials }}</span>
-              <span class="vf-shell__user-text d-none d-md-flex">
+              <span class="dl-shell__avatar" aria-hidden="true">{{ usuario.initials }}</span>
+              <span class="dl-shell__user-text d-none d-md-flex">
                 <strong>{{ usuario.name }}</strong>
                 <em>{{ usuario.jobTitle }}</em>
               </span>
-              <i class="bi bi-chevron-down vf-shell__user-caret" aria-hidden="true"></i>
+              <i class="bi bi-chevron-down dl-shell__user-caret" aria-hidden="true"></i>
             </button>
 
             @if (menuOpen()) {
-              <div class="vf-shell__menu-backdrop" (click)="closeMenu()"></div>
+              <div class="dl-shell__menu-backdrop" (click)="closeMenu()"></div>
 
-              <div class="vf-shell__menu" role="menu">
-                <div class="vf-shell__menu-head">
-                  <p class="vf-shell__menu-name">{{ usuario.name }}</p>
-                  <p class="vf-shell__menu-mail">{{ usuario.email }}</p>
-                  <p class="vf-shell__menu-role">{{ usuario.roleLabel }}</p>
+              <div class="dl-shell__menu" role="menu">
+                <div class="dl-shell__menu-head">
+                  <p class="dl-shell__menu-name">{{ usuario.name }}</p>
+                  <p class="dl-shell__menu-mail">{{ usuario.email }}</p>
+                  <p class="dl-shell__menu-role">{{ usuario.roleLabel }}</p>
                 </div>
 
-                <button type="button" class="vf-shell__menu-item" role="menuitem" routerLink="/" (click)="closeMenu()">
+                <button type="button" class="dl-shell__menu-item" role="menuitem" routerLink="/" (click)="closeMenu()">
                   <i class="bi bi-globe2" aria-hidden="true"></i>
                   Ver sitio público
                 </button>
 
-                <button type="button" class="vf-shell__menu-item is-danger" role="menuitem" (click)="logout()">
+                <button type="button" class="dl-shell__menu-item is-danger" role="menuitem" (click)="logout()">
                   <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
                   Cerrar sesión
                 </button>
@@ -82,59 +83,59 @@
     </header>
 
     <!-- Sub-barra: vista activa y estado de sincronización -->
-    <nav class="vf-shell__subbar" aria-label="Vista de la plataforma">
-      <div class="vf-shell__container">
-        <div class="vf-shell__subbar-inner">
-          <ul class="vf-shell__viewnav list-unstyled">
+    <nav class="dl-shell__subbar" aria-label="Vista de la plataforma">
+      <div class="dl-shell__container">
+        <div class="dl-shell__subbar-inner">
+          <ul class="dl-shell__viewnav list-unstyled">
             @if (isSuperuser()) {
               <li>
-                <a class="vf-shell__viewlink is-active" [routerLink]="homeRoute()" aria-current="page">
+                <a class="dl-shell__viewlink is-active" [routerLink]="homeRoute()" aria-current="page">
                   <i class="bi bi-grid-1x2" aria-hidden="true"></i>
                   Panel de flota
                 </a>
               </li>
               @if (summary(); as resumen) {
-                <li class="vf-shell__viewmeta d-none d-xl-flex">
+                <li class="dl-shell__viewmeta d-none d-xl-flex">
                   {{ resumen.totalUnits }} unidades · {{ formatNumber(resumen.totalWeeklyKm) }} km esta semana
                 </li>
               }
             } @else {
               <li>
-                <a class="vf-shell__viewlink is-active" [routerLink]="homeRoute()" aria-current="page">
+                <a class="dl-shell__viewlink is-active" [routerLink]="homeRoute()" aria-current="page">
                   <i class="bi bi-car-front" aria-hidden="true"></i>
                   Mi unidad
                 </a>
               </li>
               @if (usuario.vehicle; as unidad) {
-                <li class="vf-shell__viewmeta d-none d-xl-flex">
+                <li class="dl-shell__viewmeta d-none d-xl-flex">
                   {{ unidad.unitCode }} · {{ unidad.plates }}
                 </li>
               }
             }
           </ul>
 
-          <div class="vf-shell__meta">
+          <div class="dl-shell__meta">
             <!-- Indicador de sincronización: avanza cada segundo -->
             <span
-              [class]="'vf-sync' + (syncFresh() ? ' is-fresh' : '')"
+              [class]="'dl-sync' + (syncFresh() ? ' is-fresh' : '')"
               [title]="'La telemetría se actualiza automáticamente cada ' + refreshSeconds + ' segundos'"
             >
-              <span class="vf-pulse" aria-hidden="true"></span>
+              <span class="dl-pulse" aria-hidden="true"></span>
               Sincronizado <strong>{{ syncAgo() }}</strong>
-              <span class="vf-shell__sync-auto d-none d-lg-inline">
+              <span class="dl-shell__sync-auto d-none d-lg-inline">
                 · auto cada {{ refreshSeconds }} s
               </span>
             </span>
 
             <button
               type="button"
-              class="vf-btn vf-btn--outline vf-btn--icon"
+              class="dl-btn dl-btn--outline dl-btn--icon"
               [disabled]="refreshing()"
               aria-label="Actualizar telemetría ahora"
               title="Actualizar telemetría ahora"
               (click)="refresh()"
             >
-              <i [class]="refreshing() ? 'bi bi-arrow-repeat vf-spin' : 'bi bi-arrow-repeat'"
+              <i [class]="refreshing() ? 'bi bi-arrow-repeat dl-spin' : 'bi bi-arrow-repeat'"
                  aria-hidden="true"></i>
             </button>
           </div>
@@ -143,23 +144,23 @@
     </nav>
 
     <!-- Contenido de la vista activa -->
-    <main class="vf-shell__main">
-      <div class="vf-shell__container">
+    <main class="dl-shell__main">
+      <div class="dl-shell__container">
         <router-outlet />
       </div>
     </main>
 
     <!-- Pie de la plataforma -->
-    <footer class="vf-shell__footer">
-      <div class="vf-shell__container">
-        <div class="vf-shell__footer-inner">
-          <span>Vanguard Fleet · Plataforma ejecutiva de gestión de flota.</span>
+    <footer class="dl-shell__footer">
+      <div class="dl-shell__container">
+        <div class="dl-shell__footer-inner">
+          <span>DemoLogistics · Plataforma de gestión de flota · Prototipo de demostración.</span>
           <span class="d-flex align-items-center gap-3">
             <a routerLink="/">Sitio público</a>
-            <span class="vf-shell__dot" aria-hidden="true"></span>
+            <span class="dl-shell__dot" aria-hidden="true"></span>
             <span>Sesión: {{ usuario.email }}</span>
-            <span class="vf-badge vf-badge--ok">
-              <span class="vf-pulse" style="color: currentColor"></span> Operativo
+            <span class="dl-badge dl-badge--ok">
+              <span class="dl-pulse" style="color: currentColor"></span> Operativo
             </span>
           </span>
         </div>
@@ -168,7 +169,7 @@
   </div>
 } @else {
   <!-- Sesión en proceso de restauración -->
-  <div class="vf-shell__booting">
+  <div class="dl-shell__booting">
     <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
     <p class="mb-0">Restaurando sesión…</p>
   </div>

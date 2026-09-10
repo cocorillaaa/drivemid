@@ -1,4 +1,8 @@
-# Vanguard Fleet · Plataforma ejecutiva de gestión de flota
+> **Prototipo de demostración.** *DemoLogistics* no es una empresa real: es el nombre de
+> trabajo de este ejercicio técnico. Todas las unidades, conductores, pólizas, correos y
+> credenciales son ficticios y se generan con seeders.
+
+# DemoLogistics · Plataforma ejecutiva de gestión de flota
 
 Aplicación de **movilidad ejecutiva y transporte corporativo privado**: administración de
 unidades, conductores verificados, control de pólizas de seguro, kilometraje y telemetría GPS.
@@ -25,13 +29,13 @@ petición; el rol y la unidad asignada **nunca** se deciden en el cliente.
 
 | Rol | Correo | Contraseña | Alcance |
 |---|---|---|---|
-| Superusuario | `superadmin@vanguardfleet.mx` | `admin1234` | Vista global de la flota (4 unidades) |
-| Administrador de Unidad 01 | `unidad01@vanguardfleet.mx` | `unidad123` | Sólo Unidad 01 · ABC-123 |
-| Administrador de Unidad 02 | `unidad02@vanguardfleet.mx` | `unidad123` | Sólo Unidad 02 · DFG-456 |
-| Administrador de Unidad 03 | `unidad03@vanguardfleet.mx` | `unidad123` | Sólo Unidad 03 · HIJ-789 |
-| Administrador de Unidad 04 | `unidad04@vanguardfleet.mx` | `unidad123` | Sólo Unidad 04 · KLM-012 |
+| Superusuario | `superadmin@demologistics.mx` | `admin1234` | Vista global de la flota (4 unidades) |
+| Administrador de Unidad 01 | `unidad01@demologistics.mx` | `unidad123` | Sólo Unidad 01 · ABC-123 |
+| Administrador de Unidad 02 | `unidad02@demologistics.mx` | `unidad123` | Sólo Unidad 02 · DFG-456 |
+| Administrador de Unidad 03 | `unidad03@demologistics.mx` | `unidad123` | Sólo Unidad 03 · HIJ-789 |
+| Administrador de Unidad 04 | `unidad04@demologistics.mx` | `unidad123` | Sólo Unidad 04 · KLM-012 |
 
-Las cuentas se declaran **una sola vez** en `backend/config/vanguard.php`; de ahí las toma el
+Las cuentas se declaran **una sola vez** en `backend/config/demologistics.php`; de ahí las toma el
 `UserSeeder` para crearlas y `LandingController` para mostrarlas como atajos en la pantalla de
 acceso. Ese endpoint sólo responde con `APP_DEBUG=true`, así que en un entorno real la lista
 llega vacía y la pantalla no muestra credenciales.
@@ -92,7 +96,7 @@ DemoLogistics/
 │                   └── unit-admin-dashboard/       Vista de la unidad asignada
 └── backend/                                        Laravel 13 · :8001
     ├── routes/api.php                              Endpoints públicos y protegidos
-    ├── config/vanguard.php                         Contenido comercial + cuentas demo
+    ├── config/demologistics.php                         Contenido comercial + cuentas demo
     ├── app/Models/                                 Vehicle · User · CorporateLead · DriverApplication
     ├── app/Policies/VehiclePolicy.php              Reglas de acceso por rol
     ├── app/Http/Controllers/Api/                   Auth · Vehicle · Landing · Lead
@@ -131,8 +135,8 @@ cd backend
 composer install
 cp .env.example .env && php artisan key:generate
 
-mysql -u root -p -e "CREATE DATABASE vanguard_fleet CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-# Ajustar credenciales en .env (DB_DATABASE=vanguard_fleet, DB_USERNAME, DB_PASSWORD)
+mysql -u root -p -e "CREATE DATABASE demologistics CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+# Ajustar credenciales en .env (DB_DATABASE=demologistics, DB_USERNAME, DB_PASSWORD)
 
 php artisan migrate:fresh --seed
 php artisan serve --host=127.0.0.1 --port=8001
@@ -169,13 +173,16 @@ npx ng serve --port 4201 --host 127.0.0.1
   correos ni VIN, porque la landing no requiere autenticación.
 - **Formulario de captación** con dos pestañas —*Solicitar Servicio Corporativo* y *Postularse
   como Conductor*— cuyas ciudades y líneas de servicio también llegan de la API. Al enviar
-  registran la solicitud en el backend y devuelven el folio (`VF-COR-…` / `VF-CON-…`).
+  registran la solicitud en el backend y devuelven el folio (`DL-COR-…` / `DL-CON-…`).
 
 ### 4.2 Acceso (`/acceso`)
 
 Pantalla de credenciales con validación contra la base de datos. Incluye atajos a las cuentas
 del seeder (sólo con `APP_DEBUG`), mensaje de error legible para credenciales inválidas y aviso
 cuando la sesión expira.
+
+Tanto el logotipo como la barra superior de la plataforma muestran un distintivo **Demo** para
+dejar claro que se trata de un prototipo con datos simulados.
 
 ### 4.3 Panel de flota · Superusuario (`/plataforma/flota`)
 
@@ -256,7 +263,7 @@ Requests (422) y errores de autenticación en JSON (401). CORS habilitado para
 ```bash
 TOKEN=$(curl -s -X POST http://127.0.0.1:8001/api/auth/login \
   -H 'Content-Type: application/json' \
-  -d '{"email":"unidad01@vanguardfleet.mx","password":"unidad123"}' | jq -r .data.token)
+  -d '{"email":"unidad01@demologistics.mx","password":"unidad123"}' | jq -r .data.token)
 
 curl -s http://127.0.0.1:8001/api/vehicles -H "Authorization: Bearer $TOKEN" | jq '.data | length'   # 1
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8001/api/vehicles/unit-02 -H "Authorization: Bearer $TOKEN"  # 403
@@ -296,7 +303,7 @@ errores de página**.
   `/api/auth/me`; el cliente no puede elegirlos ni ampliarlos. `VehiclePolicy` corta cualquier
   acceso indebido aunque se manipule la URL.
 - **Sin datos hardcodeados:** la flota, el contenido comercial, los catálogos del formulario y
-  las cuentas de prueba se sirven desde la API. Editar `config/vanguard.php` no requiere
+  las cuentas de prueba se sirven desde la API. Editar `config/demologistics.php` no requiere
   recompilar Angular.
 - **Privacidad en la landing:** `PublicVehicleResource` publica sólo datos operativos y el
   nombre de pila del conductor.
@@ -329,7 +336,8 @@ errores de página**.
 
 ## 10. Notas
 
-Proyecto de **demostración**. Los nombres, teléfonos, pólizas, VIN y matrículas son ficticios y
-las coordenadas corresponden a ubicaciones públicas de la Ciudad de México usadas como
-referencia geográfica. Las contraseñas del seeder son deliberadamente simples y la lista de
-cuentas sólo se publica con `APP_DEBUG` activo.
+**DemoLogistics es un nombre de trabajo, no una marca.** El proyecto es un prototipo de
+demostración: los nombres, teléfonos, pólizas, VIN y matrículas son ficticios, y las
+coordenadas corresponden a ubicaciones públicas de la Ciudad de México usadas como referencia
+geográfica. Las contraseñas del seeder son deliberadamente simples y la lista de cuentas sólo
+se publica con `APP_DEBUG` activo.

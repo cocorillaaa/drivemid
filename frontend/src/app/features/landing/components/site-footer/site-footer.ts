@@ -5,7 +5,7 @@ import { LandingService } from '../../../../core/services/landing.service';
 
 /** Pie de página institucional de la landing pública. */
 @Component({
-  selector: 'vf-site-footer',
+  selector: 'dl-site-footer',
   imports: [RouterLink],
   templateUrl: './site-footer.html',
   styleUrl: './site-footer.scss',

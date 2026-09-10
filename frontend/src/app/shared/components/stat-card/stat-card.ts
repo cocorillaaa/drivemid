@@ -8,7 +8,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
  * `accent`, que invierte la tarjeta principal del panel.
  */
 @Component({
-  selector: 'vf-stat-card',
+  selector: 'dl-stat-card',
   templateUrl: './stat-card.html',
   styleUrl: './stat-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

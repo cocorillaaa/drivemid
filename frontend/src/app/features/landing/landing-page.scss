@@ -2,19 +2,19 @@
   display: block;
 }
 
-.vf-skip {
+.dl-skip {
   position: absolute;
   left: -9999px;
   top: 0;
   z-index: 2000;
   padding: 0.75rem 1.25rem;
-  background: var(--vf-white);
-  color: var(--vf-black);
-  border-radius: 0 0 var(--vf-radius-xs) 0;
+  background: var(--dl-white);
+  color: var(--dl-black);
+  border-radius: 0 0 var(--dl-radius-xs) 0;
   font-size: 0.875rem;
   font-weight: 500;
 }
 
-.vf-skip:focus {
+.dl-skip:focus {
   left: 0;
 }

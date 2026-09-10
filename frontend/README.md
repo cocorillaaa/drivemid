@@ -1,4 +1,4 @@
-# Vanguard Fleet · Frontend
+# DemoLogistics · Frontend
 
 Aplicación Angular 22 (standalone, zoneless, Signals) para la plataforma ejecutiva de
 gestión de flota. La documentación completa del proyecto está en el
@@ -39,8 +39,8 @@ El rol y la unidad asignada provienen de `GET /api/auth/me`; el cliente nunca lo
 `authInterceptor` adjunta el token `Bearer`, fuerza `Accept: application/json` y cierra la
 sesión ante un `401`.
 
-Credenciales del seeder: `superadmin@vanguardfleet.mx` / `admin1234` y
-`unidad0N@vanguardfleet.mx` / `unidad123` (N = 1…4).
+Credenciales del seeder: `superadmin@demologistics.mx` / `admin1234` y
+`unidad0N@demologistics.mx` / `unidad123` (N = 1…4).
 
 ## Configuración
 

@@ -22,7 +22,7 @@ interface NavLink {
  * scroll. El acceso a la plataforma lleva a la pantalla de credenciales.
  */
 @Component({
-  selector: 'vf-site-header',
+  selector: 'dl-site-header',
   imports: [RouterLink],
   templateUrl: './site-header.html',
   styleUrl: './site-header.scss',

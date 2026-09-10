@@ -17,7 +17,7 @@ import { homeRouteFor } from '../../../core/utils/role-routes';
  * asignada. Las cuentas de demostración también llegan del backend.
  */
 @Component({
-  selector: 'vf-login-page',
+  selector: 'dl-login-page',
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',
