@@ -29,7 +29,7 @@ class LandingApiTest extends TestCase
             'data' => [
                 'brand' => ['name', 'tagline'],
                 'contact' => ['phone', 'email', 'address', 'hours'],
-                'solutions' => [['key', 'icon', 'title', 'description', 'bullets']],
+                'solutions' => [['key', 'title', 'description', 'bullets']],
                 'service_types',
                 'cities',
                 'metrics' => [['key', 'value', 'label']],

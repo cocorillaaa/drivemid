@@ -44,7 +44,7 @@ class LandingController extends Controller
                     [
                         'key' => 'active_units',
                         'value' => (string) $activeUnits,
-                        'label' => 'Unidades activas en operación',
+                        'label' => 'Unidades activas en la flota',
                     ],
                     [
                         'key' => 'weekly_km',

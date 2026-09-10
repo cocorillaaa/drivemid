@@ -46,26 +46,6 @@
   border-bottom: 0;
 }
 
-.dl-alert__icon {
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  flex: 0 0 auto;
-  border-radius: 999px;
-  font-size: 0.9rem;
-}
-
-.dl-alert__icon--vencida {
-  background: var(--dl-danger-bg);
-  color: var(--dl-danger);
-}
-
-.dl-alert__icon--por_vencer {
-  background: var(--dl-warn-bg);
-  color: var(--dl-warn);
-}
-
 .dl-alert__title {
   font-size: 0.8125rem;
   font-weight: 600;

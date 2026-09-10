@@ -6,12 +6,6 @@
     <!-- Columna de marca -->
     <aside class="dl-login__aside">
       <a class="dl-login__brand" routerLink="/">
-        <span class="dl-login__mark" aria-hidden="true">
-          <svg viewBox="0 0 32 32" width="22" height="22" focusable="false">
-            <path d="M6 8 L16 25 L26 8" fill="none" stroke="currentColor" stroke-width="2.8"
-                  stroke-linecap="square" />
-          </svg>
-        </span>
         <span>
           <span class="dl-login__brand-name">DEMO<span>LOGISTICS</span></span>
           <span class="dl-login__brand-tag">Prototipo de demostración</span>
@@ -28,17 +22,14 @@
 
       <ul class="dl-login__points list-unstyled">
         <li>
-          <i class="bi bi-shield-lock" aria-hidden="true"></i>
           <span><strong>Superusuario</strong> · vista global de la flota, pólizas y telemetría.</span>
         </li>
         <li>
-          <i class="bi bi-person-vcard" aria-hidden="true"></i>
           <span><strong>Administrador de Unidad</strong> · kilometraje y contacto de una sola unidad.</span>
         </li>
       </ul>
 
       <a class="dl-login__back" routerLink="/">
-        <i class="bi bi-arrow-left" aria-hidden="true"></i>
         Volver al sitio público
       </a>
     </aside>
@@ -54,14 +45,12 @@
 
         @if (sessionExpired()) {
           <div class="dl-login__notice" role="status">
-            <i class="bi bi-clock-history" aria-hidden="true"></i>
             <p class="mb-0">Su sesión expiró o fue cerrada. Vuelva a iniciar sesión.</p>
           </div>
         }
 
         @if (errorMessage(); as message) {
           <div class="dl-login__error" role="alert">
-            <i class="bi bi-exclamation-octagon-fill" aria-hidden="true"></i>
             <p class="mb-0">{{ message }}</p>
           </div>
         }
@@ -104,7 +93,6 @@
               <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
               Verificando credenciales…
             } @else {
-              <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
               Iniciar sesión
             }
           </button>
@@ -142,7 +130,6 @@
                       </span>
                     </span>
 
-                    <i class="bi bi-arrow-right-short dl-login__account-go" aria-hidden="true"></i>
                   </button>
                 </li>
               }

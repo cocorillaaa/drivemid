@@ -38,17 +38,6 @@
   color: var(--dl-white);
 }
 
-.dl-shell__mark {
-  display: grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 9px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  flex: 0 0 auto;
-}
-
 .dl-shell__brand-text {
   display: flex;
   flex-direction: column;
@@ -101,22 +90,9 @@
 }
 
 .dl-shell__role {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.3rem 0.7rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.6875rem;
-  font-weight: 500;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.72);
   white-space: nowrap;
-}
-
-.dl-shell__role--global {
-  background: rgba(255, 255, 255, 0.14);
-  color: var(--dl-white);
 }
 
 .dl-shell__scope {
@@ -327,10 +303,6 @@
   flex-wrap: wrap;
 }
 
-.dl-shell__sync-auto {
-  opacity: 0.7;
-}
-
 /* --- Contenido --- */
 .dl-shell__main {
   flex: 1 1 auto;
@@ -378,15 +350,6 @@
   min-height: 100vh;
   color: var(--dl-slate);
   font-size: 0.875rem;
-}
-
-.dl-spin {
-  display: inline-block;
-  animation: dl-rotate 0.9s linear infinite;
-}
-
-@keyframes dl-rotate {
-  to { transform: rotate(360deg); }
 }
 
 @media (max-width: 1199.98px) {

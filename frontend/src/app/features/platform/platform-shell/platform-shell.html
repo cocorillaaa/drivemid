@@ -5,12 +5,6 @@
       <div class="dl-shell__container">
         <div class="dl-shell__topbar-inner">
           <a class="dl-shell__brand" routerLink="/" title="Ir al sitio público">
-            <span class="dl-shell__mark" aria-hidden="true">
-              <svg viewBox="0 0 32 32" width="20" height="20" focusable="false">
-                <path d="M6 8 L16 25 L26 8" fill="none" stroke="currentColor" stroke-width="3"
-                      stroke-linecap="square" />
-              </svg>
-            </span>
             <span class="dl-shell__brand-text">
               <span class="dl-shell__brand-name">DEMO<span>LOGISTICS</span></span>
               <span class="dl-shell__brand-sub">Plataforma ejecutiva</span>
@@ -20,10 +14,7 @@
 
           <!-- Contexto de la sesión -->
           <div class="dl-shell__session">
-            <span [class]="'dl-shell__role' + (isSuperuser() ? ' dl-shell__role--global' : '')">
-              <i [class]="isSuperuser() ? 'bi bi-shield-lock' : 'bi bi-person-vcard'" aria-hidden="true"></i>
-              {{ usuario.roleLabel }}
-            </span>
+            <span class="dl-shell__role">{{ usuario.roleLabel }}</span>
 
             @if (usuario.vehicle; as unidad) {
               <span class="dl-shell__scope">
@@ -32,7 +23,6 @@
               </span>
             } @else {
               <span class="dl-shell__scope dl-shell__scope--global">
-                <i class="bi bi-diagram-3" aria-hidden="true"></i>
                 Acceso a todas las unidades de la flota
               </span>
             }
@@ -53,7 +43,6 @@
                 <strong>{{ usuario.name }}</strong>
                 <em>{{ usuario.jobTitle }}</em>
               </span>
-              <i class="bi bi-chevron-down dl-shell__user-caret" aria-hidden="true"></i>
             </button>
 
             @if (menuOpen()) {
@@ -67,12 +56,10 @@
                 </div>
 
                 <button type="button" class="dl-shell__menu-item" role="menuitem" routerLink="/" (click)="closeMenu()">
-                  <i class="bi bi-globe2" aria-hidden="true"></i>
                   Ver sitio público
                 </button>
 
                 <button type="button" class="dl-shell__menu-item is-danger" role="menuitem" (click)="logout()">
-                  <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
                   Cerrar sesión
                 </button>
               </div>
@@ -90,7 +77,6 @@
             @if (isSuperuser()) {
               <li>
                 <a class="dl-shell__viewlink is-active" [routerLink]="homeRoute()" aria-current="page">
-                  <i class="bi bi-grid-1x2" aria-hidden="true"></i>
                   Panel de flota
                 </a>
               </li>
@@ -102,7 +88,6 @@
             } @else {
               <li>
                 <a class="dl-shell__viewlink is-active" [routerLink]="homeRoute()" aria-current="page">
-                  <i class="bi bi-car-front" aria-hidden="true"></i>
                   Mi unidad
                 </a>
               </li>
@@ -115,28 +100,13 @@
           </ul>
 
           <div class="dl-shell__meta">
-            <!-- Indicador de sincronización: avanza cada segundo -->
-            <span
-              [class]="'dl-sync' + (syncFresh() ? ' is-fresh' : '')"
-              [title]="'La telemetría se actualiza automáticamente cada ' + refreshSeconds + ' segundos'"
-            >
-              <span class="dl-pulse" aria-hidden="true"></span>
-              Sincronizado <strong>{{ syncAgo() }}</strong>
-              <span class="dl-shell__sync-auto d-none d-lg-inline">
-                · auto cada {{ refreshSeconds }} s
-              </span>
-            </span>
-
             <button
               type="button"
-              class="dl-btn dl-btn--outline dl-btn--icon"
+              class="dl-btn dl-btn--outline dl-btn--sm"
               [disabled]="refreshing()"
-              aria-label="Actualizar telemetría ahora"
-              title="Actualizar telemetría ahora"
               (click)="refresh()"
             >
-              <i [class]="refreshing() ? 'bi bi-arrow-repeat dl-spin' : 'bi bi-arrow-repeat'"
-                 aria-hidden="true"></i>
+              {{ refreshing() ? 'Actualizando…' : 'Actualizar' }}
             </button>
           </div>
         </div>
@@ -159,9 +129,6 @@
             <a routerLink="/">Sitio público</a>
             <span class="dl-shell__dot" aria-hidden="true"></span>
             <span>Sesión: {{ usuario.email }}</span>
-            <span class="dl-badge dl-badge--ok">
-              <span class="dl-pulse" style="color: currentColor"></span> Operativo
-            </span>
           </span>
         </div>
       </div>

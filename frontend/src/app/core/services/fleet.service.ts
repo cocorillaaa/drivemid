@@ -5,9 +5,7 @@ import { environment } from '../../../environments/environment';
 import { FleetSummary, UnitUpdatePayload, Vehicle } from '../models/fleet.models';
 import { FleetApiService } from './fleet-api.service';
 import { AuthService } from './auth.service';
-import { ClockService } from './clock.service';
 import { ToastService } from './toast.service';
-import { relativeTime } from '../utils/fleet-format';
 
 /** Fila enriquecida de la tabla general de flota. */
 export interface FleetRow {
@@ -38,15 +36,12 @@ interface LoadOptions {
  *
  * - Carga la flota (y las métricas globales si el rol es Superusuario).
  * - Refresca la telemetría automáticamente cada `telemetryRefreshMs`.
- * - Expone `syncAgo`, que se recalcula cada segundo gracias a `ClockService`,
- *   para que el indicador de sincronización avance solo.
  */
 @Injectable({ providedIn: 'root' })
 export class FleetService {
   private readonly api = inject(FleetApiService);
   private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
-  private readonly clock = inject(ClockService);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly _vehicles = signal<Vehicle[]>([]);
@@ -54,10 +49,12 @@ export class FleetService {
   private readonly _loading = signal(false);
   private readonly _refreshing = signal(false);
   private readonly _error = signal<string | null>(null);
-  private readonly _lastSync = signal<string | null>(null);
   private readonly _savingUnitId = signal<string | null>(null);
 
   private pollTimer: ReturnType<typeof setInterval> | null = null;
+
+  /** `true` una vez completada la primera carga con éxito. */
+  private loaded = false;
 
   /** Unidades visibles para el usuario autenticado. */
   readonly vehicles = this._vehicles.asReadonly();
@@ -74,9 +71,6 @@ export class FleetService {
   /** Mensaje de error de la última carga, si la hubo. */
   readonly error = this._error.asReadonly();
 
-  /** Marca del último refresco exitoso. */
-  readonly lastSync = this._lastSync.asReadonly();
-
   /** Id de la unidad que se está guardando. */
   readonly savingUnitId = this._savingUnitId.asReadonly();
 
@@ -88,29 +82,13 @@ export class FleetService {
   /** Filas enriquecidas para la tabla general de flota. */
   readonly rows = computed<FleetRow[]>(() => this._vehicles().map((v) => toFleetRow(v)));
 
-  /** Texto "hace X" del indicador de sincronización; se actualiza cada segundo. */
-  readonly syncAgo = computed<string>(() => {
-    const last = this._lastSync();
-    if (!last) return 'sin sincronizar';
-
-    return relativeTime(last, new Date(this.clock.now()));
-  });
-
-  /** `true` cuando la telemetría está al día (menos de un minuto). */
-  readonly syncFresh = computed<boolean>(() => {
-    const last = this._lastSync();
-    if (!last) return false;
-
-    return this.clock.now() - new Date(last).getTime() < 60_000;
-  });
-
   constructor() {
     this.destroyRef.onDestroy(() => this.stopAutoRefresh());
   }
 
   /** Carga la flota y, si aplica, las métricas globales. */
   load(options: LoadOptions = {}): void {
-    const firstLoad = this._lastSync() === null;
+    const firstLoad = !this.loaded;
 
     if (firstLoad) {
       this._loading.set(true);
@@ -130,7 +108,7 @@ export class FleetService {
           this._vehicles.set(vehicles);
           if (summary) this._summary.set(summary);
           this._error.set(null);
-          this._lastSync.set(new Date().toISOString());
+          this.loaded = true;
         }),
         catchError((error: unknown) => {
           const message = describeLoadError(error);
@@ -211,7 +189,6 @@ export class FleetService {
       timeout(environment.apiTimeoutMs),
       tap((updated) => {
         this.applyLocalUpdate(updated);
-        this._lastSync.set(new Date().toISOString());
         this.toast.success(
           `${updated.unitCode} actualizada`,
           'La telemetría se sincronizó con la plataforma.',

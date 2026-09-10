@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 
-import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/services/auth.service';
 import { FleetService } from '../../../core/services/fleet.service';
 import { ToastService } from '../../../core/services/toast.service';
@@ -18,8 +17,7 @@ import { homeRouteFor } from '../../../core/utils/role-routes';
 /**
  * Shell de la plataforma ejecutiva.
  *
- * Muestra la identidad de la sesión (usuario, rol y unidad asignada), el
- * estado de sincronización de la telemetría —que se refresca solo— y la
+ * Muestra la identidad de la sesión (usuario, rol y unidad asignada) y la
  * navegación propia del rol. No existe selector de roles: el alcance de la
  * sesión lo determina el backend a partir del token.
  */
@@ -47,15 +45,6 @@ export class PlatformShell implements OnDestroy {
 
   /** `true` mientras se refresca la telemetría. */
   readonly refreshing = this.fleet.refreshing;
-
-  /** Texto "hace X" que avanza cada segundo. */
-  readonly syncAgo = this.fleet.syncAgo;
-
-  /** `true` si la última sincronización es reciente. */
-  readonly syncFresh = this.fleet.syncFresh;
-
-  /** Cadencia del refresco automático, en segundos. */
-  readonly refreshSeconds = Math.round(environment.telemetryRefreshMs / 1000);
 
   /** Ruta de inicio del rol autenticado. */
   readonly homeRoute = computed(() => homeRouteFor(this.auth.role()));

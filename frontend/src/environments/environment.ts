@@ -13,8 +13,6 @@ export const environment = {
   apiTimeoutMs: 12_000,
   /** Intervalo de refresco automático de la telemetría (ms). */
   telemetryRefreshMs: 30_000,
-  /** Cadencia del reloj que alimenta los textos "hace X" (ms). */
-  clockTickMs: 1_000,
 } as const;
 
 export type Environment = typeof environment;

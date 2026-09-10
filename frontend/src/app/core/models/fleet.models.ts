@@ -197,7 +197,6 @@ export interface PublicVehicle {
 /** Solución comercial mostrada en la landing. */
 export interface LandingSolution {
   key: string;
-  icon: string;
   title: string;
   description: string;
   bullets: string[];
@@ -288,8 +287,6 @@ export interface FleetMapMarker {
   lng: number;
   /** Tono cromático del pin. */
   tone: 'ok' | 'warn' | 'danger' | 'neutral';
-  /** Icono Bootstrap Icons del pin. */
-  icon: string;
   /** Filas del popup (etiqueta/valor). */
   rows: ReadonlyArray<{ label: string; value: string }>;
   /** Radio (m) del halo de geocerca; sólo en la vista de unidad individual. */

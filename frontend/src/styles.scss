@@ -447,11 +447,6 @@ a {
   font-size: 0.8125rem;
 }
 
-.dl-btn--icon {
-  padding: 0.4rem 0.55rem;
-  font-size: 0.875rem;
-}
-
 .dl-btn--block {
   width: 100%;
 }
@@ -644,18 +639,6 @@ a {
   min-width: 15rem;
 }
 
-.dl-unit-thumb {
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  flex: 0 0 auto;
-  border-radius: var(--dl-radius-xs);
-  background: linear-gradient(150deg, var(--dl-ink) 0%, #000000 100%);
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1.05rem;
-}
-
 .dl-unit-name {
   font-weight: 600;
   color: var(--dl-black);
@@ -837,10 +820,6 @@ a {
   box-shadow: 0 6px 16px -6px rgba(17, 17, 17, 0.6);
   color: var(--dl-white);
   font-size: 0.9rem;
-}
-
-.dl-marker > i {
-  transform: rotate(45deg);
 }
 
 .dl-marker--ok {
@@ -1071,75 +1050,6 @@ a {
 }
 
 /* -----------------------------------------------------------------------------
-   Indicador de sincronización en vivo
-   -------------------------------------------------------------------------- */
-
-.dl-sync {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.3rem 0.7rem;
-  border-radius: 999px;
-  background: var(--dl-surface-2);
-  border: 1px solid var(--dl-line-strong);
-  font-size: 0.75rem;
-  color: var(--dl-slate);
-  white-space: nowrap;
-}
-
-.dl-sync .dl-pulse {
-  color: var(--dl-slate-light);
-}
-
-.dl-sync.is-fresh {
-  background: var(--dl-ok-bg);
-  border-color: rgba(31, 122, 77, 0.22);
-  color: var(--dl-ok);
-}
-
-.dl-sync.is-fresh .dl-pulse {
-  color: var(--dl-ok);
-}
-
-.dl-sync strong {
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Variante sobre fondo oscuro */
-.dl-sync--onDark {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.16);
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.dl-sync--onDark.is-fresh {
-  background: rgba(74, 222, 128, 0.14);
-  border-color: rgba(74, 222, 128, 0.3);
-  color: #86efac;
-}
-
-.dl-sync--onDark.is-fresh .dl-pulse {
-  color: #4ade80;
-}
-
-/* Punto compacto para subtítulos de tarjeta */
-.dl-sync-dot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  margin-right: 0.4rem;
-  border-radius: 999px;
-  background: var(--dl-slate-light);
-  vertical-align: middle;
-}
-
-.dl-sync-dot.is-fresh {
-  background: var(--dl-ok);
-  box-shadow: 0 0 0 3px rgba(31, 122, 77, 0.14);
-}
-
-/* -----------------------------------------------------------------------------
    Encabezado de página (dashboards de la plataforma)
    -------------------------------------------------------------------------- */
 
@@ -1147,9 +1057,9 @@ a {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1.25rem 1.5rem;
   flex-wrap: wrap;
-  margin-bottom: 1.75rem;
+  margin-bottom: 2.5rem;
 }
 
 .dl-page-head__title {
@@ -1169,7 +1079,10 @@ a {
 .dl-page-head__actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 0.5rem;
+  /* Se mantiene a la derecha aunque salte de línea bajo el título */
+  margin-left: auto;
 }
 
 /* -----------------------------------------------------------------------------
@@ -1178,38 +1091,6 @@ a {
 
 .dl-stack-sm > * + * { margin-top: 0.5rem; }
 .dl-stack > * + * { margin-top: 1rem; }
-
-.dl-dot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: currentColor;
-  flex: 0 0 auto;
-}
-
-.dl-pulse {
-  position: relative;
-  display: inline-flex;
-  width: 8px;
-  height: 8px;
-}
-
-.dl-pulse::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 999px;
-  background: currentColor;
-  opacity: 0.55;
-  animation: dl-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-@keyframes dl-ping {
-  0%   { transform: scale(1); opacity: 0.5; }
-  75%  { transform: scale(2.4); opacity: 0; }
-  100% { transform: scale(2.4); opacity: 0; }
-}
 
 .dl-bars {
   display: flex;

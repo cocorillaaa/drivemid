@@ -29,28 +29,24 @@ return [
     'solutions' => [
         [
             'key' => 'corporate-transport',
-            'icon' => 'bi-briefcase',
             'title' => 'Transporte corporativo',
             'description' => 'Traslado diario de colaboradores y personal directivo con unidades asignadas, conductores verificados y control de horarios por centro de costo.',
             'bullets' => ['Unidad dedicada', 'Facturación mensual', 'Reporte por centro de costo'],
         ],
         [
             'key' => 'executive-transfer',
-            'icon' => 'bi-person-badge',
             'title' => 'Traslado ejecutivo',
             'description' => 'Servicio puerta a puerta para juntas, aeropuerto y visitas de cliente con estándar de puntualidad y confidencialidad.',
             'bullets' => ['SLA de puntualidad', 'Conductor bilingüe', 'Discreción total'],
         ],
         [
             'key' => 'fleet-management',
-            'icon' => 'bi-diagram-3',
             'title' => 'Gestión integral de flota',
             'description' => 'Administración de unidades propias o arrendadas: pólizas, mantenimiento preventivo, telemetría y asignación de conductores.',
             'bullets' => ['Alertas de pólizas', 'Mantenimiento preventivo', 'Telemetría GPS'],
         ],
         [
             'key' => 'groups-events',
-            'icon' => 'bi-people',
             'title' => 'Grupos y eventos',
             'description' => 'Cobertura para convenciones, roadshows y logística de eventos con unidades de mayor capacidad y coordinación en sitio.',
             'bullets' => ['Unidades de 7 plazas', 'Coordinador en sitio', 'Cobertura nacional'],

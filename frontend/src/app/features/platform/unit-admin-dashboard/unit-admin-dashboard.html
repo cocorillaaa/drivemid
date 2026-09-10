@@ -14,12 +14,10 @@
 
     <div class="dl-page-head__actions">
       <span class="dl-badge dl-badge--neutral">
-        <i class="bi bi-lock" aria-hidden="true"></i>
         Acceso limitado a 1 unidad
       </span>
       @if (user()?.jobTitle; as puesto) {
         <span class="dl-badge dl-badge--neutral">
-          <i class="bi bi-person-badge" aria-hidden="true"></i>
           {{ puesto }}
         </span>
       }
@@ -29,9 +27,6 @@
   <!-- ===================== Identificación de la unidad ===================== -->
   <section class="dl-unit-band">
     <div class="dl-unit-band__main">
-      <span class="dl-unit-band__thumb" aria-hidden="true">
-        <i class="bi bi-car-front-fill"></i>
-      </span>
 
       <div>
         <p class="dl-eyebrow mb-1">Unidad asignada</p>
@@ -114,7 +109,7 @@
           </div>
           @if (hasChanges()) {
             <span class="dl-badge dl-badge--warn">
-              <i class="bi bi-pencil-square" aria-hidden="true"></i> Sin guardar
+ Sin guardar
             </span>
           }
         </div>
@@ -180,7 +175,6 @@
                   <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
                   Guardando…
                 } @else {
-                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
                   Guardar actualización
                 }
               </button>
@@ -190,13 +184,11 @@
                 [disabled]="!hasChanges() || saving()"
                 (click)="resetForm()"
               >
-                <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
                 Restaurar
               </button>
             </div>
 
             <p class="dl-help mb-0 mt-3">
-              <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
               El ajuste sólo afecta a {{ u.unitCode }}. Queda registrado en la consola del
               navegador para efectos de esta demostración.
             </p>
@@ -214,7 +206,7 @@
             <p class="dl-card__subtitle">Información de solo lectura del vehículo y su conductor</p>
           </div>
           <span class="dl-badge dl-badge--neutral">
-            <i class="bi bi-eye" aria-hidden="true"></i> Solo lectura
+ Solo lectura
           </span>
         </div>
 
@@ -252,7 +244,6 @@
                 <div class="dl-dl__row">
                   <dt>Calificación</dt>
                   <dd>
-                    <i class="bi bi-star-fill" style="color: #c9a227" aria-hidden="true"></i>
                     {{ u.driver.rating }} / 5
                   </dd>
                 </div>
@@ -344,7 +335,6 @@
 
           @if (u.policy.status !== 'vigente') {
             <div class="dl-policy-alert">
-              <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
               <p class="mb-0">
                 Esta unidad requiere renovación de póliza. Contacte al área de Operaciones
                 para programar el trámite.
@@ -364,7 +354,6 @@
             <p class="dl-card__subtitle">{{ u.location.label }} · {{ u.location.zone }}</p>
           </div>
           <button type="button" class="dl-btn dl-btn--outline dl-btn--sm" (click)="copyCoordinates()">
-            <i class="bi bi-clipboard" aria-hidden="true"></i>
             Copiar coordenadas
           </button>
         </div>
@@ -374,7 +363,6 @@
           [singleUnit]="true"
           [zoom]="14"
           height="24rem"
-          [overlayLabel]="u.unitCode + ' rastreada'"
         />
 
         <div class="dl-card__body pt-3">

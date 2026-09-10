@@ -17,28 +17,24 @@
         @if (contact(); as datos) {
           <ul class="dl-contact-channels list-unstyled mb-4">
             <li>
-              <i class="bi bi-telephone" aria-hidden="true"></i>
               <span>
                 <em>Mesa de servicio</em>
                 <a [href]="'tel:' + datos.phoneLink">{{ datos.phone }}</a>
               </span>
             </li>
             <li>
-              <i class="bi bi-envelope" aria-hidden="true"></i>
               <span>
                 <em>Correo corporativo</em>
                 <a [href]="'mailto:' + datos.email">{{ datos.email }}</a>
               </span>
             </li>
             <li>
-              <i class="bi bi-geo-alt" aria-hidden="true"></i>
               <span>
                 <em>Oficinas corporativas</em>
                 {{ datos.address }}
               </span>
             </li>
             <li>
-              <i class="bi bi-clock" aria-hidden="true"></i>
               <span>
                 <em>Horario de atención</em>
                 {{ datos.hours }}
@@ -48,7 +44,6 @@
         }
 
         <div class="dl-contact-note">
-          <i class="bi bi-shield-lock" aria-hidden="true"></i>
           <p class="mb-0">
             La información compartida se trata de forma confidencial y se utiliza
             únicamente para elaborar su propuesta de servicio.
@@ -63,7 +58,6 @@
             <!-- Confirmación -->
             <div class="dl-lead-success">
               <span class="dl-lead-success__icon">
-                <i class="bi bi-check-lg" aria-hidden="true"></i>
               </span>
               <h3 class="dl-lead-success__title">{{ res.headline }}</h3>
               <p class="dl-lead-success__text">{{ res.detail }}</p>
@@ -75,11 +69,9 @@
 
               <div class="d-flex flex-wrap gap-2 justify-content-center">
                 <button type="button" class="dl-btn dl-btn--dark" (click)="resetForm()">
-                  <i class="bi bi-plus-lg" aria-hidden="true"></i>
                   Registrar otra solicitud
                 </button>
                 <a class="dl-btn dl-btn--outline" href="#flota">
-                  <i class="bi bi-map" aria-hidden="true"></i>
                   Ver flota en vivo
                 </a>
               </div>
@@ -96,7 +88,6 @@
                   [attr.aria-selected]="activeTab() === 'corporate'"
                   (click)="setTab('corporate')"
                 >
-                  <i class="bi bi-building" aria-hidden="true"></i>
                   Solicitar Servicio Corporativo
                 </button>
                 <button
@@ -107,7 +98,6 @@
                   [attr.aria-selected]="activeTab() === 'driver'"
                   (click)="setTab('driver')"
                 >
-                  <i class="bi bi-person-badge" aria-hidden="true"></i>
                   Postularse como Conductor
                 </button>
               </div>
@@ -248,7 +238,6 @@
 
                   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <p class="mb-0 dl-help">
-                      <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
                       Respuesta de un ejecutivo de cuenta en menos de 24 horas hábiles.
                     </p>
                     <button type="submit" class="dl-btn dl-btn--dark" [disabled]="submitting()">
@@ -256,7 +245,6 @@
                         <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
                         Enviando…
                       } @else {
-                        <i class="bi bi-send" aria-hidden="true"></i>
                         Enviar solicitud
                       }
                     </button>
@@ -394,7 +382,6 @@
 
                   <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <p class="mb-0 dl-help">
-                      <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
                       Revisión de expediente en un máximo de 5 días hábiles.
                     </p>
                     <button type="submit" class="dl-btn dl-btn--dark" [disabled]="submitting()">
@@ -402,7 +389,6 @@
                         <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
                         Enviando…
                       } @else {
-                        <i class="bi bi-send" aria-hidden="true"></i>
                         Enviar postulación
                       }
                     </button>

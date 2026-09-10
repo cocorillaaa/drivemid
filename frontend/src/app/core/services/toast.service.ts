@@ -7,15 +7,7 @@ export interface ToastMessage {
   variant: ToastVariant;
   title: string;
   body?: string;
-  icon: string;
 }
-
-const VARIANT_ICON: Record<ToastVariant, string> = {
-  success: 'bi-check-circle-fill',
-  danger: 'bi-exclamation-octagon-fill',
-  info: 'bi-info-circle-fill',
-  warning: 'bi-exclamation-triangle-fill',
-};
 
 /**
  * Servicio de notificaciones no bloqueantes.
@@ -42,7 +34,7 @@ export class ToastService {
     const id = ++this.sequence;
     this._toasts.update((list) => [
       ...list,
-      { id, variant, title, body, icon: VARIANT_ICON[variant] },
+      { id, variant, title, body },
     ]);
 
     if (durationMs > 0) {

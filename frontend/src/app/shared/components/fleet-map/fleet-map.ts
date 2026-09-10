@@ -53,9 +53,6 @@ export class FleetMapComponent implements AfterViewInit, OnDestroy {
   /** Id del marcador resaltado. */
   readonly selectedId = input<string | null>(null);
 
-  /** Etiqueta flotante de la esquina superior izquierda. */
-  readonly overlayLabel = input<string>('');
-
   private readonly canvasRef = viewChild.required<ElementRef<HTMLDivElement>>('canvas');
 
   private map?: L.Map;
@@ -186,7 +183,7 @@ function buildIcon(item: FleetMapMarker, selected: boolean): L.DivIcon {
 
   return L.divIcon({
     className: 'dl-marker-wrapper',
-    html: `<div class="${classes.join(' ')}"><i class="bi ${item.icon}" aria-hidden="true"></i></div>`,
+    html: `<div class="${classes.join(' ')}"></div>`,
     iconSize: [34, 34],
     iconAnchor: [17, 32],
     popupAnchor: [0, -30],

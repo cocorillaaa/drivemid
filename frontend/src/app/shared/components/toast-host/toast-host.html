@@ -2,7 +2,6 @@
 <div class="dl-toast-host" role="status" aria-live="polite" aria-atomic="false">
   @for (toast of toasts(); track toast.id) {
     <div [class]="'dl-toast dl-toast--' + toast.variant">
-      <i [class]="'bi ' + toast.icon + ' dl-toast__icon'" aria-hidden="true"></i>
 
       <div class="flex-grow-1">
         <p class="dl-toast__title">{{ toast.title }}</p>
@@ -17,7 +16,7 @@
         aria-label="Cerrar notificación"
         (click)="dismiss(toast.id)"
       >
-        <i class="bi bi-x-lg" aria-hidden="true"></i>
+        &times;
       </button>
     </div>
   }

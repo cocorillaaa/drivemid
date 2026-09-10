@@ -21,12 +21,10 @@
       <div class="d-none d-lg-flex align-items-center gap-2">
         @if (contact(); as datos) {
           <a class="dl-header__phone" [href]="'tel:' + datos.phoneLink">
-            <i class="bi bi-telephone" aria-hidden="true"></i>
             <span>{{ datos.phone }}</span>
           </a>
         }
         <a class="dl-btn dl-btn--light dl-btn--sm" routerLink="/acceso">
-          <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
           Acceso a Plataforma
         </a>
       </div>
@@ -40,7 +38,7 @@
         aria-label="Abrir menú de navegación"
         (click)="toggleMenu()"
       >
-        <i [class]="menuOpen() ? 'bi bi-x-lg' : 'bi bi-list'" aria-hidden="true"></i>
+        {{ menuOpen() ? 'Cerrar' : 'Menú' }}
       </button>
     </nav>
   </div>
@@ -54,13 +52,11 @@
             <li>
               <a class="dl-mobile-menu__link" [href]="link.href" (click)="closeMenu()">
                 {{ link.label }}
-                <i class="bi bi-chevron-right" aria-hidden="true"></i>
               </a>
             </li>
           }
         </ul>
         <a class="dl-btn dl-btn--light dl-btn--block" routerLink="/acceso" (click)="closeMenu()">
-          <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
           Acceso a Plataforma
         </a>
       </div>

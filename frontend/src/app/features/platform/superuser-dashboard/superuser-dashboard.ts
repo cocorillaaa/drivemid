@@ -60,12 +60,6 @@ export class SuperuserDashboard {
   /** Estado de carga de la telemetría. */
   readonly fleetLoading = this.fleet.loading;
 
-  /** Texto "hace X" del indicador de sincronización (avanza cada segundo). */
-  readonly syncAgo = this.fleet.syncAgo;
-
-  /** `true` si la última sincronización es reciente. */
-  readonly syncFresh = this.fleet.syncFresh;
-
   /** Filtro activo de la tabla. */
   readonly filter = signal<FleetFilter>('all');
 

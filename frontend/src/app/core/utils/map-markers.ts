@@ -31,7 +31,6 @@ export function toFleetMarker(
     lat: vehicle.location.lat,
     lng: vehicle.location.lng,
     tone: POLICY_TONE[vehicle.policy.status],
-    icon: 'bi-truck-front-fill',
     rows: [
       { label: 'Conductor', value: vehicle.driver.fullName },
       { label: 'Teléfono', value: formatPhone(vehicle.driver.phone) },
@@ -64,7 +63,6 @@ export function toPublicFleetMarker(unit: PublicVehicle): FleetMapMarker {
     lat: unit.location.lat,
     lng: unit.location.lng,
     tone: POLICY_TONE[unit.policyStatus],
-    icon: 'bi-truck-front-fill',
     rows: [
       { label: 'Servicio', value: unit.serviceTier },
       { label: 'Conductor', value: unit.driverFirstName },

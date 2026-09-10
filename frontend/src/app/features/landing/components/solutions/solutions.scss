@@ -7,18 +7,6 @@
   flex-direction: column;
 }
 
-.dl-solution__icon {
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  margin-bottom: 1.1rem;
-  border-radius: var(--dl-radius-sm);
-  background: var(--dl-black);
-  color: var(--dl-white);
-  font-size: 1.15rem;
-}
-
 .dl-solution__title {
   font-size: 1.0625rem;
   font-weight: 600;

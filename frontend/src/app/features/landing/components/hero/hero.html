@@ -7,7 +7,6 @@
       <!-- Columna de mensaje -->
       <div class="col-lg-6">
         <span class="dl-hero__eyebrow">
-          <span class="dl-dot"></span>
           Transporte privado corporativo · CDMX y zona metropolitana
         </span>
 
@@ -24,19 +23,17 @@
 
         <div class="d-flex flex-wrap gap-2 mb-4">
           <a class="dl-btn dl-btn--light" href="#contacto">
-            <i class="bi bi-building-check" aria-hidden="true"></i>
             Solicitar servicio corporativo
           </a>
           <a class="dl-btn dl-btn--ghost-light" routerLink="/acceso">
-            <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
             Acceso a Plataforma
           </a>
         </div>
 
         <ul class="dl-hero__assurances list-unstyled">
-          <li><i class="bi bi-patch-check" aria-hidden="true"></i> Conductores con licencia federal vigente</li>
-          <li><i class="bi bi-shield-check" aria-hidden="true"></i> Unidades con póliza de cobertura amplia</li>
-          <li><i class="bi bi-clock-history" aria-hidden="true"></i> Monitoreo GPS y asistencia 24/7</li>
+          <li> Conductores con licencia federal vigente</li>
+          <li> Unidades con póliza de cobertura amplia</li>
+          <li> Monitoreo GPS y asistencia 24/7</li>
         </ul>
       </div>
 
@@ -44,20 +41,12 @@
       <div class="col-lg-6">
         <div class="dl-console" role="img"
              aria-label="Vista previa del panel de control de flota de DemoLogistics">
-          <div class="dl-console__bar">
-            <span class="dl-console__dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span class="dl-console__url">demologistics.mx/plataforma/flota</span>
-          </div>
-
           <div class="dl-console__body">
             <div class="d-flex align-items-center justify-content-between mb-3">
               <div>
                 <span class="dl-eyebrow dl-eyebrow--onDark">Panel de control</span>
-                <p class="dl-console__heading mb-0">Flota en operación</p>
+                <p class="dl-console__heading mb-0">Resumen de la flota</p>
               </div>
-              <span class="dl-sync dl-sync--onDark is-fresh">
-                <span class="dl-pulse" aria-hidden="true"></span> En vivo
-              </span>
             </div>
 
             @if (summary(); as resumen) {
@@ -90,7 +79,6 @@
               @for (unit of units(); track unit.id) {
                 <li class="dl-console__row">
                   <span class="dl-console__row-unit">
-                    <i class="bi bi-car-front-fill" aria-hidden="true"></i>
                     <span>
                       <strong>{{ unit.unitCode }}</strong>
                       <em>{{ unit.make }} {{ unit.model }} · {{ unit.plates }}</em>

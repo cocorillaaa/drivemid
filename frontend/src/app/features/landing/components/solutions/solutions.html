@@ -14,9 +14,6 @@
       @for (solution of solutions(); track solution.key) {
         <div class="col-md-6 col-xl-3">
           <article class="dl-card dl-card--pad dl-card--hover dl-solution h-100">
-            <span class="dl-solution__icon">
-              <i [class]="'bi ' + solution.icon" aria-hidden="true"></i>
-            </span>
 
             <h3 class="dl-solution__title">{{ solution.title }}</h3>
             <p class="dl-solution__text">{{ solution.description }}</p>
@@ -24,7 +21,6 @@
             <ul class="dl-solution__bullets list-unstyled mb-0">
               @for (bullet of solution.bullets; track bullet) {
                 <li>
-                  <i class="bi bi-dash-lg" aria-hidden="true"></i>
                   {{ bullet }}
                 </li>
               }

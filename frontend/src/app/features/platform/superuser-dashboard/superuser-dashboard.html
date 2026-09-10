@@ -4,14 +4,13 @@
     <span class="dl-eyebrow">Superusuario · Vista global de flota</span>
     <h1 class="dl-page-head__title">Panel de control de flota</h1>
     <p class="dl-page-head__sub">
-      Monitoreo de las {{ summary()?.totalUnits ?? '—' }} unidades ejecutivas en operación:
+      Monitoreo de las {{ summary()?.totalUnits ?? '—' }} unidades ejecutivas:
       kilometraje semanal, vigencia de pólizas, conductor asignado y última ubicación reportada.
     </p>
   </div>
 
   <div class="dl-page-head__actions">
     <button type="button" class="dl-btn dl-btn--outline" (click)="exportCsv()">
-      <i class="bi bi-filetype-csv" aria-hidden="true"></i>
       Exportar reporte
     </button>
     <button
@@ -20,7 +19,6 @@
       [disabled]="fleetLoading()"
       (click)="refresh()"
     >
-      <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
       Actualizar telemetría
     </button>
   </div>
@@ -70,10 +68,6 @@
     <div class="dl-card__head flex-wrap">
       <div>
         <h2 class="dl-card__title">Flota ejecutiva · {{ visibleRows().length }} de {{ rows().length }} unidades</h2>
-        <p class="dl-card__subtitle">
-          <span [class]="'dl-sync-dot' + (syncFresh() ? ' is-fresh' : '')" aria-hidden="true"></span>
-          Telemetría sincronizada {{ syncAgo() }} · se actualiza automáticamente
-        </p>
       </div>
 
       <div class="dl-tabs" role="group" aria-label="Filtro de la tabla">
@@ -82,21 +76,21 @@
           [class]="'dl-tabs__item' + (filter() === 'all' ? ' is-active' : '')"
           (click)="setFilter('all')"
         >
-          <i class="bi bi-list-ul" aria-hidden="true"></i> Todas
+ Todas
         </button>
         <button
           type="button"
           [class]="'dl-tabs__item' + (filter() === 'alerts' ? ' is-active' : '')"
           (click)="setFilter('alerts')"
         >
-          <i class="bi bi-exclamation-triangle" aria-hidden="true"></i> Con alerta
+ Con alerta
         </button>
         <button
           type="button"
           [class]="'dl-tabs__item' + (filter() === 'service' ? ' is-active' : '')"
           (click)="setFilter('service')"
         >
-          <i class="bi bi-tools" aria-hidden="true"></i> Servicio próximo
+ Servicio próximo
         </button>
       </div>
     </div>
@@ -125,9 +119,6 @@
               <!-- Unidad -->
               <td>
                 <div class="dl-unit-cell">
-                  <span class="dl-unit-thumb" aria-hidden="true">
-                    <i class="bi bi-car-front-fill"></i>
-                  </span>
                   <span>
                     <span class="d-block dl-unit-name">
                       {{ row.vehicle.make }} {{ row.vehicle.model }} {{ row.vehicle.year }}
@@ -149,7 +140,6 @@
                   <span>
                     <span class="d-block fw-medium">{{ row.vehicle.driver.fullName }}</span>
                     <span class="d-block dl-unit-meta">
-                      <i class="bi bi-star-fill" style="color: #c9a227" aria-hidden="true"></i>
                       {{ row.vehicle.driver.rating }} · {{ row.vehicle.serviceTier }}
                     </span>
                   </span>
@@ -159,7 +149,6 @@
               <!-- Teléfono -->
               <td>
                 <a class="dl-phone" [href]="'tel:+52' + row.vehicle.driver.phone">
-                  <i class="bi bi-telephone" aria-hidden="true"></i>
                   {{ formatPhone(row.vehicle.driver.phone) }}
                 </a>
               </td>
@@ -202,7 +191,6 @@
               <!-- Ubicación -->
               <td style="min-width: 13rem">
                 <span class="d-block fw-medium">
-                  <i class="bi bi-geo-alt" aria-hidden="true"></i>
                   {{ row.vehicle.location.label }}
                 </span>
                 <span class="d-block dl-unit-meta">{{ row.vehicle.location.zone }}</span>
@@ -211,7 +199,6 @@
                   · {{ row.vehicle.location.speedKmh }} km/h
                 </span>
                 <span class="d-block dl-unit-meta">
-                  <i class="bi bi-clock-history" aria-hidden="true"></i>
                   {{ relativeTime(row.vehicle.location.lastUpdate) }}
                 </span>
               </td>
@@ -221,29 +208,26 @@
                 <div class="dl-row-actions">
                   <button
                     type="button"
-                    class="dl-btn dl-btn--outline dl-btn--icon"
-                    title="Ubicar en el mapa"
+                    class="dl-btn dl-btn--outline dl-btn--sm"
                     [attr.aria-label]="'Ubicar ' + row.vehicle.unitCode + ' en el mapa'"
                     (click)="locateOnMap(row.vehicle)"
                   >
-                    <i class="bi bi-geo" aria-hidden="true"></i>
+                    Mapa
                   </button>
                   <button
                     type="button"
-                    class="dl-btn dl-btn--outline dl-btn--icon"
-                    title="Ver ficha técnica"
+                    class="dl-btn dl-btn--outline dl-btn--sm"
                     [attr.aria-label]="'Ver ficha técnica de ' + row.vehicle.unitCode"
                     (click)="openDetail(row.vehicle.id)"
                   >
-                    <i class="bi bi-eye" aria-hidden="true"></i>
+                    Ficha
                   </button>
                   <a
-                    class="dl-btn dl-btn--dark dl-btn--icon"
-                    title="Llamar al conductor"
+                    class="dl-btn dl-btn--dark dl-btn--sm"
                     [attr.aria-label]="'Llamar al conductor de ' + row.vehicle.unitCode"
                     [href]="'tel:+52' + row.vehicle.driver.phone"
                   >
-                    <i class="bi bi-telephone" aria-hidden="true"></i>
+                    Llamar
                   </a>
                 </div>
               </td>
@@ -251,7 +235,6 @@
           } @empty {
             <tr>
               <td colspan="7" class="text-center py-5 dl-text-muted">
-                <i class="bi bi-inbox d-block mb-2" style="font-size: 1.5rem" aria-hidden="true"></i>
                 No hay unidades que cumplan el filtro seleccionado.
               </td>
             </tr>
@@ -268,22 +251,17 @@
       <section class="dl-card h-100 overflow-hidden">
         <div class="dl-card__head">
           <div>
-            <h2 class="dl-card__title">Mapa de operación · Zona Metropolitana del Valle de México</h2>
+            <h2 class="dl-card__title">Mapa de la flota · Zona Metropolitana del Valle de México</h2>
             <p class="dl-card__subtitle">
               {{ markers().length }} marcadores activos · telemetría GPS
             </p>
           </div>
-          <span class="dl-badge dl-badge--ok">
-            <span class="dl-pulse" style="color: var(--dl-ok)"></span>
-            En línea
-          </span>
         </div>
 
         <dl-fleet-map
           [markers]="markers()"
           [selectedId]="selectedMapId()"
           height="30rem"
-          [overlayLabel]="resumen.activeUnits + ' unidades rastreadas'"
         />
 
         <div class="dl-card__body py-3">
@@ -303,7 +281,7 @@
                 class="dl-btn dl-btn--outline dl-btn--sm ms-auto"
                 (click)="selectedMapId.set(null)"
               >
-                <i class="bi bi-x-circle" aria-hidden="true"></i> Limpiar selección
+ Limpiar selección
               </button>
             }
           </div>
@@ -330,10 +308,6 @@
             <ul class="list-unstyled mb-0">
               @for (unit of policyAlertUnits(); track unit.id) {
                 <li class="dl-alert">
-                  <span [class]="'dl-alert__icon dl-alert__icon--' + unit.policy.status">
-                    <i [class]="unit.policy.status === 'vencida' ? 'bi bi-shield-x' : 'bi bi-shield-exclamation'"
-                       aria-hidden="true"></i>
-                  </span>
                   <div class="flex-grow-1">
                     <p class="dl-alert__title">
                       {{ unit.unitCode }} · <span class="dl-plate">{{ unit.plates }}</span>
@@ -356,8 +330,6 @@
             </ul>
           } @else {
             <div class="dl-card__body text-center">
-              <i class="bi bi-shield-check d-block mb-2" style="font-size: 1.5rem; color: var(--dl-ok)"
-                 aria-hidden="true"></i>
               <p class="mb-0 dl-text-muted" style="font-size: .875rem">
                 Todas las pólizas están vigentes.
               </p>
@@ -396,7 +368,6 @@
 
             @if (topUnit(); as top) {
               <p class="dl-help mb-0 mt-2">
-                <i class="bi bi-trophy me-1" aria-hidden="true"></i>
                 Mayor recorrido: {{ top.unitCode }} ({{ top.make }} {{ top.model }}) con
                 {{ formatKm(top.weeklyKm) }}.
               </p>

@@ -6,20 +6,10 @@
   <div #canvas class="dl-map__canvas" role="img"
        [attr.aria-label]="'Mapa de ubicación de ' + markers().length + ' unidades de la flota'"></div>
 
-  @if (overlayLabel()) {
-    <div class="dl-map__overlay dl-map__overlay--tl">
-      <span class="dl-eyebrow d-block mb-1">Monitoreo GPS</span>
-      <span class="d-flex align-items-center gap-2 fw-semibold" style="font-size: 0.8125rem">
-        <span class="dl-pulse" style="color: var(--dl-ok)"></span>
-        {{ overlayLabel() }}
-      </span>
-    </div>
-  }
-
   @if (tilesUnavailable()) {
     <div class="dl-map__overlay dl-map__overlay--bl">
       <span style="font-size: 0.6875rem; color: var(--dl-slate)">
-        <i class="bi bi-wifi-off me-1"></i>Capa base no disponible · coordenadas activas
+Capa base no disponible · coordenadas activas
       </span>
     </div>
   }

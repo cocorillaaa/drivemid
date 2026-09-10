@@ -59,12 +59,6 @@ export class UnitAdminDashboard {
   /** `true` mientras la flota se carga por primera vez. */
   readonly loading = this.fleet.loading;
 
-  /** Texto "hace X" del indicador de sincronización. */
-  readonly syncAgo = this.fleet.syncAgo;
-
-  /** `true` si la última sincronización es reciente. */
-  readonly syncFresh = this.fleet.syncFresh;
-
   /** Marcador único con halo de geocerca. */
   readonly markers = computed<FleetMapMarker[]>(() => {
     const current = this.unit();

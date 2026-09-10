@@ -10,9 +10,6 @@
     <!-- Encabezado -->
     <header class="dl-modal__head">
       <div class="d-flex align-items-start gap-3">
-        <span class="dl-unit-thumb" aria-hidden="true">
-          <i class="bi bi-car-front-fill"></i>
-        </span>
         <div>
           <p class="dl-eyebrow mb-1">Ficha técnica de unidad</p>
           <h3 class="mb-1" style="font-size: 1.1875rem">
@@ -30,8 +27,8 @@
         </div>
       </div>
 
-      <button type="button" class="dl-btn dl-btn--outline dl-btn--icon" aria-label="Cerrar" (click)="close()">
-        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      <button type="button" class="dl-btn dl-btn--outline dl-btn--sm" (click)="close()">
+        Cerrar
       </button>
     </header>
 
@@ -77,7 +74,6 @@
             <div>
               <p class="dl-driver__name">{{ vehicle().driver.fullName }}</p>
               <p class="dl-driver__meta">
-                <i class="bi bi-star-fill" aria-hidden="true"></i>
                 {{ vehicle().driver.rating }} · Asignado desde
                 {{ formatDate(vehicle().driver.assignedSince) }}
               </p>
@@ -162,7 +158,6 @@
     <footer class="dl-modal__foot">
       <button type="button" class="dl-btn dl-btn--outline" (click)="close()">Cerrar</button>
       <a class="dl-btn dl-btn--dark" [href]="'tel:+52' + vehicle().driver.phone">
-        <i class="bi bi-telephone" aria-hidden="true"></i>
         Llamar al conductor
       </a>
     </footer>

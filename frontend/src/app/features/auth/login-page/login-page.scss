@@ -44,17 +44,6 @@
   color: var(--dl-white);
 }
 
-.dl-login__mark {
-  display: grid;
-  place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  flex: 0 0 auto;
-}
-
 .dl-login__brand > span:last-child {
   display: flex;
   flex-direction: column;
@@ -276,17 +265,6 @@
   color: var(--dl-slate-light);
   letter-spacing: -0.01em;
   word-break: break-all;
-}
-
-.dl-login__account-go {
-  flex: 0 0 auto;
-  font-size: 1.15rem;
-  color: var(--dl-slate-light);
-  line-height: 1;
-}
-
-.dl-login__account:hover:not(:disabled) .dl-login__account-go {
-  color: var(--dl-black);
 }
 
 @media (max-width: 991.98px) {

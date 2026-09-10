@@ -91,7 +91,7 @@ DemoLogistics/
 │               ├── auth/login-page/                Pantalla de credenciales
 │               ├── landing/                        Header · Hero · Soluciones · Flota · Captación · Footer
 │               └── platform/
-│                   ├── platform-shell/             Barra de sesión + sincronización en vivo
+│                   ├── platform-shell/             Barra de sesión y navegación por rol
 │                   ├── superuser-dashboard/        Vista global de flota
 │                   └── unit-admin-dashboard/       Vista de la unidad asignada
 └── backend/                                        Laravel 13 · :8001
@@ -107,14 +107,14 @@ DemoLogistics/
     └── database/factories/                         Factories para pruebas
 ```
 
-### Estado y sincronización
+### Estado
 
 `FleetService` es la única fuente de verdad del panel. Expone Signals de sólo lectura y:
 
 - Carga la flota y —sólo para el Superusuario— las métricas globales.
-- **Refresca la telemetría automáticamente** cada 30 s (`environment.telemetryRefreshMs`).
-- Deriva `syncAgo` de un reloj compartido de 1 s, por lo que el indicador
-  «Sincronizado hace *X*» avanza solo, sin recargar datos ni la página.
+- **Refresca la telemetría en segundo plano** cada 30 s (`environment.telemetryRefreshMs`)
+  y permite forzarlo con el botón *Actualizar*. El refresco es silencioso: no se muestran
+  indicadores de estado.
 - Aplica las actualizaciones de unidad de forma **optimista** y las revierte si la API las
   rechaza, informando al usuario.
 
@@ -168,7 +168,7 @@ npx ng serve --port 4201 --host 127.0.0.1
   que lleva a la pantalla de credenciales.
 - **Hero** con la propuesta de valor y un panel ilustrativo alimentado por la flota real.
 - **Soluciones** y **canales de contacto**: contenido servido por el backend.
-- **Flota en vivo:** mapa Leaflet con las unidades, listado sincronizado y banda de cobertura.
+- **Flota:** mapa Leaflet con las unidades, listado de la flota y banda de cobertura.
   La API sólo publica datos operativos y el nombre de pila del conductor: **nunca** teléfonos,
   correos ni VIN, porque la landing no requiere autenticación.
 - **Formulario de captación** con dos pestañas —*Solicitar Servicio Corporativo* y *Postularse
@@ -289,12 +289,17 @@ cd frontend && npx ng build                    # compilación de producción
 Además se ejecutó una **verificación visual automatizada** del flujo completo (navegador
 headless): landing pública, acceso con credenciales válidas e inválidas, sesión de Superusuario,
 sesión de dos Administradores de Unidad distintos, intento de escalada de privilegios por URL,
-actualización de telemetría, sincronización en vivo y vista móvil — **29 comprobaciones, 0
-errores de página**.
+actualización de telemetría, ausencia de indicadores de estado e iconografía, y vista móvil —
+**30 comprobaciones, 0 errores de página**.
 
 ---
 
 ## 8. Decisiones técnicas
+
+- **Interfaz sin ruido:** no hay indicadores de estado («en vivo», «en línea», «operando»,
+  «sincronizado») ni iconografía decorativa. La información se presenta como texto y datos;
+  el refresco de telemetría ocurre en segundo plano. Los pines del mapa son formas de color,
+  sin glifos.
 
 - **Zoneless + Signals:** todo el estado vive en Signals, así que la detección de cambios se
   dispara sólo cuando algo cambia realmente. El reloj de 1 s alimenta los textos relativos sin

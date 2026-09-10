@@ -16,17 +16,10 @@
       <div class="col-lg-5">
         <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
           @if (summary(); as resumen) {
-            <span class="dl-badge dl-badge--neutral">
-              <i class="bi bi-truck-front" aria-hidden="true"></i>
-              {{ resumen.activeUnits }} unidades en operación
-            </span>
-            <span class="dl-badge dl-badge--neutral">
-              <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
-              {{ formatNumber(resumen.totalWeeklyKm) }} km esta semana
-            </span>
+            <span class="dl-flota-dato">{{ resumen.activeUnits }} unidades activas</span>
+            <span class="dl-flota-dato">{{ formatNumber(resumen.totalWeeklyKm) }} km esta semana</span>
           }
           <a class="dl-btn dl-btn--dark dl-btn--sm" routerLink="/acceso">
-            <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
             Acceder a la plataforma
           </a>
         </div>
@@ -48,9 +41,6 @@
                 }
               </p>
             </div>
-            <span class="dl-badge dl-badge--ok">
-              <span class="dl-pulse" style="color: var(--dl-ok)"></span> Operando
-            </span>
           </div>
 
           <ul class="list-unstyled mb-0 dl-fleet-list">
@@ -62,9 +52,6 @@
                   (click)="select(unit)"
                   [attr.aria-pressed]="selectedId() === unit.id"
                 >
-                  <span class="dl-unit-thumb">
-                    <i class="bi bi-car-front-fill" aria-hidden="true"></i>
-                  </span>
 
                   <span class="flex-grow-1 text-start">
                     <span class="d-block dl-unit-name">
@@ -75,10 +62,8 @@
                       · {{ unit.serviceTier }}
                     </span>
                     <span class="d-block dl-unit-meta mt-1">
-                      <i class="bi bi-geo-alt" aria-hidden="true"></i>
                       {{ unit.location.label }}
-                      · <i class="bi bi-clock" aria-hidden="true"></i>
-                      {{ relativeTime(unit.location.lastUpdate) }}
+                      ·                      {{ relativeTime(unit.location.lastUpdate) }}
                     </span>
                   </span>
 
@@ -144,7 +129,6 @@
             [markers]="markers()"
             [selectedId]="selectedId()"
             height="27.5rem"
-            [overlayLabel]="(summary()?.activeUnits ?? 0) + ' unidades monitoreadas'"
           />
 
           <div class="dl-card__body py-3">
@@ -159,7 +143,6 @@
                 <span class="dl-legend__dot" style="background: var(--dl-danger)"></span> Póliza vencida
               </span>
               <span class="dl-legend__item ms-auto">
-                <i class="bi bi-info-circle" aria-hidden="true"></i>
                 Seleccione un pin para ver el detalle
               </span>
             </div>
@@ -174,7 +157,6 @@
         @for (item of coverage; track item.title) {
           <div class="col-sm-6 col-xl-3">
             <div class="dl-coverage__item">
-              <i [class]="'bi ' + item.icon + ' dl-coverage__icon'" aria-hidden="true"></i>
               <h4 class="dl-coverage__title">{{ item.title }}</h4>
               <p class="dl-coverage__text">{{ item.text }}</p>
             </div>
