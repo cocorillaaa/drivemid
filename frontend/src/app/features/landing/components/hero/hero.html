@@ -1,0 +1,109 @@
+<!-- Hero público: propuesta de valor ejecutiva -->
+<section class="vf-hero" id="inicio">
+  <div class="vf-hero__glow" aria-hidden="true"></div>
+
+  <div class="container position-relative">
+    <div class="row align-items-center g-5">
+      <!-- Columna de mensaje -->
+      <div class="col-lg-6">
+        <span class="vf-hero__eyebrow">
+          <span class="vf-dot"></span>
+          Transporte privado corporativo · CDMX y zona metropolitana
+        </span>
+
+        <h1 class="vf-hero__title">
+          Movilidad ejecutiva para operaciones<br class="d-none d-md-block" />
+          que no se detienen.
+        </h1>
+
+        <p class="vf-hero__lead">
+          Administramos flotillas corporativas de principio a fin: asignación de unidades,
+          conductores verificados, control de pólizas, kilometraje y telemetría en una sola
+          plataforma ejecutiva.
+        </p>
+
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <a class="vf-btn vf-btn--light" href="#contacto">
+            <i class="bi bi-building-check" aria-hidden="true"></i>
+            Solicitar servicio corporativo
+          </a>
+          <a class="vf-btn vf-btn--ghost-light" routerLink="/plataforma">
+            <i class="bi bi-speedometer2" aria-hidden="true"></i>
+            Acceso a Plataforma
+          </a>
+        </div>
+
+        <ul class="vf-hero__assurances list-unstyled">
+          <li><i class="bi bi-patch-check" aria-hidden="true"></i> Conductores con licencia federal vigente</li>
+          <li><i class="bi bi-shield-check" aria-hidden="true"></i> Unidades con póliza de cobertura amplia</li>
+          <li><i class="bi bi-clock-history" aria-hidden="true"></i> Monitoreo GPS y asistencia 24/7</li>
+        </ul>
+      </div>
+
+      <!-- Panel ilustrativo del producto -->
+      <div class="col-lg-6">
+        <div class="vf-console" role="img"
+             aria-label="Vista previa del panel de control de flota de Vanguard Fleet">
+          <div class="vf-console__bar">
+            <span class="vf-console__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="vf-console__url">vanguardfleet.mx/plataforma/flota</span>
+          </div>
+
+          <div class="vf-console__body">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <span class="vf-eyebrow vf-eyebrow--onDark">Panel de control</span>
+                <p class="vf-console__heading mb-0">Flota en operación</p>
+              </div>
+              <span class="vf-badge vf-badge--dark" style="background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.16)">
+                <span class="vf-pulse" style="color: #4ade80"></span> En vivo
+              </span>
+            </div>
+
+            <div class="vf-console__kpis">
+              <div class="vf-console__kpi">
+                <span class="vf-console__kpi-label">Unidades activas</span>
+                <span class="vf-console__kpi-value">{{ summary().activeUnits }}</span>
+              </div>
+              <div class="vf-console__kpi">
+                <span class="vf-console__kpi-label">Km esta semana</span>
+                <span class="vf-console__kpi-value">{{ formatNumber(summary().totalWeeklyKm) }}</span>
+              </div>
+              <div class="vf-console__kpi">
+                <span class="vf-console__kpi-label">Pólizas por atender</span>
+                <span class="vf-console__kpi-value">{{ summary().policyAlerts }}</span>
+              </div>
+            </div>
+
+            <ul class="vf-console__list list-unstyled mb-0">
+              @for (unit of units(); track unit.id) {
+                <li class="vf-console__row">
+                  <span class="vf-console__row-unit">
+                    <i class="bi bi-car-front-fill" aria-hidden="true"></i>
+                    <span>
+                      <strong>{{ unit.unitCode }}</strong>
+                      <em>{{ unit.make }} {{ unit.model }} · {{ unit.plates }}</em>
+                    </span>
+                  </span>
+                  <span class="vf-console__row-right">
+                    <span [class]="unitStatusBadge[unit.status]">{{ unitStatusLabel[unit.status] }}</span>
+                  </span>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Banda de indicadores -->
+    <div class="vf-hero__metrics">
+      @for (metric of metrics; track metric.label) {
+        <div class="vf-hero__metric">
+          <span class="vf-hero__metric-value">{{ metric.value }}</span>
+          <span class="vf-hero__metric-label">{{ metric.label }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</section>

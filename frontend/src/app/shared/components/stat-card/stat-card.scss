@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.vf-stat__icon--ok {
+  color: var(--vf-ok);
+  background: var(--vf-ok-bg);
+}
+
+.vf-stat__icon--warn {
+  color: var(--vf-warn);
+  background: var(--vf-warn-bg);
+}
+
+.vf-stat__icon--danger {
+  color: var(--vf-danger);
+  background: var(--vf-danger-bg);
+}

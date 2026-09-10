@@ -1,0 +1,170 @@
+<!-- Ficha técnica de la unidad (modal controlado por Signals) -->
+<div
+  class="vf-modal-backdrop"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="'Ficha técnica de ' + vehicle().unitCode"
+  (click)="close()"
+>
+  <div class="vf-modal" (click)="$event.stopPropagation()">
+    <!-- Encabezado -->
+    <header class="vf-modal__head">
+      <div class="d-flex align-items-start gap-3">
+        <span class="vf-unit-thumb" aria-hidden="true">
+          <i class="bi bi-car-front-fill"></i>
+        </span>
+        <div>
+          <p class="vf-eyebrow mb-1">Ficha técnica de unidad</p>
+          <h3 class="mb-1" style="font-size: 1.1875rem">
+            {{ vehicle().unitCode }} · {{ vehicle().make }} {{ vehicle().model }} {{ vehicle().year }}
+          </h3>
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <span class="vf-plate">{{ vehicle().plates }}</span>
+            <span [class]="unitStatusBadge[vehicle().status]">
+              {{ unitStatusLabel[vehicle().status] }}
+            </span>
+            <span [class]="policyBadge[vehicle().policy.status]">
+              Póliza {{ policyLabel[vehicle().policy.status] }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="vf-btn vf-btn--outline vf-btn--icon" aria-label="Cerrar" (click)="close()">
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <!-- Cuerpo -->
+    <div class="vf-modal__body">
+      <div class="row g-4">
+        <!-- Datos de la unidad -->
+        <div class="col-md-6">
+          <h4 class="vf-modal__section">Datos de la unidad</h4>
+          <dl class="vf-dl">
+            <div class="vf-dl__row"><dt>Número de serie (VIN)</dt><dd class="vf-mono">{{ vehicle().vin }}</dd></div>
+            <div class="vf-dl__row"><dt>Color</dt><dd>{{ vehicle().color }}</dd></div>
+            <div class="vf-dl__row"><dt>Capacidad</dt><dd>{{ vehicle().capacity }} pasajeros</dd></div>
+            <div class="vf-dl__row"><dt>Servicio</dt><dd>{{ vehicle().serviceTier }}</dd></div>
+            <div class="vf-dl__row"><dt>Odómetro</dt><dd>{{ formatKm(vehicle().odometerKm) }}</dd></div>
+            <div class="vf-dl__row"><dt>Combustible</dt><dd>{{ vehicle().fuelLevel }}%</dd></div>
+          </dl>
+
+          <h4 class="vf-modal__section mt-4">Mantenimiento preventivo</h4>
+          <div class="d-flex justify-content-between mb-2" style="font-size: 0.8125rem">
+            <span class="vf-text-muted">Servicio a los {{ formatKm(vehicle().nextServiceKm) }}</span>
+            <strong>{{ servicePct() }}%</strong>
+          </div>
+          <div class="vf-progress">
+            <div
+              [class]="'vf-progress__bar' + (servicePct() >= 90 ? ' vf-progress__bar--warn' : '')"
+              [style.width.%]="servicePct()"
+            ></div>
+          </div>
+          <p class="vf-help mb-0">
+            Último servicio: {{ formatKm(vehicle().lastServiceKm) }} ·
+            {{ formatKm(vehicle().nextServiceKm - vehicle().odometerKm) }} restantes
+          </p>
+        </div>
+
+        <!-- Conductor -->
+        <div class="col-md-6">
+          <h4 class="vf-modal__section">Conductor asignado</h4>
+          <div class="vf-driver">
+            <span class="vf-driver__avatar" aria-hidden="true">
+              {{ vehicle().driver.fullName.charAt(0) }}
+            </span>
+            <div>
+              <p class="vf-driver__name">{{ vehicle().driver.fullName }}</p>
+              <p class="vf-driver__meta">
+                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                {{ vehicle().driver.rating }} · Asignado desde
+                {{ formatDate(vehicle().driver.assignedSince) }}
+              </p>
+            </div>
+          </div>
+
+          <dl class="vf-dl mt-3">
+            <div class="vf-dl__row"><dt>Teléfono</dt><dd>{{ formatPhone(vehicle().driver.phone) }}</dd></div>
+            <div class="vf-dl__row"><dt>Correo</dt><dd>{{ vehicle().driver.email }}</dd></div>
+            <div class="vf-dl__row">
+              <dt>Licencia federal</dt>
+              <dd class="vf-mono">{{ vehicle().driver.licenseNumber }}</dd>
+            </div>
+          </dl>
+
+          <h4 class="vf-modal__section mt-4">Póliza de seguro</h4>
+          <dl class="vf-dl">
+            <div class="vf-dl__row"><dt>Aseguradora</dt><dd>{{ vehicle().policy.provider }}</dd></div>
+            <div class="vf-dl__row">
+              <dt>Número de póliza</dt>
+              <dd class="vf-mono">{{ vehicle().policy.policyNumber }}</dd>
+            </div>
+            <div class="vf-dl__row">
+              <dt>Vigencia</dt>
+              <dd>{{ formatDate(vehicle().policy.validFrom) }} — {{ formatDate(vehicle().policy.validTo) }}</dd>
+            </div>
+            <div class="vf-dl__row">
+              <dt>Estatus</dt>
+              <dd>
+                <span [class]="policyBadge[vehicle().policy.status]">
+                  {{ policyCountdownText(vehicle().policy.daysToExpire) }}
+                </span>
+              </dd>
+            </div>
+          </dl>
+          <p class="vf-help mb-0">{{ vehicle().policy.coverage }}</p>
+        </div>
+
+        <!-- Kilometraje y ubicación -->
+        <div class="col-md-6">
+          <h4 class="vf-modal__section">Kilometraje de la semana</h4>
+          <div class="vf-bars vf-bars--lg mb-2">
+            @for (km of vehicle().weeklyKmByDay; track $index) {
+              <span
+                class="vf-bars__bar"
+                [class.vf-bars__bar--today]="$index === 4"
+                [style.height.%]="(km / maxDailyKm()) * 100"
+                [attr.title]="km + ' km'"
+              ></span>
+            }
+          </div>
+          <div class="d-flex justify-content-between">
+            @for (day of weekDays; track $index) {
+              <span class="vf-text-muted" style="font-size: 0.6875rem">{{ day }}</span>
+            }
+          </div>
+          <p class="vf-help">Total semanal: {{ formatKm(vehicle().weeklyKm) }}</p>
+        </div>
+
+        <div class="col-md-6">
+          <h4 class="vf-modal__section">Última ubicación reportada</h4>
+          <dl class="vf-dl">
+            <div class="vf-dl__row"><dt>Dirección</dt><dd>{{ vehicle().location.label }}</dd></div>
+            <div class="vf-dl__row"><dt>Corredor</dt><dd>{{ vehicle().location.zone }}</dd></div>
+            <div class="vf-dl__row">
+              <dt>Coordenadas</dt>
+              <dd class="vf-mono">
+                {{ vehicle().location.lat.toFixed(4) }}, {{ vehicle().location.lng.toFixed(4) }}
+              </dd>
+            </div>
+            <div class="vf-dl__row"><dt>Velocidad</dt><dd>{{ vehicle().location.speedKmh }} km/h</dd></div>
+            <div class="vf-dl__row">
+              <dt>Reporte</dt>
+              <dd>{{ relativeTime(vehicle().location.lastUpdate) }}</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pie -->
+    <footer class="vf-modal__foot">
+      <button type="button" class="vf-btn vf-btn--outline" (click)="close()">Cerrar</button>
+      <button type="button" class="vf-btn vf-btn--dark" (click)="openAsUnitAdmin()">
+        <i class="bi bi-person-vcard" aria-hidden="true"></i>
+        Abrir como Administrador de Unidad
+      </button>
+    </footer>
+  </div>
+</div>

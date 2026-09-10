@@ -1,0 +1,41 @@
+# ---------------------------------------------------------------------------
+# Vanguard Fleet · monorepo (Angular 22 + Laravel 13)
+# ---------------------------------------------------------------------------
+
+# Dependencias
+node_modules/
+vendor/
+
+# Artefactos de build
+dist/
+build/
+.angular/
+*.tsbuildinfo
+
+# Entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Almacenamiento y caché de Laravel
+backend/storage/*.key
+backend/storage/framework/cache/data/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/logs/*
+backend/bootstrap/cache/*.php
+backend/database/*.sqlite
+backend/database/*.sqlite-journal
+
+# Herramientas de agentes IA (cachés de skills generadas por Laravel Boost)
+backend/.agents/
+backend/.claude/
+backend/.grok/
+
+# Editores y sistema operativo
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+*.log

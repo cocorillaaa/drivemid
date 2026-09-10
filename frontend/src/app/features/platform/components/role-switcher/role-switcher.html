@@ -1,0 +1,38 @@
+<!-- Selector rápido de rol (simulación de sesión) -->
+<div class="vf-role-switch">
+  <span class="vf-role-switch__label">
+    <i class="bi bi-person-gear" aria-hidden="true"></i>
+    <span class="d-none d-xl-inline">Rol de sesión</span>
+  </span>
+
+  <div class="vf-role-switch__group" role="group" aria-label="Selector de rol de sesión">
+    @for (profile of profiles; track profile.id) {
+      <button
+        type="button"
+        [class]="'vf-role-switch__option' + (role() === profile.id ? ' is-active' : '')"
+        [attr.aria-pressed]="role() === profile.id"
+        [attr.title]="profile.label"
+        (click)="select(profile.id)"
+      >
+        <i [class]="'bi ' + profile.icon" aria-hidden="true"></i>
+        <span>{{ profile.shortLabel }}</span>
+      </button>
+    }
+  </div>
+
+  @if (role() === 'unit_admin') {
+    <label class="vf-role-switch__unit">
+      <span class="visually-hidden">Unidad asignada</span>
+      <i class="bi bi-car-front" aria-hidden="true"></i>
+      <select
+        class="vf-role-switch__select"
+        [value]="activeUnitId()"
+        (change)="onUnitChange($event)"
+      >
+        @for (unit of vehicles(); track unit.id) {
+          <option [value]="unit.id">{{ unit.unitCode }} · {{ unit.plates }}</option>
+        }
+      </select>
+    </label>
+  }
+</div>

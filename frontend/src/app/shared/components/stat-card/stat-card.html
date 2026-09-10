@@ -1,0 +1,20 @@
+<!-- Tarjeta ejecutiva de métrica -->
+<article [class]="'vf-stat' + (accent() ? ' vf-stat--accent' : '')">
+  <header class="vf-stat__top">
+    <p class="vf-stat__label">{{ label() }}</p>
+    <span [class]="'vf-stat__icon vf-stat__icon--' + tone()">
+      <i [class]="'bi ' + icon()" aria-hidden="true"></i>
+    </span>
+  </header>
+
+  <p class="vf-stat__value">
+    {{ value() }}
+    @if (unit()) {
+      <span class="vf-stat__unit">{{ unit() }}</span>
+    }
+  </p>
+
+  @if (hint()) {
+    <p class="vf-stat__hint">{{ hint() }}</p>
+  }
+</article>

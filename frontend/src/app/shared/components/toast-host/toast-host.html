@@ -1,0 +1,24 @@
+<!-- Contenedor global de notificaciones de la demo -->
+<div class="vf-toast-host" role="status" aria-live="polite" aria-atomic="false">
+  @for (toast of toasts(); track toast.id) {
+    <div [class]="'vf-toast vf-toast--' + toast.variant">
+      <i [class]="'bi ' + toast.icon + ' vf-toast__icon'" aria-hidden="true"></i>
+
+      <div class="flex-grow-1">
+        <p class="vf-toast__title">{{ toast.title }}</p>
+        @if (toast.body) {
+          <p class="vf-toast__body">{{ toast.body }}</p>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="vf-toast__close"
+        aria-label="Cerrar notificación"
+        (click)="dismiss(toast.id)"
+      >
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+  }
+</div>

@@ -1,0 +1,414 @@
+<!-- Dashboard Administrador de Unidad · Vista individual -->
+@if (unit(); as u) {
+  <!-- ===================== Encabezado ===================== -->
+  <header class="vf-page-head">
+    <div>
+      <span class="vf-eyebrow">Administrador de Unidad · Vista individual</span>
+      <h1 class="vf-page-head__title">{{ u.unitCode }} · {{ u.make }} {{ u.model }} {{ u.year }}</h1>
+      <p class="vf-page-head__sub">
+        Acceso restringido a una sola unidad de la flota. Actualice el kilometraje semanal y el
+        teléfono de contacto del conductor; el resto de la ficha es de solo lectura.
+      </p>
+    </div>
+
+    <div class="vf-page-head__actions">
+      <span class="vf-badge vf-badge--neutral">
+        <i class="bi bi-lock" aria-hidden="true"></i>
+        Permisos: 1 unidad
+      </span>
+      <span class="vf-badge vf-badge--neutral">
+        <i class="bi bi-hdd-network" aria-hidden="true"></i>
+        {{ dataSource() === 'api' ? 'API Laravel · :8001' : 'Dataset demo' }}
+      </span>
+    </div>
+  </header>
+
+  <!-- ===================== Identificación de la unidad ===================== -->
+  <section class="vf-unit-band">
+    <div class="vf-unit-band__main">
+      <span class="vf-unit-band__thumb" aria-hidden="true">
+        <i class="bi bi-car-front-fill"></i>
+      </span>
+
+      <div>
+        <p class="vf-eyebrow mb-1">Unidad asignada</p>
+        <h2 class="vf-unit-band__title">{{ u.make }} {{ u.model }} {{ u.year }}</h2>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <span class="vf-plate">{{ u.plates }}</span>
+          <span [class]="unitStatusBadge[u.status]">{{ unitStatusLabel[u.status] }}</span>
+          <span [class]="policyBadge[u.policy.status]">
+            Póliza {{ policyLabel[u.policy.status] }}
+          </span>
+          <span class="vf-badge vf-badge--neutral">{{ u.serviceTier }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="vf-unit-band__meta">
+      <div class="vf-unit-band__meta-item">
+        <span class="vf-eyebrow">Odómetro</span>
+        <strong>{{ formatKm(u.odometerKm) }}</strong>
+      </div>
+      <div class="vf-unit-band__meta-item">
+        <span class="vf-eyebrow">Km esta semana</span>
+        <strong>{{ formatKm(u.weeklyKm) }}</strong>
+      </div>
+      <div class="vf-unit-band__meta-item">
+        <span class="vf-eyebrow">Combustible</span>
+        <strong>{{ u.fuelLevel }}%</strong>
+      </div>
+      <div class="vf-unit-band__meta-item">
+        <span class="vf-eyebrow">Reporte GPS</span>
+        <strong>{{ relativeTime(u.location.lastUpdate) }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Métricas rápidas ===================== -->
+  <section class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+      <vf-stat-card
+        [accent]="true"
+        icon="bi-speedometer2"
+        label="Km de la semana"
+        [value]="u.weeklyKm"
+        unit="km"
+        [hint]="'Promedio de ' + dailyAverageKm() + ' km por día'"
+      />
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <vf-stat-card
+        icon="bi-tools"
+        [tone]="kmToService() <= 1500 ? 'warn' : 'default'"
+        label="Próximo servicio"
+        [value]="formatKm(kmToService())"
+        [hint]="'Programado a los ' + formatKm(u.nextServiceKm)"
+      />
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <vf-stat-card
+        icon="bi-shield-check"
+        [tone]="u.policy.status === 'vigente' ? 'ok' : (u.policy.status === 'por_vencer' ? 'warn' : 'danger')"
+        label="Días de póliza"
+        [value]="u.policy.daysToExpire"
+        unit="días"
+        [hint]="'Vence el ' + formatDate(u.policy.validTo)"
+      />
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <vf-stat-card
+        icon="bi-star"
+        tone="default"
+        label="Calificación del conductor"
+        [value]="u.driver.rating"
+        unit="/ 5"
+        [hint]="u.driver.fullName"
+      />
+    </div>
+  </section>
+
+  <!-- ===================== Formulario rápido + ficha técnica ===================== -->
+  <div class="row g-4 mb-4">
+    <!-- Formulario rápido de actualización -->
+    <div class="col-xl-5">
+      <section class="vf-card h-100">
+        <div class="vf-card__head">
+          <div>
+            <h2 class="vf-card__title">Actualizar estatus de la unidad</h2>
+            <p class="vf-card__subtitle">Kilometraje semanal y teléfono de contacto</p>
+          </div>
+          @if (hasChanges()) {
+            <span class="vf-badge vf-badge--warn">
+              <i class="bi bi-pencil-square" aria-hidden="true"></i> Sin guardar
+            </span>
+          }
+        </div>
+
+        <div class="vf-card__body">
+          <form [formGroup]="updateForm" (ngSubmit)="submit()" novalidate>
+            <!-- Kilometraje semanal -->
+            <div class="mb-4">
+              <label class="vf-label" for="ua-km">Km recorridos en la semana *</label>
+              <div class="vf-input-group">
+                <input
+                  id="ua-km"
+                  type="number"
+                  min="0"
+                  max="5000"
+                  step="1"
+                  class="form-control"
+                  formControlName="weeklyKm"
+                  [class.is-invalid]="showError('weeklyKm')"
+                />
+                <span class="vf-input-group__addon">km</span>
+              </div>
+              @if (showError('weeklyKm')) {
+                <span class="vf-error">Capture un kilometraje entre 0 y 5,000 km.</span>
+              } @else {
+                <span class="vf-help">
+                  Valor registrado actualmente: <strong>{{ formatKm(u.weeklyKm) }}</strong>
+                  · Promedio {{ dailyAverageKm() }} km/día
+                </span>
+              }
+            </div>
+
+            <!-- Teléfono -->
+            <div class="mb-4">
+              <label class="vf-label" for="ua-phone">Teléfono de contacto del conductor *</label>
+              <div class="vf-input-group">
+                <span class="vf-input-group__addon vf-input-group__addon--prefix">+52</span>
+                <input
+                  id="ua-phone"
+                  type="tel"
+                  inputmode="numeric"
+                  maxlength="10"
+                  class="form-control"
+                  formControlName="phone"
+                  placeholder="5548217390"
+                  [class.is-invalid]="showError('phone')"
+                />
+              </div>
+              @if (showError('phone')) {
+                <span class="vf-error">Capture 10 dígitos, sin espacios ni guiones.</span>
+              } @else {
+                <span class="vf-help">
+                  Contacto vigente: <strong>{{ formatPhone(u.driver.phone) }}</strong>
+                </span>
+              }
+            </div>
+
+            <hr class="vf-hairline mb-4" />
+
+            <div class="d-flex flex-wrap gap-2">
+              <button type="submit" class="vf-btn vf-btn--dark flex-grow-1" [disabled]="saving()">
+                @if (saving()) {
+                  <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                  Guardando…
+                } @else {
+                  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                  Guardar actualización
+                }
+              </button>
+              <button
+                type="button"
+                class="vf-btn vf-btn--outline"
+                [disabled]="!hasChanges() || saving()"
+                (click)="resetForm()"
+              >
+                <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+                Restaurar
+              </button>
+            </div>
+
+            <p class="vf-help mb-0 mt-3">
+              <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+              El ajuste sólo afecta a {{ u.unitCode }}. Queda registrado en la consola del
+              navegador para efectos de esta demostración.
+            </p>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <!-- Ficha técnica -->
+    <div class="col-xl-7">
+      <section class="vf-card h-100">
+        <div class="vf-card__head">
+          <div>
+            <h2 class="vf-card__title">Ficha técnica de la unidad</h2>
+            <p class="vf-card__subtitle">Información de solo lectura del vehículo y su conductor</p>
+          </div>
+          <span class="vf-badge vf-badge--neutral">
+            <i class="bi bi-eye" aria-hidden="true"></i> Solo lectura
+          </span>
+        </div>
+
+        <div class="vf-card__body">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <h3 class="vf-mini-title">Vehículo</h3>
+              <dl class="vf-dl">
+                <div class="vf-dl__row"><dt>Número de serie (VIN)</dt><dd class="vf-mono">{{ u.vin }}</dd></div>
+                <div class="vf-dl__row"><dt>Color</dt><dd>{{ u.color }}</dd></div>
+                <div class="vf-dl__row"><dt>Capacidad</dt><dd>{{ u.capacity }} pasajeros</dd></div>
+                <div class="vf-dl__row"><dt>Servicio asignado</dt><dd>{{ u.serviceTier }}</dd></div>
+                <div class="vf-dl__row"><dt>Odómetro</dt><dd>{{ formatKm(u.odometerKm) }}</dd></div>
+                <div class="vf-dl__row">
+                  <dt>Último servicio</dt>
+                  <dd>{{ formatKm(u.lastServiceKm) }}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="col-md-6">
+              <h3 class="vf-mini-title">Conductor asignado</h3>
+              <dl class="vf-dl">
+                <div class="vf-dl__row"><dt>Nombre</dt><dd>{{ u.driver.fullName }}</dd></div>
+                <div class="vf-dl__row"><dt>Teléfono</dt><dd>{{ formatPhone(u.driver.phone) }}</dd></div>
+                <div class="vf-dl__row"><dt>Correo</dt><dd>{{ u.driver.email }}</dd></div>
+                <div class="vf-dl__row">
+                  <dt>Licencia federal</dt>
+                  <dd class="vf-mono">{{ u.driver.licenseNumber }}</dd>
+                </div>
+                <div class="vf-dl__row">
+                  <dt>Asignado desde</dt>
+                  <dd>{{ formatDate(u.driver.assignedSince) }}</dd>
+                </div>
+                <div class="vf-dl__row">
+                  <dt>Calificación</dt>
+                  <dd>
+                    <i class="bi bi-star-fill" style="color: #c9a227" aria-hidden="true"></i>
+                    {{ u.driver.rating }} / 5
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <!-- Mantenimiento preventivo -->
+            <div class="col-12">
+              <h3 class="vf-mini-title">Mantenimiento preventivo</h3>
+              <div class="d-flex justify-content-between mb-2" style="font-size: 0.8125rem">
+                <span class="vf-text-muted">
+                  Avance hacia el servicio de los {{ formatKm(u.nextServiceKm) }}
+                </span>
+                <strong>{{ servicePct() }}%</strong>
+              </div>
+              <div class="vf-progress">
+                <div
+                  [class]="'vf-progress__bar' + (servicePct() >= 85 ? ' vf-progress__bar--warn' : '')"
+                  [style.width.%]="servicePct()"
+                ></div>
+              </div>
+              <p class="vf-help mb-0">
+                Restan {{ formatKm(kmToService()) }} para el siguiente servicio programado.
+              </p>
+            </div>
+
+            <!-- Kilometraje diario -->
+            <div class="col-12">
+              <h3 class="vf-mini-title">Kilometraje diario de la semana</h3>
+              <div class="vf-bars vf-bars--lg mb-2">
+                @for (km of u.weeklyKmByDay; track $index) {
+                  <span
+                    class="vf-bars__bar"
+                    [class.vf-bars__bar--today]="$index === 4"
+                    [style.height.%]="(km / maxDailyKm()) * 100"
+                    [attr.title]="km + ' km'"
+                  ></span>
+                }
+              </div>
+              <div class="d-flex justify-content-between">
+                @for (day of weekDays; track $index) {
+                  <span class="vf-text-muted" style="font-size: 0.6875rem">{{ day }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ===================== Póliza + ubicación ===================== -->
+  <div class="row g-4">
+    <!-- Póliza de seguro -->
+    <div class="col-xl-5">
+      <section class="vf-card h-100">
+        <div class="vf-card__head">
+          <div>
+            <h2 class="vf-card__title">Póliza de seguro</h2>
+            <p class="vf-card__subtitle">Vigencia y cobertura contratada</p>
+          </div>
+          <span [class]="policyBadge[u.policy.status]">{{ policyLabel[u.policy.status] }}</span>
+        </div>
+
+        <div class="vf-card__body">
+          <div class="vf-policy-hero">
+            <span class="vf-eyebrow">Aseguradora</span>
+            <p class="vf-policy-hero__provider">{{ u.policy.provider }}</p>
+            <p class="vf-policy-hero__number vf-mono">{{ u.policy.policyNumber }}</p>
+          </div>
+
+          <dl class="vf-dl">
+            <div class="vf-dl__row">
+              <dt>Inicio de vigencia</dt><dd>{{ formatDate(u.policy.validFrom) }}</dd>
+            </div>
+            <div class="vf-dl__row">
+              <dt>Fin de vigencia</dt><dd>{{ formatDate(u.policy.validTo) }}</dd>
+            </div>
+            <div class="vf-dl__row">
+              <dt>Estatus</dt>
+              <dd>
+                <span [class]="policyBadge[u.policy.status]">
+                  {{ policyCountdownText(u.policy.daysToExpire) }}
+                </span>
+              </dd>
+            </div>
+            <div class="vf-dl__row"><dt>Cobertura</dt><dd>{{ u.policy.coverage }}</dd></div>
+          </dl>
+
+          @if (u.policy.status !== 'vigente') {
+            <div class="vf-policy-alert">
+              <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+              <p class="mb-0">
+                Esta unidad requiere renovación de póliza. Contacte al área de Operaciones
+                para programar el trámite.
+              </p>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+
+    <!-- Mapa individual -->
+    <div class="col-xl-7">
+      <section class="vf-card h-100 overflow-hidden">
+        <div class="vf-card__head">
+          <div>
+            <h2 class="vf-card__title">Última ubicación de la unidad</h2>
+            <p class="vf-card__subtitle">{{ u.location.label }} · {{ u.location.zone }}</p>
+          </div>
+          <button type="button" class="vf-btn vf-btn--outline vf-btn--sm" (click)="copyCoordinates()">
+            <i class="bi bi-clipboard" aria-hidden="true"></i>
+            Copiar coordenadas
+          </button>
+        </div>
+
+        <vf-fleet-map
+          [markers]="markers()"
+          [singleUnit]="true"
+          [zoom]="14"
+          height="24rem"
+          [overlayLabel]="u.unitCode + ' rastreada'"
+        />
+
+        <div class="vf-card__body pt-3">
+          <div class="row g-3">
+            <div class="col-sm-3">
+              <span class="vf-eyebrow d-block mb-1">Latitud</span>
+              <span class="vf-mono">{{ u.location.lat.toFixed(5) }}</span>
+            </div>
+            <div class="col-sm-3">
+              <span class="vf-eyebrow d-block mb-1">Longitud</span>
+              <span class="vf-mono">{{ u.location.lng.toFixed(5) }}</span>
+            </div>
+            <div class="col-sm-3">
+              <span class="vf-eyebrow d-block mb-1">Velocidad</span>
+              <span>{{ u.location.speedKmh }} km/h · {{ u.location.heading }}</span>
+            </div>
+            <div class="col-sm-3">
+              <span class="vf-eyebrow d-block mb-1">Último reporte</span>
+              <span>{{ relativeTime(u.location.lastUpdate) }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+} @else {
+  <!-- Estado de carga mientras se resuelve la unidad asignada -->
+  <div class="vf-empty">
+    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+    <p class="mb-0">Cargando la unidad asignada…</p>
+  </div>
+}

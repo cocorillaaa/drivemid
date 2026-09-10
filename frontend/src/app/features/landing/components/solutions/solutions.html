@@ -1,0 +1,37 @@
+<!-- Soluciones de movilidad ejecutiva -->
+<section class="vf-section" id="soluciones">
+  <div class="container">
+    <div class="vf-section-head">
+      <span class="vf-eyebrow">Soluciones</span>
+      <h2>Un solo operador para toda la movilidad de su empresa</h2>
+      <p class="vf-lead mb-0">
+        Desde el traslado diario de colaboradores hasta la logística de un roadshow:
+        asignamos unidades, conductores y esquemas de control a la medida de cada operación.
+      </p>
+    </div>
+
+    <div class="row g-3 g-lg-4">
+      @for (solution of solutions; track solution.title) {
+        <div class="col-md-6 col-xl-3">
+          <article class="vf-card vf-card--pad vf-card--hover vf-solution h-100">
+            <span class="vf-solution__icon">
+              <i [class]="'bi ' + solution.icon" aria-hidden="true"></i>
+            </span>
+
+            <h3 class="vf-solution__title">{{ solution.title }}</h3>
+            <p class="vf-solution__text">{{ solution.description }}</p>
+
+            <ul class="vf-solution__bullets list-unstyled mb-0">
+              @for (bullet of solution.bullets; track bullet) {
+                <li>
+                  <i class="bi bi-dash-lg" aria-hidden="true"></i>
+                  {{ bullet }}
+                </li>
+              }
+            </ul>
+          </article>
+        </div>
+      }
+    </div>
+  </div>
+</section>

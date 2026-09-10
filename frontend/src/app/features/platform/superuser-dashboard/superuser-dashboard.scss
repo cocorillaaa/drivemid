@@ -1,0 +1,98 @@
+:host {
+  display: block;
+}
+
+/* Fila resaltada tras "Ubicar en el mapa" */
+.vf-row--selected {
+  background: var(--vf-surface-2) !important;
+  box-shadow: inset 3px 0 0 var(--vf-black);
+}
+
+.vf-row-actions {
+  display: inline-flex;
+  gap: 0.3rem;
+  justify-content: flex-end;
+}
+
+.vf-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  color: var(--vf-ink);
+  white-space: nowrap;
+}
+
+.vf-phone i {
+  color: var(--vf-slate-light);
+  font-size: 0.8rem;
+}
+
+.vf-phone:hover {
+  color: var(--vf-black);
+  text-decoration: underline;
+}
+
+/* --- Alertas de pólizas --- */
+.vf-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--vf-line);
+}
+
+.vf-alert:last-child {
+  border-bottom: 0;
+}
+
+.vf-alert__icon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+
+.vf-alert__icon--vencida {
+  background: var(--vf-danger-bg);
+  color: var(--vf-danger);
+}
+
+.vf-alert__icon--por_vencer {
+  background: var(--vf-warn-bg);
+  color: var(--vf-warn);
+}
+
+.vf-alert__title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vf-black);
+  margin: 0 0 0.2rem;
+}
+
+.vf-alert__text {
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--vf-slate);
+  margin: 0;
+}
+
+/* --- Distribución de kilometraje --- */
+.vf-km-row + .vf-km-row {
+  margin-top: 1rem;
+}
+
+.vf-km-row__label {
+  font-size: 0.8125rem;
+  color: var(--vf-graphite);
+}
+
+.vf-km-row__value {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--vf-black);
+  font-variant-numeric: tabular-nums;
+}

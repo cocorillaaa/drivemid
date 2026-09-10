@@ -1,0 +1,99 @@
+:host {
+  display: block;
+}
+
+/* --- Listado de unidades --- */
+.vf-fleet-list {
+  max-height: 30rem;
+  overflow-y: auto;
+}
+
+.vf-fleet-item {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--vf-line);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.vf-fleet-item:hover {
+  background: var(--vf-surface);
+}
+
+.vf-fleet-item.is-active {
+  background: var(--vf-surface-2);
+  box-shadow: inset 3px 0 0 var(--vf-black);
+}
+
+.vf-fleet-item .bi-geo-alt,
+.vf-fleet-item .bi-clock {
+  color: var(--vf-slate-light);
+}
+
+/* --- Mapa dentro de la tarjeta --- */
+vf-fleet-map {
+  display: block;
+  padding: 1rem 1rem 0;
+}
+
+/* --- Banda de cobertura --- */
+.vf-coverage {
+  margin-top: 3.5rem;
+  border: 1px solid var(--vf-line);
+  border-radius: var(--vf-radius);
+  background: var(--vf-white);
+  overflow: hidden;
+}
+
+.vf-coverage__item {
+  height: 100%;
+  padding: 1.5rem;
+  border-right: 1px solid var(--vf-line);
+}
+
+.vf-coverage__icon {
+  display: block;
+  font-size: 1.15rem;
+  color: var(--vf-black);
+  margin-bottom: 0.75rem;
+}
+
+.vf-coverage__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.vf-coverage__text {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--vf-slate);
+  margin: 0;
+}
+
+@media (min-width: 1200px) {
+  .vf-coverage__item {
+    border-right: 1px solid var(--vf-line);
+  }
+
+  .vf-coverage .col-xl-3:last-child .vf-coverage__item {
+    border-right: 0;
+  }
+}
+
+@media (max-width: 1199.98px) {
+  .vf-coverage .col-sm-6:nth-child(2n) .vf-coverage__item {
+    border-right: 0;
+  }
+
+  .vf-coverage .col-sm-6:nth-child(-n + 2) .vf-coverage__item {
+    border-bottom: 1px solid var(--vf-line);
+  }
+}

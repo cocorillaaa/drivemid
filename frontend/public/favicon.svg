@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Vanguard Fleet">
+  <rect width="64" height="64" rx="14" fill="#111111"/>
+  <path d="M15 19 L32 47 L49 19" fill="none" stroke="#ffffff" stroke-width="5.5"
+        stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M24 19 L32 33 L40 19" fill="none" stroke="#8a8f96" stroke-width="3"
+        stroke-linecap="square" stroke-linejoin="miter"/>
+</svg>

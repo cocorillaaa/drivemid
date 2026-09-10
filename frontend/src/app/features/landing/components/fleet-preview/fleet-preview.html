@@ -1,0 +1,164 @@
+<!-- Flota en vivo: mapa interactivo + listado sincronizado -->
+<section class="vf-section vf-section--surface" id="flota">
+  <div class="container">
+    <div class="row align-items-end g-4 mb-4">
+      <div class="col-lg-7">
+        <span class="vf-eyebrow">Flota en vivo</span>
+        <h2 class="mt-2 mb-3" style="font-size: clamp(1.6rem, 2.4vw, 2.1rem)">
+          Cuatro unidades ejecutivas, supervisadas en tiempo real
+        </h2>
+        <p class="vf-lead mb-0">
+          Cada unidad reporta ubicación, kilometraje semanal y vigencia de póliza.
+          Seleccione una unidad del listado para ubicarla en el mapa.
+        </p>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
+          <span class="vf-badge vf-badge--neutral">
+            <i class="bi bi-database-check" aria-hidden="true"></i>
+            Fuente: {{ dataSource() === 'api' ? 'API Laravel · :8001' : 'Dataset demo' }}
+          </span>
+          <span class="vf-badge vf-badge--neutral">
+            <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
+            {{ formatNumber(summary().totalWeeklyKm) }} km esta semana
+          </span>
+          <a class="vf-btn vf-btn--dark vf-btn--sm" routerLink="/plataforma">
+            <i class="bi bi-speedometer2" aria-hidden="true"></i>
+            Abrir plataforma
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-3 g-lg-4">
+      <!-- Listado de unidades -->
+      <div class="col-lg-5">
+        <div class="vf-card h-100 overflow-hidden">
+          <div class="vf-card__head">
+            <div>
+              <h3 class="vf-card__title">Unidades asignadas</h3>
+              <p class="vf-card__subtitle">
+                {{ summary().onServiceUnits }} en servicio · {{ summary().availableUnits }} disponibles
+              </p>
+            </div>
+            <span class="vf-badge vf-badge--ok">
+              <span class="vf-pulse" style="color: var(--vf-ok)"></span> Operando
+            </span>
+          </div>
+
+          <ul class="list-unstyled mb-0 vf-fleet-list">
+            @for (unit of vehicles(); track unit.id) {
+              <li>
+                <button
+                  type="button"
+                  [class]="'vf-fleet-item' + (selectedId() === unit.id ? ' is-active' : '')"
+                  (click)="select(unit)"
+                  [attr.aria-pressed]="selectedId() === unit.id"
+                >
+                  <span class="vf-unit-thumb">
+                    <i class="bi bi-car-front-fill" aria-hidden="true"></i>
+                  </span>
+
+                  <span class="flex-grow-1 text-start">
+                    <span class="d-block vf-unit-name">
+                      {{ unit.unitCode }} · {{ unit.make }} {{ unit.model }}
+                    </span>
+                    <span class="d-block vf-unit-meta">
+                      <span class="vf-plate">{{ unit.plates }}</span>
+                      · {{ unit.driver.fullName }}
+                    </span>
+                    <span class="d-block vf-unit-meta mt-1">
+                      <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                      {{ unit.location.label }}
+                      · <i class="bi bi-clock" aria-hidden="true"></i>
+                      {{ relativeTime(unit.location.lastUpdate) }}
+                    </span>
+                  </span>
+
+                  <span class="text-end flex-shrink-0">
+                    <span class="d-block fw-semibold" style="font-size: 0.8125rem">
+                      {{ formatKm(unit.weeklyKm) }}
+                    </span>
+                    <span [class]="policyBadge[unit.policy.status] + ' mt-1'">
+                      {{ policyLabel[unit.policy.status] }}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            }
+          </ul>
+
+          <div class="vf-card__body border-top pt-3 pb-3">
+            <div class="vf-dl">
+              <div class="vf-dl__row">
+                <dt>Conductor de la unidad seleccionada</dt>
+                <dd>
+                  {{ selectedUnit()?.driver?.fullName ?? vehicles()[0]?.driver?.fullName }}
+                </dd>
+              </div>
+              <div class="vf-dl__row">
+                <dt>Teléfono de contacto</dt>
+                <dd>
+                  {{ formatPhone(selectedUnit()?.driver?.phone ?? vehicles()[0]?.driver?.phone ?? '') }}
+                </dd>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mapa -->
+      <div class="col-lg-7">
+        <div class="vf-card h-100 overflow-hidden">
+          <div class="vf-card__head">
+            <div>
+              <h3 class="vf-card__title">Cobertura operativa · Valle de México</h3>
+              <p class="vf-card__subtitle">Última posición reportada por telemetría GPS</p>
+            </div>
+          </div>
+
+          <vf-fleet-map
+            [markers]="markers()"
+            [selectedId]="selectedId()"
+            height="27.5rem"
+            [overlayLabel]="summary().activeUnits + ' unidades monitoreadas'"
+          />
+
+          <div class="vf-card__body py-3">
+            <div class="vf-legend">
+              <span class="vf-legend__item">
+                <span class="vf-legend__dot" style="background: var(--vf-ok)"></span> Póliza vigente
+              </span>
+              <span class="vf-legend__item">
+                <span class="vf-legend__dot" style="background: var(--vf-warn)"></span> Póliza por vencer
+              </span>
+              <span class="vf-legend__item">
+                <span class="vf-legend__dot" style="background: var(--vf-danger)"></span> Póliza vencida
+              </span>
+              <span class="vf-legend__item ms-auto">
+                <i class="bi bi-info-circle" aria-hidden="true"></i>
+                Seleccione un pin para ver el detalle
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Banda de cobertura -->
+    <div class="vf-coverage" id="cobertura">
+      <div class="row g-0">
+        @for (item of coverage; track item.title) {
+          <div class="col-sm-6 col-xl-3">
+            <div class="vf-coverage__item">
+              <i [class]="'bi ' + item.icon + ' vf-coverage__icon'" aria-hidden="true"></i>
+              <h4 class="vf-coverage__title">{{ item.title }}</h4>
+              <p class="vf-coverage__text">{{ item.text }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>
