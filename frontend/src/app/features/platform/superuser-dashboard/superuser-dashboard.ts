@@ -57,9 +57,6 @@ export class SuperuserDashboard {
   /** Unidades crudas. */
   readonly vehicles = this.fleet.vehicles;
 
-  /** Estado de carga de la telemetría. */
-  readonly fleetLoading = this.fleet.loading;
-
   /** Filtro activo de la tabla. */
   readonly filter = signal<FleetFilter>('all');
 
@@ -131,12 +128,6 @@ export class SuperuserDashboard {
   /** Cambia el filtro de la tabla. */
   setFilter(filter: FleetFilter): void {
     this.filter.set(filter);
-  }
-
-  /** Vuelve a consultar la telemetría de la flota. */
-  refresh(): void {
-    this.fleet.refresh();
-    this.toast.info('Telemetría actualizada', 'Se consultaron las posiciones más recientes.');
   }
 
   /** Resalta una unidad en el mapa y desplaza la vista hacia él. */

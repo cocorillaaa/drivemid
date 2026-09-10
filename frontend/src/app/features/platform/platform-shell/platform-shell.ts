@@ -43,9 +43,6 @@ export class PlatformShell implements OnDestroy {
   /** Resumen de flota (sólo Superusuario). */
   readonly summary = this.fleet.summary;
 
-  /** `true` mientras se refresca la telemetría. */
-  readonly refreshing = this.fleet.refreshing;
-
   /** Ruta de inicio del rol autenticado. */
   readonly homeRoute = computed(() => homeRouteFor(this.auth.role()));
 
@@ -73,11 +70,6 @@ export class PlatformShell implements OnDestroy {
   /** Cierra el menú de usuario. */
   closeMenu(): void {
     this.menuOpen.set(false);
-  }
-
-  /** Fuerza un refresco manual de la telemetría. */
-  refresh(): void {
-    this.fleet.refresh();
   }
 
   /** Cierra la sesión y vuelve a la pantalla de acceso. */

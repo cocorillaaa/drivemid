@@ -44,6 +44,13 @@
   color: var(--dl-white);
 }
 
+.dl-login__logo {
+  display: block;
+  width: auto;
+  height: 34px;
+  flex: 0 0 auto;
+}
+
 .dl-login__brand > span:last-child {
   display: flex;
   flex-direction: column;

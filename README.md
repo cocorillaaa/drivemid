@@ -357,13 +357,17 @@ tanto sobre negro como sobre blanco.
 
 ## 10. Capturas
 
-| Acceso a la plataforma | Panel de flota (Superusuario) |
+| Landing pública | Acceso a la plataforma |
 |---|---|
-| ![Acceso](docs/screenshots/07-acceso.png) | ![Panel de flota](docs/screenshots/02-panel-flota.png) |
+| ![Landing](docs/screenshots/01-landing.png) | ![Acceso](docs/screenshots/07-acceso.png) |
 
-| Mapa de operación | Mi unidad (Administrador de Unidad) |
+| Panel de flota (Superusuario) | Mi unidad (Administrador de Unidad) |
 |---|---|
-| ![Mapa](docs/screenshots/03-mapa-flota.png) | ![Unidad](docs/screenshots/04-unidad-admin.png) |
+| ![Panel de flota](docs/screenshots/02-panel-flota.png) | ![Unidad](docs/screenshots/04-unidad-admin.png) |
+
+| Mapa de la flota (panel) | Zonas de cobertura (landing) |
+|---|---|
+| ![Mapa de la flota](docs/screenshots/03-mapa-flota.png) | ![Cobertura](docs/screenshots/08-cobertura.png) |
 
 | Ficha técnica | Captación de clientes |
 |---|---|

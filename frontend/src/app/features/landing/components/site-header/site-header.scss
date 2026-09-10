@@ -59,6 +59,14 @@
   margin-top: 0.15rem;
 }
 
+/* --- Logotipo --- */
+.dl-brand__logo {
+  display: block;
+  width: auto;
+  height: 30px;
+  flex: 0 0 auto;
+}
+
 /* --- Navegación --- */
 .dl-nav {
   align-items: center;

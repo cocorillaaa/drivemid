@@ -5,6 +5,7 @@
       <div class="dl-shell__container">
         <div class="dl-shell__topbar-inner">
           <a class="dl-shell__brand" routerLink="/" title="Ir al sitio público">
+            <img class="dl-shell__logo" src="/images/logo-claro.png" alt="" width="200" height="273" aria-hidden="true" />
             <span class="dl-shell__brand-text">
               <span class="dl-shell__brand-name">DEMO<span>LOGISTICS</span></span>
               <span class="dl-shell__brand-sub">Plataforma ejecutiva</span>
@@ -99,16 +100,6 @@
             }
           </ul>
 
-          <div class="dl-shell__meta">
-            <button
-              type="button"
-              class="dl-btn dl-btn--outline dl-btn--sm"
-              [disabled]="refreshing()"
-              (click)="refresh()"
-            >
-              {{ refreshing() ? 'Actualizando…' : 'Actualizar' }}
-            </button>
-          </div>
         </div>
       </div>
     </nav>

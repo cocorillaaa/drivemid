@@ -38,6 +38,13 @@
   color: var(--dl-white);
 }
 
+.dl-shell__logo {
+  display: block;
+  width: auto;
+  height: 26px;
+  flex: 0 0 auto;
+}
+
 .dl-shell__brand-text {
   display: flex;
   flex-direction: column;
@@ -294,13 +301,6 @@
   align-items: center;
   font-size: 0.75rem;
   color: var(--dl-slate);
-}
-
-.dl-shell__meta {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  flex-wrap: wrap;
 }
 
 /* --- Contenido --- */

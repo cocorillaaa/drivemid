@@ -47,7 +47,6 @@ export class FleetService {
   private readonly _vehicles = signal<Vehicle[]>([]);
   private readonly _summary = signal<FleetSummary | null>(null);
   private readonly _loading = signal(false);
-  private readonly _refreshing = signal(false);
   private readonly _error = signal<string | null>(null);
   private readonly _savingUnitId = signal<string | null>(null);
 
@@ -64,9 +63,6 @@ export class FleetService {
 
   /** `true` durante la primera carga. */
   readonly loading = this._loading.asReadonly();
-
-  /** `true` durante un refresco automático o manual. */
-  readonly refreshing = this._refreshing.asReadonly();
 
   /** Mensaje de error de la última carga, si la hubo. */
   readonly error = this._error.asReadonly();
@@ -90,11 +86,7 @@ export class FleetService {
   load(options: LoadOptions = {}): void {
     const firstLoad = !this.loaded;
 
-    if (firstLoad) {
-      this._loading.set(true);
-    } else {
-      this._refreshing.set(true);
-    }
+    if (firstLoad) this._loading.set(true);
 
     const wantsSummary = this.auth.isSuperuser();
 
@@ -120,17 +112,9 @@ export class FleetService {
 
           return of(null);
         }),
-        finalize(() => {
-          this._loading.set(false);
-          this._refreshing.set(false);
-        }),
+        finalize(() => this._loading.set(false)),
       )
       .subscribe();
-  }
-
-  /** Fuerza un refresco manual desde la interfaz. */
-  refresh(): void {
-    this.load({ silent: true });
   }
 
   /** Arranca el refresco automático de telemetría. */

@@ -17,6 +17,13 @@
   color: var(--dl-white);
 }
 
+.dl-footer__logo {
+  display: block;
+  width: auto;
+  height: 26px;
+  flex: 0 0 auto;
+}
+
 .dl-footer__name {
   font-size: 0.8125rem;
   font-weight: 700;
