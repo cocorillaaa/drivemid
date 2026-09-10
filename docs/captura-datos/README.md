@@ -4,7 +4,7 @@ Material para pasar la plataforma de datos de prueba a datos reales del cliente.
 
 | Archivo | Para qué |
 |---|---|
-| `DemoLogistics_plantilla_datos.xlsx` | Libro que se envía al cliente para que capture su flota |
+| `plantilla sistema.xlsx` | Libro que se envía al cliente para que capture su flota |
 
 ## Contenido del libro
 
@@ -18,6 +18,9 @@ Material para pasar la plataforma de datos de prueba a datos reales del cliente.
 
 Cada encabezado lleva un comentario con la indicación del campo, la fila 3 es un ejemplo en
 amarillo que debe borrarse antes de enviar, y hay 40 filas formateadas listas para capturar.
+
+El libro **no lleva la marca por ningún lado**: ni en el nombre del archivo ni dentro de las
+pestañas. Es la versión que se entregó al cliente para que la llene y la devuelva.
 
 ## Correspondencia con la base de datos
 
