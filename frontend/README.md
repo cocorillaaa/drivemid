@@ -50,6 +50,11 @@ extrajo de la maqueta que entregó el cliente y vive en `public/images/` en dos 
 el distintivo completo (`logo-drivemid.png`) y la versión dorada sin círculo
 (`logo-drivemid-oro.png`) para fondos oscuros.
 
+El **icono de la pestaña** (`public/favicon-16.png`, `-32` y `-48`) usa sólo el monograma
+sobre el azul del distintivo: a ese tamaño el nombre «DRIVE MID» del logotipo completo
+resulta ilegible. El icono táctil de iOS (`apple-touch-icon.png`, 180 px) sí lleva el
+distintivo entero, donde el nombre se lee.
+
 ## Configuración
 
 La URL de la API y los intervalos de refresco se definen en
