@@ -1,0 +1,117 @@
+:host {
+  display: block;
+}
+
+.dl-performance__tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* --- Aviso de cifras de ejemplo --- */
+.dl-performance__notice {
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--dl-gold);
+  border-radius: var(--dl-radius-sm);
+  background: var(--dl-gold-soft);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--dl-ink);
+}
+
+/* La tabla económica tiene nueve columnas: se le fija un ancho mínimo y el
+   contenedor se desplaza en pantallas angostas, en lugar de encimar cabeceras. */
+.dl-performance__table {
+  min-width: 60rem;
+}
+
+/* --- Cascada del ingreso al flujo --- */
+.dl-waterfall {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.85rem;
+}
+
+.dl-waterfall__row {
+  display: grid;
+  grid-template-columns: 14rem 1fr 7rem;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.dl-waterfall__row--total {
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--dl-line);
+}
+
+.dl-waterfall__label {
+  font-size: 0.8125rem;
+  color: var(--dl-slate);
+}
+
+.dl-waterfall__row--total .dl-waterfall__label {
+  font-weight: 600;
+  color: var(--dl-ink);
+}
+
+.dl-waterfall__bar {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--dl-surface-2);
+  overflow: hidden;
+}
+
+.dl-waterfall__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--dl-ink);
+}
+
+.dl-waterfall__fill--cost {
+  background: var(--dl-line-strong);
+}
+
+.dl-waterfall__fill--total {
+  background: var(--dl-gold);
+}
+
+.dl-waterfall__value {
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--dl-ink);
+}
+
+.dl-waterfall__row--total .dl-waterfall__value {
+  font-weight: 700;
+}
+
+/* --- Semanas con pérdida --- */
+.dl-bars__bar--negative {
+  background: var(--dl-danger);
+}
+
+@media (max-width: 767.98px) {
+  .dl-waterfall__row {
+    grid-template-columns: 1fr 5.5rem;
+    grid-template-areas:
+      'label value'
+      'bar bar';
+    row-gap: 0.35rem;
+  }
+
+  .dl-waterfall__label {
+    grid-area: label;
+  }
+
+  .dl-waterfall__bar {
+    grid-area: bar;
+  }
+
+  .dl-waterfall__value {
+    grid-area: value;
+  }
+}

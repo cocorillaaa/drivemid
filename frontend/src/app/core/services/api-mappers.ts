@@ -6,8 +6,15 @@ import {
   LandingAudience,
   LandingContact,
   LandingOverview,
+  PerformanceOverview,
+  PerformanceSeriesPoint,
+  ProgramPerformance,
   ProgramStep,
   ProgramValue,
+  UnitPerformance,
+  UnitPerformanceDetail,
+  UnitPerformanceRow,
+  UnitPeriodRow,
   UserRole,
   Vehicle,
 } from '../models/fleet.models';
@@ -258,5 +265,228 @@ export function mapLandingOverview(raw: RawLandingOverview): LandingOverview {
     workPlan: raw.work_plan,
     audiences: raw.audiences,
     capitalRanges: raw.capital_ranges,
+  };
+}
+
+/* ---------------------------------------------------------------------------
+   Rendimiento económico
+   ------------------------------------------------------------------------ */
+
+export interface RawPerformanceSeriesPoint {
+  week_start: string;
+  km: number;
+  gross_income: number;
+  net_flow: number;
+  utilization_pct: number;
+  days_in_shop: number;
+}
+
+export interface RawUnitPerformance {
+  weeks: number;
+  first_week: string | null;
+  last_week: string | null;
+  capital_invested: number;
+  weekly_fee: number;
+  acquired_on: string | null;
+  financials_are_demo: boolean;
+  periods_are_demo: boolean;
+  km: number;
+  days_available: number;
+  days_in_service: number;
+  days_in_shop: number;
+  days_off_road: number;
+  gross_income: number;
+  collected_income: number;
+  outstanding_income: number;
+  maintenance_cost: number;
+  incident_cost: number;
+  direct_costs: number;
+  fixed_costs: number;
+  operating_result: number;
+  reserve: number;
+  net_flow: number;
+  monthly_net_flow: number;
+  utilization_pct: number;
+  availability_pct: number;
+  gross_income_per_day: number;
+  net_flow_per_day: number;
+  net_flow_per_km: number;
+  cost_per_km: number;
+  maintenance_cost_per_km: number;
+  monthly_km: number;
+  delinquency_pct: number;
+  driver_turnover: number;
+  driver_names: string[];
+  annualized_return_pct: number;
+  series: RawPerformanceSeriesPoint[];
+}
+
+function mapSeries(raw: RawPerformanceSeriesPoint[]): PerformanceSeriesPoint[] {
+  return (raw ?? []).map((point) => ({
+    weekStart: point.week_start,
+    km: num(point.km),
+    grossIncome: num(point.gross_income),
+    netFlow: num(point.net_flow),
+    utilizationPct: num(point.utilization_pct),
+    daysInShop: num(point.days_in_shop),
+  }));
+}
+
+export function mapUnitPerformance(raw: RawUnitPerformance): UnitPerformance {
+  return {
+    weeks: num(raw.weeks),
+    firstWeek: raw.first_week,
+    lastWeek: raw.last_week,
+    capitalInvested: num(raw.capital_invested),
+    weeklyFee: num(raw.weekly_fee),
+    acquiredOn: raw.acquired_on,
+    financialsAreDemo: !!raw.financials_are_demo,
+    periodsAreDemo: !!raw.periods_are_demo,
+    km: num(raw.km),
+    daysAvailable: num(raw.days_available),
+    daysInService: num(raw.days_in_service),
+    daysInShop: num(raw.days_in_shop),
+    daysOffRoad: num(raw.days_off_road),
+    grossIncome: num(raw.gross_income),
+    collectedIncome: num(raw.collected_income),
+    outstandingIncome: num(raw.outstanding_income),
+    maintenanceCost: num(raw.maintenance_cost),
+    incidentCost: num(raw.incident_cost),
+    directCosts: num(raw.direct_costs),
+    fixedCosts: num(raw.fixed_costs),
+    operatingResult: num(raw.operating_result),
+    reserve: num(raw.reserve),
+    netFlow: num(raw.net_flow),
+    monthlyNetFlow: num(raw.monthly_net_flow),
+    utilizationPct: num(raw.utilization_pct),
+    availabilityPct: num(raw.availability_pct),
+    grossIncomePerDay: num(raw.gross_income_per_day),
+    netFlowPerDay: num(raw.net_flow_per_day),
+    netFlowPerKm: num(raw.net_flow_per_km),
+    costPerKm: num(raw.cost_per_km),
+    maintenanceCostPerKm: num(raw.maintenance_cost_per_km),
+    monthlyKm: num(raw.monthly_km),
+    delinquencyPct: num(raw.delinquency_pct),
+    driverTurnover: num(raw.driver_turnover),
+    driverNames: raw.driver_names ?? [],
+    annualizedReturnPct: num(raw.annualized_return_pct),
+    series: mapSeries(raw.series),
+  };
+}
+
+export interface RawProgramPerformance {
+  units_with_data: number;
+  capital_invested: number;
+  gross_income: number;
+  outstanding_income: number;
+  operating_result: number;
+  net_flow: number;
+  monthly_net_flow: number;
+  annualized_return_pct: number;
+  weighted_utilization_pct: number;
+  weighted_availability_pct: number;
+  delinquency_pct: number;
+  cost_per_km: number;
+}
+
+function mapProgram(raw: RawProgramPerformance): ProgramPerformance {
+  return {
+    unitsWithData: num(raw.units_with_data),
+    capitalInvested: num(raw.capital_invested),
+    grossIncome: num(raw.gross_income),
+    outstandingIncome: num(raw.outstanding_income),
+    operatingResult: num(raw.operating_result),
+    netFlow: num(raw.net_flow),
+    monthlyNetFlow: num(raw.monthly_net_flow),
+    annualizedReturnPct: num(raw.annualized_return_pct),
+    weightedUtilizationPct: num(raw.weighted_utilization_pct),
+    weightedAvailabilityPct: num(raw.weighted_availability_pct),
+    delinquencyPct: num(raw.delinquency_pct),
+    costPerKm: num(raw.cost_per_km),
+  };
+}
+
+export interface RawPerformanceOverview {
+  weeks: number;
+  demo_data: boolean;
+  program: RawProgramPerformance;
+  units: (RawUnitPerformance & {
+    id: string;
+    unit_code: string;
+    make: string;
+    model: string;
+    year: number;
+    plates: string;
+    status: Vehicle['status'];
+    driver_name: string;
+    tracking_url: string | null;
+  })[];
+}
+
+export function mapPerformanceOverview(raw: RawPerformanceOverview): PerformanceOverview {
+  return {
+    weeks: num(raw.weeks),
+    demoData: !!raw.demo_data,
+    program: mapProgram(raw.program),
+    units: (raw.units ?? []).map<UnitPerformanceRow>((unit) => ({
+      ...mapUnitPerformance(unit),
+      id: unit.id,
+      unitCode: unit.unit_code,
+      make: unit.make,
+      model: unit.model,
+      year: num(unit.year),
+      plates: unit.plates,
+      status: unit.status,
+      driverName: unit.driver_name,
+      trackingUrl: unit.tracking_url ?? null,
+    })),
+  };
+}
+
+export function mapUnitPerformanceDetail(raw: {
+  weeks: number;
+  demo_data: boolean;
+  vehicle: RawPerformanceOverview['units'][number];
+  performance: RawUnitPerformance;
+  periods: {
+    week_start: string;
+    km_driven: number;
+    days_in_service: number;
+    days_in_shop: number;
+    gross_income: number;
+    collected_income: number;
+    outstanding_income: number;
+    direct_costs: number;
+    driver_name: string | null;
+    source: UnitPeriodRow['source'];
+  }[];
+}): UnitPerformanceDetail {
+  return {
+    weeks: num(raw.weeks),
+    demoData: !!raw.demo_data,
+    vehicle: {
+      id: raw.vehicle.id,
+      unitCode: raw.vehicle.unit_code,
+      make: raw.vehicle.make,
+      model: raw.vehicle.model,
+      year: num(raw.vehicle.year),
+      plates: raw.vehicle.plates,
+      status: raw.vehicle.status,
+      driverName: raw.vehicle.driver_name,
+      trackingUrl: raw.vehicle.tracking_url ?? null,
+    },
+    performance: mapUnitPerformance(raw.performance),
+    periods: (raw.periods ?? []).map<UnitPeriodRow>((period) => ({
+      weekStart: period.week_start,
+      kmDriven: num(period.km_driven),
+      daysInService: num(period.days_in_service),
+      daysInShop: num(period.days_in_shop),
+      grossIncome: num(period.gross_income),
+      collectedIncome: num(period.collected_income),
+      outstandingIncome: num(period.outstanding_income),
+      directCosts: num(period.direct_costs),
+      driverName: period.driver_name,
+      source: period.source,
+    })),
   };
 }

@@ -225,6 +225,45 @@ a {
 }
 
 /* -----------------------------------------------------------------------------
+   Impresión
+
+   El reporte de rendimiento se entrega en papel o en PDF, así que al imprimir
+   se retira todo lo que es interfaz —barra de sesión, navegación, avisos— y se
+   deja que las tarjetas fluyan en lugar de recortarse contra el alto de la
+   fila de Bootstrap.
+   -------------------------------------------------------------------------- */
+
+@media print {
+  .dl-shell__topbar,
+  .dl-shell__subbar,
+  .dl-shell__footer,
+  .dl-toast-host,
+  .dl-skip {
+    display: none !important;
+  }
+
+  .dl-shell__main {
+    padding: 0 !important;
+  }
+
+  /* `h-100` fija el alto al de la fila; al imprimir debe medirlo el contenido. */
+  .h-100 {
+    height: auto !important;
+  }
+
+  .dl-card,
+  .dl-stat {
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  .dl-table tr,
+  .dl-dl__row {
+    break-inside: avoid;
+  }
+}
+
+/* -----------------------------------------------------------------------------
    Contenedores de sección
    -------------------------------------------------------------------------- */
 

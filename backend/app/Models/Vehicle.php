@@ -6,6 +6,7 @@ use Database\Factories\VehicleFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Unidad de la flota ejecutiva.
@@ -23,6 +24,15 @@ class Vehicle extends Model
 
     /** Códigos de estatus operativo válidos. */
     public const STATUSES = ['en_servicio', 'disponible', 'mantenimiento'];
+
+    /**
+     * Kilometraje semanal de referencia de una unidad del programa.
+     *
+     * Es el denominador contra el que se mide la utilización: los 412 km
+     * semanales que el cliente reportó para su Aveo. Se declara aquí, en un
+     * solo lugar, en lugar de repartirlo por las vistas.
+     */
+    public const TARGET_WEEKLY_KM = 412;
 
     protected $primaryKey = 'id';
 
@@ -55,7 +65,40 @@ class Vehicle extends Model
             'location_lng' => 'decimal:7',
             'location_updated_at' => 'datetime',
             'speed_kmh' => 'integer',
+            'capital_invested' => 'integer',
+            'weekly_fee' => 'integer',
+            'maintenance_reserve' => 'integer',
+            'security_deposit' => 'integer',
+            'monthly_insurance_cost' => 'integer',
+            'monthly_tracking_cost' => 'integer',
+            'monthly_admin_cost' => 'integer',
+            'acquired_on' => 'date',
+            'financials_are_demo' => 'boolean',
         ];
+    }
+
+    /**
+     * Cortes semanales de la unidad, del más reciente al más antiguo.
+     *
+     * @return HasMany<UnitPeriod, $this>
+     */
+    public function periods(): HasMany
+    {
+        return $this->hasMany(UnitPeriod::class)->orderByDesc('week_start');
+    }
+
+    /** Costos fijos mensuales declarados en el contrato de la unidad. */
+    public function monthlyFixedCosts(): int
+    {
+        return $this->monthly_insurance_cost
+            + $this->monthly_tracking_cost
+            + $this->monthly_admin_cost;
+    }
+
+    /** Kilometraje semanal contratado, usado como denominador de la utilización. */
+    public function targetWeeklyKm(): int
+    {
+        return self::TARGET_WEEKLY_KM;
     }
 
     /** Días restantes de vigencia de la póliza (negativo si ya venció). */

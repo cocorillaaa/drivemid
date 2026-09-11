@@ -67,6 +67,24 @@ class VehicleSeeder extends Seeder
                 'speed_kmh' => 0,
                 'heading' => 'N',
                 'tracking_url' => 'https://seguimiento.ejemplo.mx/u/YXY669G',
+
+                /*
+                 * Condiciones económicas de EJEMPLO. El cliente todavía no las
+                 * comparte; la marca `financials_are_demo` hace que el panel y
+                 * el reporte lo adviertan en pantalla. Los importes siguen el
+                 * orden de magnitud del estudio de mercado: alrededor de
+                 * $200,000 de capital por unidad y una renta semanal que ronda
+                 * los $4,000.
+                 */
+                'capital_invested' => 200_000,
+                'weekly_fee' => 4_400,
+                'maintenance_reserve' => 700,
+                'security_deposit' => 5_000,
+                'monthly_insurance_cost' => 1_250,
+                'monthly_tracking_cost' => 280,
+                'monthly_admin_cost' => 900,
+                'acquired_on' => '2026-01-15',
+                'financials_are_demo' => true,
             ],
         ];
     }

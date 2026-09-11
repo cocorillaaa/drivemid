@@ -1,0 +1,95 @@
+:host {
+  display: block;
+}
+
+.dl-report__head {
+  align-items: flex-start;
+}
+
+.dl-report__actions {
+  flex-wrap: wrap;
+}
+
+/* --- Aviso de cifras de ejemplo --- */
+.dl-report__notice {
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--dl-gold);
+  border-radius: var(--dl-radius-sm);
+  background: var(--dl-gold-soft);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--dl-ink);
+}
+
+/* --- Importes: se leen en columna y con cifras tabulares --- */
+.dl-dl--money dd {
+  font-variant-numeric: tabular-nums;
+}
+
+.dl-dl__row--total dt,
+.dl-dl__row--total dd {
+  font-weight: 700;
+  color: var(--dl-ink);
+}
+
+.dl-dl__row--total {
+  border-top: 1px solid var(--dl-line-strong);
+  padding-top: 0.7rem;
+}
+
+/* --- Semanas sin operación --- */
+.dl-report__row--bad td {
+  background: var(--dl-danger-bg);
+}
+
+.dl-report__demo-tag {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 4px;
+  background: var(--dl-gold-soft);
+  border: 1px solid var(--dl-gold);
+  font-size: 0.625rem;
+  color: var(--dl-gold-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.dl-report__foot {
+  max-width: 52rem;
+  margin: 2rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.65;
+  color: var(--dl-slate);
+}
+
+/* -----------------------------------------------------------------------------
+   Impresión: el reporte se entrega en papel o en PDF
+   -------------------------------------------------------------------------- */
+
+@media print {
+  :host {
+    display: block;
+  }
+
+  .dl-report__actions {
+    display: none !important;
+  }
+
+  .dl-card,
+  .dl-stat,
+  .dl-table-wrap {
+    box-shadow: none !important;
+    border-color: var(--dl-line) !important;
+    break-inside: avoid;
+  }
+
+  .dl-table {
+    font-size: 0.6875rem;
+  }
+
+  .dl-report__notice {
+    background: transparent;
+  }
+}

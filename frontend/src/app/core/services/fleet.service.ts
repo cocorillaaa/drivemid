@@ -2,7 +2,12 @@ import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core'
 import { Observable, catchError, finalize, forkJoin, map, of, tap, throwError, timeout } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { FleetSummary, UnitUpdatePayload, Vehicle } from '../models/fleet.models';
+import {
+  FleetSummary,
+  PerformanceOverview,
+  UnitUpdatePayload,
+  Vehicle,
+} from '../models/fleet.models';
 import { FleetApiService } from './fleet-api.service';
 import { AuthService } from './auth.service';
 import { ToastService } from './toast.service';
@@ -186,6 +191,53 @@ export class FleetService {
       }),
       finalize(() => this._savingUnitId.set(null)),
     );
+  }
+
+  /**
+   * Rendimiento económico del programa.
+   *
+   * Se carga aparte de la flota porque sólo lo consulta el Superusuario y su
+   * costo de cálculo es mayor: agrega los cortes semanales de cada unidad.
+   */
+  private readonly _performance = signal<PerformanceOverview | null>(null);
+  private readonly _performanceLoading = signal(false);
+  private readonly _performanceError = signal<string | null>(null);
+
+  /** Rendimiento del programa completo. */
+  readonly performance = this._performance.asReadonly();
+  readonly performanceLoading = this._performanceLoading.asReadonly();
+  readonly performanceError = this._performanceError.asReadonly();
+
+  /** Ventana observada, en semanas. */
+  readonly performanceWeeks = signal(12);
+
+  /** Carga el rendimiento con la ventana seleccionada. */
+  loadPerformance(): void {
+    this._performanceLoading.set(true);
+
+    this.api
+      .getPerformance(this.performanceWeeks())
+      .pipe(
+        timeout(environment.apiTimeoutMs),
+        tap((overview) => {
+          this._performance.set(overview);
+          this._performanceError.set(null);
+        }),
+        catchError(() => {
+          this._performanceError.set('No fue posible cargar los indicadores de rendimiento.');
+          return of(null);
+        }),
+        finalize(() => this._performanceLoading.set(false)),
+      )
+      .subscribe();
+  }
+
+  /** Cambia la ventana observada y recarga los indicadores. */
+  setPerformanceWeeks(weeks: number): void {
+    if (weeks === this.performanceWeeks()) return;
+
+    this.performanceWeeks.set(weeks);
+    this.loadPerformance();
   }
 
   /** Registra una solicitud de servicio corporativo en el backend. */

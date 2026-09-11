@@ -8,13 +8,18 @@ import {
   InvestorLeadPayload,
   DriverApplicationPayload,
   FleetSummary,
+  PerformanceOverview,
+  UnitPerformanceDetail,
   UnitUpdatePayload,
   Vehicle,
 } from '../models/fleet.models';
 import {
   RawFleetSummary,
+  RawPerformanceOverview,
   RawVehicle,
   mapFleetSummary,
+  mapPerformanceOverview,
+  mapUnitPerformanceDetail,
   mapVehicle,
 } from './api-mappers';
 
@@ -58,6 +63,29 @@ export class FleetApiService {
         driver_phone: payload.phone,
       })
       .pipe(map((res) => mapVehicle(res.data)));
+  }
+
+  /**
+   * Rendimiento económico del programa y de cada unidad.
+   *
+   * `weeks` acota la ventana observada; el backend la limita a un año.
+   */
+  getPerformance(weeks: number): Observable<PerformanceOverview> {
+    return this.http
+      .get<ApiResponse<RawPerformanceOverview>>(`${this.baseUrl}/performance`, {
+        params: { weeks },
+      })
+      .pipe(map((res) => mapPerformanceOverview(res.data)));
+  }
+
+  /** Rendimiento de una unidad con su bitácora de cortes semanales. */
+  getUnitPerformance(id: string, weeks: number): Observable<UnitPerformanceDetail> {
+    return this.http
+      .get<ApiResponse<Parameters<typeof mapUnitPerformanceDetail>[0]>>(
+        `${this.baseUrl}/performance/${id}`,
+        { params: { weeks } },
+      )
+      .pipe(map((res) => mapUnitPerformanceDetail(res.data)));
   }
 
   /** Alta de interesado en el programa de inversión desde el sitio público. */

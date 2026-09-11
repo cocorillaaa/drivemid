@@ -30,6 +30,7 @@ import {
 } from '../../../core/utils/fleet-format';
 import { FleetMapComponent } from '../../../shared/components/fleet-map/fleet-map';
 import { StatCardComponent } from '../../../shared/components/stat-card/stat-card';
+import { PerformancePanelComponent } from './performance-panel';
 import { UnitDetailModalComponent } from '../../../shared/components/unit-detail-modal/unit-detail-modal';
 
 /** Filtro rápido de la tabla general de flota. */
@@ -49,6 +50,7 @@ type FleetFilter = 'all' | 'alerts' | 'service';
     FleetMapComponent,
     UnitDetailModalComponent,
     ContactModalComponent,
+    PerformancePanelComponent,
   ],
   templateUrl: './superuser-dashboard.html',
   styleUrl: './superuser-dashboard.scss',
@@ -157,6 +159,13 @@ export class SuperuserDashboard {
   readonly formatDateShort = formatDateShort;
   readonly relativeTime = relativeTime;
   readonly policyCountdownText = policyCountdownText;
+
+  constructor() {
+    // Los indicadores de rendimiento sólo los ve esta vista.
+    if (!this.fleet.performance()) {
+      this.fleet.loadPerformance();
+    }
+  }
 
   /** Cambia el filtro de la tabla. */
   setFilter(filter: FleetFilter): void {

@@ -11,6 +11,7 @@ import { roleGuard } from './core/guards/role.guard';
  * - `/plataforma`  shell protegido; la vista interna depende del rol que el
  *                  backend asigne al token.
  *   - `/plataforma/flota`  → Superusuario (vista global).
+ *   - `/plataforma/rendimiento/:id` → reporte de una unidad (Superusuario).
  *   - `/plataforma/unidad` → Administrador de Unidad (sólo su unidad).
  */
 export const routes: Routes = [
@@ -39,6 +40,15 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/platform/superuser-dashboard/superuser-dashboard').then(
             (m) => m.SuperuserDashboard,
+          ),
+      },
+      {
+        path: 'rendimiento/:id',
+        title: 'Reporte de rendimiento · Drive Mid (demo)',
+        canActivate: [roleGuard('superuser')],
+        loadComponent: () =>
+          import('./features/platform/performance-report/performance-report').then(
+            (m) => m.PerformanceReport,
           ),
       },
       {

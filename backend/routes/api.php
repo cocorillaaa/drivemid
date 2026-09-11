@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LandingController;
 use App\Http\Controllers\Api\LeadController;
+use App\Http\Controllers\Api\PerformanceController;
 use App\Http\Controllers\Api\VehicleController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,8 @@ use Illuminate\Support\Facades\Route;
 |   GET    /api/vehicles/{vehicle}         Detalle (autorizado por política)
 |   PATCH  /api/vehicles/{vehicle}/telemetry  Km semanales y teléfono de contacto
 |   GET    /api/fleet/summary              Métricas globales (sólo Superusuario)
+|   GET    /api/performance                Rendimiento del programa (sólo Superusuario)
+|   GET    /api/performance/{vehicle}      Rendimiento de una unidad, con su serie semanal
 |   GET    /api/leads                      Bandeja de prospectos (sólo Superusuario)
 |
 */
@@ -75,6 +78,9 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
 
     Route::get('/fleet/summary', [VehicleController::class, 'summary']);
+
+    Route::get('/performance', [PerformanceController::class, 'index']);
+    Route::get('/performance/{vehicle}', [PerformanceController::class, 'show']);
 
     Route::get('/leads', [LeadController::class, 'index']);
 

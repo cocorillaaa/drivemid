@@ -51,6 +51,8 @@ Aplicada en el backend con `VehiclePolicy` y *route model binding*:
 | `GET /api/vehicles/{id}` | cualquiera | la suya · **403** en las demás |
 | `PATCH /api/vehicles/{id}/telemetry` | cualquiera | la suya · **403** en las demás |
 | `GET /api/fleet/summary` | 200 | **403** |
+| `GET /api/performance` | 200 | **403** |
+| `GET /api/performance/{id}` | 200 | **403** |
 | `GET /api/leads` | 200 | **403** |
 
 En el frontend, `authGuard` exige sesión, `roleGuard` mantiene la URL alineada con el rol y el
@@ -69,7 +71,7 @@ drivemid/
 │       ├── styles.scss                             Sistema de diseño (paleta neutra + marca)
 │       └── app/
 │           ├── app.config.ts                       Router + HttpClient + interceptor
-│           ├── app.routes.ts                       / · /acceso · /plataforma/{flota,unidad}
+│           ├── app.routes.ts                       / · /acceso · /plataforma/{flota,rendimiento,unidad}
 │           ├── core/
 │           │   ├── models/fleet.models.ts          Modelo de dominio
 │           │   ├── interceptors/auth.interceptor.ts  Bearer token · Accept JSON · 401
@@ -80,7 +82,7 @@ drivemid/
 │           │   │   ├── auth-api.service.ts         /auth/login · me · logout
 │           │   │   ├── token-storage.service.ts    Persistencia del token
 │           │   │   ├── fleet.service.ts            Estado de flota + refresco automático
-│           │   │   ├── fleet-api.service.ts        /vehicles · /fleet/summary · /leads
+│           │   │   ├── fleet-api.service.ts        /vehicles · /fleet/summary · /performance · /leads
 │           │   │   ├── landing.service.ts          Contenido del sitio público
 │           │   │   ├── landing-api.service.ts      /public/overview · demo-accounts
 │           │   │   ├── clipboard.service.ts        Copiado de teléfono y correo
@@ -93,18 +95,20 @@ drivemid/
 │               ├── landing/                        Header · Hero · Quiénes somos · Modelo · Plan · Públicos · Captación · Footer
 │               └── platform/
 │                   ├── platform-shell/             Barra de sesión y navegación por rol
-│                   ├── superuser-dashboard/        Vista global de flota
+│                   ├── superuser-dashboard/        Vista global de flota + panel de rendimiento
+│                   ├── performance-report/         Reporte de rendimiento de una unidad
 │                   └── unit-admin-dashboard/       Vista de la unidad asignada
 └── backend/                                        Laravel 13 · :8001
     ├── routes/api.php                              Endpoints públicos y protegidos
     ├── config/drivemid.php                         Identidad, contenido del sitio y cuentas demo
-    ├── app/Models/                                 Vehicle · User · InvestorLead · DriverApplication
+    ├── app/Models/                                 Vehicle · UnitPeriod · User · InvestorLead · DriverApplication
     ├── app/Policies/VehiclePolicy.php              Reglas de acceso por rol
-    ├── app/Http/Controllers/Api/                   Auth · Vehicle · Landing · Lead
+    ├── app/Services/                               UnitPerformanceCalculator (indicadores del estudio)
+    ├── app/Http/Controllers/Api/                   Auth · Vehicle · Landing · Lead · Performance
     ├── app/Http/Requests/                          Validación de entrada
     ├── app/Http/Resources/                         VehicleResource · UserResource
-    ├── database/migrations/                        8 migraciones
-    ├── database/seeders/                           VehicleSeeder · UserSeeder
+    ├── database/migrations/                        10 migraciones
+    ├── database/seeders/                           VehicleSeeder · UserSeeder · UnitPeriodSeeder
     └── database/factories/                         Factories para pruebas
 ```
 
@@ -222,6 +226,8 @@ dejar claro que se trata de un prototipo con datos simulados.
 - **Mapa interactivo** de la flota centrado en Mérida, Yucatán, con los pines coloreados por
   estatus de póliza.
 - **Panel de alertas de pólizas** y distribución de kilometraje por unidad.
+- **Rendimiento del programa** (ver 4.5), al final del tablero: la lectura económica, separada a
+  propósito del panel operativo.
 
 ### 4.4 Mi unidad · Administrador de Unidad (`/plataforma/unidad`)
 
@@ -239,6 +245,27 @@ unidades ni acceso a ninguna otra:
   listos para copiar sin salir de la plataforma.
 - **Estatus de la póliza** con vigencia, días restantes y aviso de renovación.
 - **Mapa individual** con la última ubicación y halo de geocerca.
+
+### 4.5 Rendimiento del programa · Superusuario
+
+El estudio de mercado que entregó el cliente pide ocho indicadores —utilización, ingreso bruto y
+neto por día, flujo neto por unidad, costo de mantenimiento por km, kilometraje mensual, días
+fuera de servicio, mora y rotación de conductores— y **ninguno se podía calcular** con lo que
+había: el sistema sólo guardaba una foto del estado actual, sin histórico. El módulo de
+rendimiento existe para cerrar ese hueco.
+
+Se ve en dos lugares, ambos exclusivos del Superusuario:
+
+- **Panel «Rendimiento del programa»**, al final de `/plataforma/flota`: cuatro indicadores
+  (retorno anualizado, flujo neto mensual, utilización y días fuera de servicio), la **cascada
+  del ingreso al flujo** —ingreso facturado, costos, reserva y flujo neto—, el flujo neto por
+  semana y el aporte de cada unidad, con la ventana ajustable entre mes, trimestre y semestre.
+- **Reporte de una unidad** en `/plataforma/rendimiento/:id`: es el documento que se entrega al
+  inversionista. Lleva las condiciones del contrato (capital, renta semanal, reserva, alta del
+  activo), los indicadores, el recorrido del ingreso hasta el flujo, la eficiencia del activo
+  (costo por km, mantenimiento por km, cambios de conductor) y la **bitácora de cortes semanales**
+  que respalda cada número. Se imprime tal cual para guardarlo en PDF y la bitácora se exporta a
+  CSV.
 
 ---
 
@@ -293,6 +320,38 @@ mientras no exista una API o un export de posiciones del proveedor.
 `docs/captura-datos/plantilla sistema.xlsx` es el libro que se envía al cliente para completar
 esos datos. Ver `docs/captura-datos/README.md`.
 
+### 5.3 Rendimiento: qué es real y qué es de ejemplo
+
+Los **cortes semanales** son el histórico del sistema: un renglón por unidad y semana en
+`unit_periods`, único por `vehicle_id` + `week_start`. De ahí salen los indicadores.
+
+El seeder carga **doce cortes de ejemplo** marcados con `source = 'demo'`, y las condiciones
+económicas de la unidad llevan `financials_are_demo = true`. La separación es deliberada:
+
+| Dato | Origen |
+|---|---|
+| Referencia de utilización: 412 km por semana | **Cliente** (`Vehicle::TARGET_WEEKLY_KM`) |
+| Kilómetros y días de cada corte | **Ejemplo**, construidos alrededor de esa referencia |
+| Capital invertido, renta semanal, reserva, costos fijos, depósito | **Ejemplo** — orden de magnitud del estudio |
+| Importes de cada corte (ingreso, cobranza, mantenimiento, siniestros) | **Ejemplo** |
+
+Es decir: el cliente aportó la identidad del vehículo y la referencia de kilometraje semanal; el
+resto de las cifras de rendimiento son de demostración hasta que entregue las suyas.
+
+Los importes de ejemplo siguen el estudio del cliente: **$200,000** de capital por unidad,
+**$4,400** de renta semanal, **$700** de reserva por semana y **$5,000** de depósito, más
+$1,250 de seguro, $280 de monitoreo y $900 de administración al mes. Con doce semanas de historia
+—una de ellas prácticamente detenida en taller, para que el panel muestre cómo se ve un mes malo—
+el resultado de la demostración es de aproximadamente **27.7 % anualizado**, con 94 % de
+utilización, 88.1 % de disponibilidad, 6.1 % de mora y $6.81 de costo por kilómetro.
+
+Ese 27.7 % está **por debajo del 42 %** que menciona el estudio, y es intencional: el propio
+documento insiste en no presentar el rendimiento como garantizado y en proyectar con escenario
+conservador, no con el mejor mes.
+
+El panel y el reporte **advierten en pantalla** cuando las cifras son de ejemplo. Los indicadores
+pasan a ser reales en cuanto se capturen los primeros cortes propios y se borren los sembrados.
+
 ---
 
 ## 6. API REST (puerto 8001)
@@ -323,7 +382,15 @@ esos datos. Ver `docs/captura-datos/README.md`.
 | `GET` | `/api/vehicles/{id}` | Detalle (403 si no corresponde) |
 | `PATCH` | `/api/vehicles/{id}/telemetry` | `weekly_km` y/o `driver_phone` |
 | `GET` | `/api/fleet/summary` | Métricas globales (sólo Superusuario) |
+| `GET` | `/api/performance` | Rendimiento del programa y de cada unidad (sólo Superusuario) |
+| `GET` | `/api/performance/{id}` | Rendimiento de una unidad con su bitácora de cortes (sólo Superusuario) |
 | `GET` | `/api/leads` | Bandeja de prospectos (sólo Superusuario) |
+
+Los endpoints de rendimiento aceptan el parámetro **`weeks`** (ventana observada, en semanas):
+12 por omisión, 52 como máximo; fuera de ese rango responden 422. Los dos están reservados al
+Superusuario porque, con una sola unidad, el detalle económico identifica de inmediato al
+conductor y su renta; si un inversionista necesita consultarlo, lo correcto es una cuenta con su
+propio alcance y no reutilizar la del Administrador de Unidad.
 
 Todas las respuestas usan el sobre `{ "data": …, "message"?: … }`, con validación por Form
 Requests (422) y errores de autenticación en JSON (401). CORS habilitado para
@@ -343,12 +410,12 @@ curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8001/api/fleet/summary
 ## 7. Pruebas
 
 ```bash
-cd backend  && php artisan test --compact      # 37 pruebas · 229 aserciones
+cd backend  && php artisan test --compact      # 45 pruebas · 278 aserciones
 cd frontend && npx ng test --watch=false       # 4 pruebas del guard de rol
 cd frontend && npx ng build                    # compilación de producción
 ```
 
-De las 37 pruebas del backend, 35 cubren la API y 2 son las de ejemplo que trae Laravel
+De las 45 pruebas del backend, 43 cubren la API y 2 son las de ejemplo que trae Laravel
 (`tests/Feature/ExampleTest.php` y `tests/Unit/ExampleTest.php`):
 
 - `AuthApiTest` (10) — emisión y revocación de tokens, credenciales inválidas, validación,
@@ -360,6 +427,11 @@ De las 37 pruebas del backend, 35 cubren la API y 2 son las de ejemplo que trae 
 - `LandingApiTest` (8) — contenido público, identidad del programa, modelo de negocio y plan de
   trabajo, canales de contacto reales, catálogo del formulario y verificación de que **no** se
   expongan datos operativos ni de cobertura.
+- `PerformanceApiTest` (8) — fija la aritmética de los indicadores con importes redondos: la
+  derivación de los ocho indicadores a partir de un corte conocido, el devengo de la reserva
+  cuando la unidad está en taller, el conteo de cambios de conductor como rotación, la unidad sin
+  cortes que reporta ceros y no un error, el acotamiento de la ventana `weeks` y la marca de
+  cifras de ejemplo.
 - `role.guard.spec.ts` (4) — regresión del ciclo infinito de redirección.
 
 ---
@@ -397,6 +469,21 @@ De las 37 pruebas del backend, 35 cubren la API y 2 son las de ejemplo que trae 
   usuario escribe.
 - **El enlace de rastreo no se versiona:** es un dato sensible (da acceso a la ubicación del
   vehículo), así que el repositorio sólo contiene un marcador de ejemplo.
+- **El histórico es una tabla, no una foto:** los indicadores de rendimiento no se pueden derivar
+  del estado actual de la unidad. `unit_periods` guarda un corte por unidad y semana, y los
+  cálculos viven en un solo servicio (`UnitPerformanceCalculator`), no repartidos por las vistas.
+- **Convenciones de cálculo explícitas:** el ingreso del periodo es la renta registrada en el
+  corte; los costos fijos se declaran por mes y se prorratean por día; la reserva se devenga por
+  los días del periodo aunque la unidad esté en taller, porque es una provisión contra el desgaste
+  del activo y no un porcentaje de lo producido; y la utilización se mide contra los 412 km
+  semanales de referencia (`Vehicle::TARGET_WEEKLY_KM`).
+- **El rendimiento no se promete:** el retorno anualizado es una proyección lineal del flujo
+  observado y así se rotula en el panel y en el reporte. El estudio del cliente insiste en no
+  presentarlo como garantía, y el resultado de la demostración queda deliberadamente por debajo
+  del objetivo que el propio estudio menciona.
+- **Las cifras de ejemplo se declaran solas:** `unit_periods.source = 'demo'` y
+  `vehicles.financials_are_demo` viajan desde la base hasta la pantalla, que advierte al usuario.
+  Un panel de demostración que se ve como datos reales es peor que uno vacío.
 
 ---
 
@@ -449,6 +536,10 @@ actuales se derivan del archivo de mapa de bits de la maqueta.
 |---|---|
 | ![Ficha técnica](docs/screenshots/09-ficha-tecnica.png) | ![Mi unidad](docs/screenshots/10-mi-unidad.png) |
 
+| Rendimiento del programa (Superusuario) | Reporte de rendimiento de una unidad |
+|---|---|
+| ![Rendimiento](docs/screenshots/11-rendimiento.png) | ![Reporte de rendimiento](docs/screenshots/12-reporte-rendimiento.png) |
+
 ---
 
 ## 11. Notas
@@ -462,3 +553,9 @@ seeder son deliberadamente simples y la lista de cuentas sólo se publica con `A
 **El enlace de rastreo real no se versiona.** El seguimiento de la unidad es un enlace externo
 que da acceso a su ubicación; el repositorio y el seeder llevan un marcador, y el enlace real
 vive únicamente en la base de datos local.
+
+**Los importes del módulo de rendimiento son de ejemplo.** El cliente aportó la identidad del
+vehículo y la referencia de 412 km semanales, pero los kilómetros de cada corte, el capital
+invertido, la renta semanal, la reserva, los costos fijos y los importes son cifras de
+demostración, marcadas como tales en la base y advertidas en pantalla (ver 5.3). El sistema
+calcula; las cifras las tiene que poner el cliente.

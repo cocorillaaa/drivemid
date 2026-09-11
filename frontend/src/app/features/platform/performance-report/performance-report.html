@@ -1,0 +1,270 @@
+<!-- Reporte de rendimiento de una unidad -->
+@if (loading()) {
+  <div class="dl-empty">
+    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+    <p class="mb-0">Calculando los indicadores de la unidad…</p>
+  </div>
+} @else if (error(); as mensaje) {
+  <div class="dl-empty">
+    <p class="mb-3">{{ mensaje }}</p>
+    <a class="dl-btn dl-btn--outline" routerLink="/plataforma/flota">Volver al panel</a>
+  </div>
+} @else if (detail(); as datos) {
+  <header class="dl-page-head dl-report__head">
+    <div>
+      <span class="dl-eyebrow">Reporte de rendimiento · {{ datos.weeks }} cortes semanales</span>
+      <h1 class="dl-page-head__title">
+        {{ datos.vehicle.unitCode }} · {{ datos.vehicle.make }} {{ datos.vehicle.model }}
+        {{ datos.vehicle.year }}
+      </h1>
+      <p class="dl-page-head__sub">
+        <span class="dl-plate">{{ datos.vehicle.plates }}</span>
+        · Conductor: {{ datos.vehicle.driverName }}
+        · Emitido el {{ date(issuedOn.toISOString()) }}
+      </p>
+    </div>
+
+    <div class="dl-page-head__actions dl-report__actions">
+      <a class="dl-btn dl-btn--outline" routerLink="/plataforma/flota">Volver al panel</a>
+      <button type="button" class="dl-btn dl-btn--outline" (click)="exportCsv()">
+        Exportar cortes
+      </button>
+      <button type="button" class="dl-btn dl-btn--dark" (click)="print()">
+        Imprimir o guardar en PDF
+      </button>
+    </div>
+  </header>
+
+  @if (datos.demoData) {
+    <p class="dl-report__notice">
+      Las cifras de este reporte son <strong>de ejemplo</strong>: tanto los cortes semanales como
+      los importes de renta, costos y reserva provienen del sembrado de demostración. El reporte
+      pasa a reflejar la operación real en cuanto existan cortes capturados.
+    </p>
+  }
+
+  @if (datos.performance.weeks === 0) {
+    <div class="dl-empty">
+      <p class="mb-0">
+        Esta unidad todavía no tiene cortes semanales capturados, así que no hay indicadores que
+        reportar. Se calculan en cuanto exista el primero.
+      </p>
+    </div>
+  } @else {
+    <!-- ===================== Indicadores ===================== -->
+    <section class="row g-3 mb-4" aria-label="Indicadores del periodo">
+      <div class="col-sm-6 col-xl-3">
+        <dl-stat-card
+          [accent]="true"
+          label="Retorno anualizado"
+          [value]="datos.performance.annualizedReturnPct"
+          unit="%"
+          [hint]="'Proyección del flujo observado, no una garantía'"
+        />
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <dl-stat-card
+          label="Flujo neto mensual"
+          [value]="money(datos.performance.monthlyNetFlow)"
+          [hint]="'Flujo del periodo: ' + money(datos.performance.netFlow)"
+        />
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <dl-stat-card
+          label="Utilización"
+          [value]="datos.performance.utilizationPct"
+          unit="%"
+          [hint]="'Disponibilidad: ' + datos.performance.availabilityPct + '% de los días'"
+        />
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <dl-stat-card
+          label="Días fuera de servicio"
+          [value]="datos.performance.daysOffRoad"
+          unit="días"
+          [hint]="'Días en taller: ' + datos.performance.daysInShop"
+        />
+      </div>
+    </section>
+
+    <div class="row g-4">
+      <!-- ===================== Del ingreso al flujo ===================== -->
+      <div class="col-lg-7">
+        <section class="dl-card h-100">
+          <div class="dl-card__head">
+            <div>
+              <h2 class="dl-card__title">Del ingreso al flujo del inversionista</h2>
+              <p class="dl-card__subtitle">
+                {{ datos.performance.weeks }} semanas · del {{ date(datos.performance.firstWeek) }}
+                al {{ date(datos.performance.lastWeek) }}
+              </p>
+            </div>
+          </div>
+
+          <div class="dl-card__body">
+            <dl class="dl-dl dl-dl--money">
+              <div class="dl-dl__row">
+                <dt>Ingreso facturado</dt>
+                <dd>{{ money(datos.performance.grossIncome) }}</dd>
+              </div>
+              <div class="dl-dl__row">
+                <dt>Ingreso cobrado</dt>
+                <dd>{{ money(datos.performance.collectedIncome) }}</dd>
+              </div>
+              <div class="dl-dl__row">
+                <dt>Pendiente de cobro ({{ datos.performance.delinquencyPct }}%)</dt>
+                <dd>{{ money(datos.performance.outstandingIncome) }}</dd>
+              </div>
+              <div class="dl-dl__row">
+                <dt>Mantenimiento</dt>
+                <dd>{{ money(datos.performance.maintenanceCost) }}</dd>
+              </div>
+              @if (datos.performance.incidentCost > 0) {
+                <div class="dl-dl__row">
+                  <dt>Siniestros y deducibles</dt>
+                  <dd>{{ money(datos.performance.incidentCost) }}</dd>
+                </div>
+              }
+              <div class="dl-dl__row">
+                <dt>Costos fijos (seguro, monitoreo, administración)</dt>
+                <dd>{{ money(datos.performance.fixedCosts) }}</dd>
+              </div>
+              <div class="dl-dl__row">
+                <dt>Reserva de mantenimiento</dt>
+                <dd>{{ money(datos.performance.reserve) }}</dd>
+              </div>
+              <div class="dl-dl__row dl-dl__row--total">
+                <dt>Flujo neto del periodo</dt>
+                <dd>{{ money(datos.performance.netFlow) }}</dd>
+              </div>
+            </dl>
+
+            <p class="dl-help mb-0 mt-3">
+              El flujo neto es lo que queda después de costos y reserva. La reserva no es un gasto:
+              es dinero que se aparta para el mantenimiento del activo y por eso no se distribuye.
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ===================== Condiciones y eficiencia ===================== -->
+      <div class="col-lg-5">
+        <section class="dl-card mb-4">
+          <div class="dl-card__head">
+            <h2 class="dl-card__title">Condiciones del contrato</h2>
+          </div>
+          <div class="dl-card__body">
+            <dl class="dl-dl">
+              @for (term of terms(); track term.label) {
+                <div class="dl-dl__row">
+                  <dt>{{ term.label }}</dt>
+                  <dd>{{ term.value }}</dd>
+                </div>
+              }
+            </dl>
+          </div>
+        </section>
+
+        <section class="dl-card">
+          <div class="dl-card__head">
+            <h2 class="dl-card__title">Eficiencia del activo</h2>
+          </div>
+          <div class="dl-card__body">
+            <dl class="dl-dl">
+              <div class="dl-dl__row">
+                <dt>Kilometraje de la ventana</dt>
+                <dd>{{ datos.performance.km.toLocaleString('es-MX') }} km</dd>
+              </div>
+              <div class="dl-dl__row">
+                <dt>Kilometraje mensual</dt>
+                <dd>{{ datos.performance.monthlyKm.toLocaleString('es-MX') }} km</dd>
+              </div>
+              <div class="dl-dl__row">
+                <dt>Costo por kilómetro</dt>
+                <dd>{{ money(datos.performance.costPerKm) }}</dd>
+              </div>
+              <div class="dl-dl__row">
+                <dt>Mantenimiento por kilómetro</dt>
+                <dd>{{ money(datos.performance.maintenanceCostPerKm) }}</dd>
+              </div>
+              <div class="dl-dl__row">
+                <dt>Flujo neto por kilómetro</dt>
+                <dd>{{ money(datos.performance.netFlowPerKm) }}</dd>
+              </div>
+              <div class="dl-dl__row">
+                <dt>Ingreso por día en servicio</dt>
+                <dd>{{ money(datos.performance.grossIncomePerDay) }}</dd>
+              </div>
+              <div class="dl-dl__row">
+                <dt>Flujo neto por día en servicio</dt>
+                <dd>{{ money(datos.performance.netFlowPerDay) }}</dd>
+              </div>
+              <div class="dl-dl__row">
+                <dt>Cambios de conductor</dt>
+                <dd>{{ datos.performance.driverTurnover }}</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ===================== Bitácora de cortes ===================== -->
+    <section class="dl-card mt-4">
+      <div class="dl-card__head">
+        <div>
+          <h2 class="dl-card__title">Bitácora de cortes semanales</h2>
+          <p class="dl-card__subtitle">
+            Cada indicador de este reporte sale de estos renglones, sin cálculos intermedios
+          </p>
+        </div>
+      </div>
+
+      <div class="dl-table-wrap">
+        <table class="dl-table">
+          <thead>
+            <tr>
+              <th scope="col">Semana</th>
+              <th scope="col" class="text-end">Km</th>
+              <th scope="col" class="text-end">Días servicio</th>
+              <th scope="col" class="text-end">Días taller</th>
+              <th scope="col" class="text-end">Ingreso</th>
+              <th scope="col" class="text-end">Cobrado</th>
+              <th scope="col" class="text-end">Pendiente</th>
+              <th scope="col" class="text-end">Costos</th>
+              <th scope="col">Conductor</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (period of datos.periods; track period.weekStart) {
+              <tr [class.dl-report__row--bad]="period.daysInService === 0">
+                <td class="dl-mono">
+                  {{ date(period.weekStart) }}
+                  @if (period.source === 'demo') {
+                    <span class="dl-report__demo-tag" title="Corte de ejemplo">ejemplo</span>
+                  }
+                </td>
+                <td class="text-end">{{ period.kmDriven.toLocaleString('es-MX') }}</td>
+                <td class="text-end">{{ period.daysInService }}</td>
+                <td class="text-end">{{ period.daysInShop }}</td>
+                <td class="text-end">{{ money(period.grossIncome) }}</td>
+                <td class="text-end">{{ money(period.collectedIncome) }}</td>
+                <td class="text-end">
+                  {{ period.outstandingIncome ? money(period.outstandingIncome) : '—' }}
+                </td>
+                <td class="text-end">{{ money(period.directCosts) }}</td>
+                <td>{{ period.driverName ?? '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <p class="dl-report__foot">
+      El rendimiento anualizado es una proyección lineal del flujo observado en la ventana, no una
+      promesa de resultado: depende del desempeño real de la operación, de los días fuera de
+      servicio y de la mora.
+    </p>
+  }
+}

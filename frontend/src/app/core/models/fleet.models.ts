@@ -180,6 +180,155 @@ export interface FleetSummary {
 }
 
 /* ---------------------------------------------------------------------------
+   Rendimiento económico
+   ------------------------------------------------------------------------ */
+
+/**
+ * Indicadores de rendimiento de una unidad.
+ *
+ * Salen de los cortes semanales, no de una foto del estado actual: miden lo
+ * que la unidad produjo y costó en la ventana observada. Los importes son
+ * pesos enteros; las tasas, porcentajes ya redondeados por el backend.
+ */
+export interface UnitPerformance {
+  /** Semanas con corte capturado dentro de la ventana. */
+  weeks: number;
+  firstWeek: string | null;
+  lastWeek: string | null;
+
+  /** Condiciones del contrato. */
+  capitalInvested: number;
+  weeklyFee: number;
+  acquiredOn: string | null;
+  /** `true` cuando los importes del contrato son de ejemplo y no del cliente. */
+  financialsAreDemo: boolean;
+
+  /** `true` cuando los cortes semanales provienen del sembrado de demostración. */
+  periodsAreDemo: boolean;
+
+  /** Operación. */
+  km: number;
+  daysAvailable: number;
+  daysInService: number;
+  daysInShop: number;
+  daysOffRoad: number;
+
+  /** Dinero del periodo completo. */
+  grossIncome: number;
+  collectedIncome: number;
+  outstandingIncome: number;
+  maintenanceCost: number;
+  incidentCost: number;
+  directCosts: number;
+  fixedCosts: number;
+  operatingResult: number;
+  reserve: number;
+  netFlow: number;
+  /** Flujo neto llevado a un mes promedio. */
+  monthlyNetFlow: number;
+
+  /** Indicadores del estudio del cliente. */
+  utilizationPct: number;
+  availabilityPct: number;
+  grossIncomePerDay: number;
+  netFlowPerDay: number;
+  netFlowPerKm: number;
+  costPerKm: number;
+  maintenanceCostPerKm: number;
+  monthlyKm: number;
+  delinquencyPct: number;
+  driverTurnover: number;
+  driverNames: string[];
+  annualizedReturnPct: number;
+
+  series: PerformanceSeriesPoint[];
+}
+
+/** Semana de la serie de rendimiento. */
+export interface PerformanceSeriesPoint {
+  weekStart: string;
+  km: number;
+  grossIncome: number;
+  netFlow: number;
+  utilizationPct: number;
+  daysInShop: number;
+}
+
+/** Unidad con su rendimiento, tal como llega en el listado del programa. */
+export interface UnitPerformanceRow extends UnitPerformance {
+  id: string;
+  unitCode: string;
+  make: string;
+  model: string;
+  year: number;
+  plates: string;
+  status: UnitStatus;
+  driverName: string;
+  trackingUrl: string | null;
+}
+
+/** Rendimiento agregado del programa. */
+export interface ProgramPerformance {
+  unitsWithData: number;
+  capitalInvested: number;
+  grossIncome: number;
+  outstandingIncome: number;
+  operatingResult: number;
+  netFlow: number;
+  /** Flujo neto del programa llevado a un mes promedio. */
+  monthlyNetFlow: number;
+  annualizedReturnPct: number;
+  weightedUtilizationPct: number;
+  weightedAvailabilityPct: number;
+  delinquencyPct: number;
+  costPerKm: number;
+}
+
+/** Respuesta del panel de rendimiento. */
+export interface PerformanceOverview {
+  /** Ventana observada, en semanas. */
+  weeks: number;
+  /** `true` si alguna unidad trae cifras de ejemplo, de contrato o de cortes. */
+  demoData: boolean;
+  program: ProgramPerformance;
+  units: UnitPerformanceRow[];
+}
+
+/** Corte semanal tal como se capturó, sin indicadores derivados. */
+export interface UnitPeriodRow {
+  weekStart: string;
+  kmDriven: number;
+  daysInService: number;
+  daysInShop: number;
+  grossIncome: number;
+  collectedIncome: number;
+  outstandingIncome: number;
+  directCosts: number;
+  driverName: string | null;
+  source: 'capturado' | 'importado' | 'demo';
+}
+
+/** Rendimiento detallado de una unidad, con su bitácora de cortes. */
+export interface UnitPerformanceDetail {
+  weeks: number;
+  /** `true` si las cifras de esta unidad son de ejemplo. */
+  demoData: boolean;
+  vehicle: {
+    id: string;
+    unitCode: string;
+    make: string;
+    model: string;
+    year: number;
+    plates: string;
+    status: UnitStatus;
+    driverName: string;
+    trackingUrl: string | null;
+  };
+  performance: UnitPerformance;
+  periods: UnitPeriodRow[];
+}
+
+/* ---------------------------------------------------------------------------
    Sitio público
    ------------------------------------------------------------------------ */
 

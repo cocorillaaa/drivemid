@@ -11,7 +11,6 @@ import { SiteHeaderComponent } from './components/site-header/site-header';
 import { WorkPlanComponent } from './components/work-plan/work-plan';
 
 /**
- * Sitio público del programa de inversión en movilidad.
  *
  * Todo el contenido (quiénes somos, modelo de negocio, plan de trabajo,
  * públicos, catálogos y contacto) proviene de `/api/public/overview`: el

@@ -1,0 +1,198 @@
+<!-- Rendimiento del programa: la lectura del inversionista -->
+<section class="dl-card dl-performance" id="rendimiento">
+  <div class="dl-card__head">
+    <div>
+      <h2 class="dl-card__title">Rendimiento del programa</h2>
+      <p class="dl-card__subtitle">
+        Indicadores de los últimos
+        {{ performance()?.weeks ?? 0 }} {{ (performance()?.weeks ?? 0) === 1 ? 'corte semanal' : 'cortes semanales' }}
+        por unidad · no confundir con el panel operativo de arriba
+      </p>
+    </div>
+
+    <div class="dl-performance__tools">
+      <div class="dl-tabs" role="group" aria-label="Ventana observada">
+        @for (option of windows; track option.weeks) {
+          <button
+            type="button"
+            class="dl-tabs__item"
+            [class.is-active]="weeks() === option.weeks"
+            [attr.aria-pressed]="weeks() === option.weeks"
+            (click)="selectWindow(option.weeks)"
+          >
+            {{ option.label }}
+          </button>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="dl-btn dl-btn--outline dl-btn--sm"
+        [disabled]="loading()"
+        (click)="reload()"
+      >
+        {{ loading() ? 'Calculando…' : 'Recalcular' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="dl-card__body">
+    @if (performanceError(); as mensaje) {
+      <p class="dl-error mb-0">{{ mensaje }}</p>
+    } @else if (!performance()) {
+      <div class="row g-3">
+        @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+          <div class="col-sm-6 col-xl-3">
+            <div class="dl-card dl-card--pad">
+              <span class="dl-skeleton d-block mb-3" style="width: 55%; height: 0.7rem"></span>
+              <span class="dl-skeleton d-block" style="width: 75%; height: 1.7rem"></span>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      @if (performance(); as datos) {
+        @if (datos.demoData) {
+          <p class="dl-performance__notice">
+            Todo lo que muestra este panel es <strong>de ejemplo</strong>: los cortes semanales
+            provienen del sembrado de demostración y el cliente todavía no entrega sus importes de
+            renta, costos ni reserva. Los indicadores se vuelven reales en cuanto existan cortes
+            capturados de la operación.
+          </p>
+        }
+
+        @if (datos.program.unitsWithData === 0) {
+          <p class="dl-text-muted mb-0">
+            Todavía no hay cortes semanales capturados, así que no hay indicadores que mostrar.
+            Se calculan en cuanto exista el primer corte.
+          </p>
+        } @else {
+          <!-- Indicadores principales -->
+          <div class="row g-3">
+            <div class="col-sm-6 col-xl-3">
+              <dl-stat-card
+                [accent]="true"
+                label="Retorno anualizado"
+                [value]="datos.program.annualizedReturnPct"
+                unit="%"
+                [hint]="'Sobre ' + money(datos.program.capitalInvested) + ' de capital invertido'"
+              />
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <dl-stat-card
+                label="Flujo neto mensual"
+                [value]="money(datos.program.monthlyNetFlow)"
+                hint="Promedio de la ventana observada, ya con reserva"
+              />
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <dl-stat-card
+                label="Utilización"
+                [value]="datos.program.weightedUtilizationPct"
+                unit="%"
+                [hint]="'Kilometraje contra la referencia de ' + referenceKm + ' km por semana'"
+              />
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <dl-stat-card
+                label="Días fuera de servicio"
+                [value]="daysOffRoad()"
+                unit="días"
+                [hint]="'Disponibilidad de la flota: ' + datos.program.weightedAvailabilityPct + '%'"
+              />
+            </div>
+          </div>
+
+          <!-- Del ingreso al flujo -->
+          <h3 class="dl-mini-title mt-4">Del ingreso al flujo del periodo</h3>
+          <ol class="dl-waterfall list-unstyled mb-0">
+            @for (line of waterfall(); track line.label) {
+              <li class="dl-waterfall__row" [class.dl-waterfall__row--total]="line.total">
+                <span class="dl-waterfall__label">{{ line.label }}</span>
+                <span class="dl-waterfall__bar" aria-hidden="true">
+                  <span
+                    class="dl-waterfall__fill"
+                    [class.dl-waterfall__fill--cost]="line.kind === 'cost'"
+                    [class.dl-waterfall__fill--total]="line.kind === 'total'"
+                    [style.width.%]="line.width"
+                  ></span>
+                </span>
+                <span class="dl-waterfall__value">{{ money(line.amount) }}</span>
+              </li>
+            }
+          </ol>
+
+          <!-- Serie semanal del programa -->
+          <h3 class="dl-mini-title mt-4">Flujo neto por semana</h3>
+          <div class="dl-bars dl-bars--lg mb-2">
+            @for (point of programSeries(); track point.weekStart) {
+              <span
+                class="dl-bars__bar"
+                [class.dl-bars__bar--negative]="point.netFlow < 0"
+                [style.height.%]="barHeight(point.netFlow)"
+                [attr.title]="point.weekStart + ' · ' + money(point.netFlow)"
+              ></span>
+            }
+          </div>
+          <p class="dl-help">
+            Semanas de la más antigua a la más reciente. Las barras oscuras son semanas con
+            pérdida: taller o reparación.
+          </p>
+
+          <!-- Detalle por unidad -->
+          <h3 class="dl-mini-title mt-4">Aporte de cada unidad</h3>
+          <div class="dl-table-wrap">
+            <table class="dl-table dl-performance__table">
+              <thead>
+                <tr>
+                  <th scope="col">Unidad</th>
+                  <th scope="col" class="text-end">Capital</th>
+                  <th scope="col" class="text-end">Ingreso</th>
+                  <th scope="col" class="text-end">Costos</th>
+                  <th scope="col" class="text-end">Reserva</th>
+                  <th scope="col" class="text-end">Flujo neto</th>
+                  <th scope="col" class="text-end">Retorno</th>
+                  <th scope="col" class="text-end">Mora</th>
+                  <th scope="col" class="text-end">Reporte</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (unit of datos.units; track unit.id) {
+                  <tr>
+                    <td>
+                      <span class="dl-text-strong">{{ unit.unitCode }}</span>
+                      <span class="d-block dl-unit-meta">
+                        {{ unit.make }} {{ unit.model }} · <span class="dl-plate">{{ unit.plates }}</span>
+                      </span>
+                    </td>
+                    <td class="text-end dl-mono">{{ money(unit.capitalInvested) }}</td>
+                    <td class="text-end">{{ unit.weeks ? money(unit.grossIncome) : '—' }}</td>
+                    <td class="text-end">
+                      {{ unit.weeks ? money(unit.directCosts + unit.fixedCosts) : '—' }}
+                    </td>
+                    <td class="text-end">{{ unit.weeks ? money(unit.reserve) : '—' }}</td>
+                    <td class="text-end dl-text-strong">
+                      {{ unit.weeks ? money(unit.netFlow) : 'sin cortes' }}
+                    </td>
+                    <td class="text-end">{{ unit.weeks ? unit.annualizedReturnPct + '%' : '—' }}</td>
+                    <td class="text-end">{{ unit.weeks ? unit.delinquencyPct + '%' : '—' }}</td>
+                    <td class="text-end">
+                      <a class="dl-btn dl-btn--outline dl-btn--sm" [routerLink]="['/plataforma/rendimiento', unit.id]">
+                        Ver reporte
+                      </a>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <p class="dl-help mb-0 mt-3">
+            El rendimiento es una proyección del flujo observado, no una garantía: depende del
+            desempeño real de la operación.
+          </p>
+        }
+      }
+    }
+  </div>
+</section>
