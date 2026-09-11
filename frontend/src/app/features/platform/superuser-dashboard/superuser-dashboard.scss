@@ -10,6 +10,7 @@
 
 .dl-row-actions {
   display: inline-flex;
+  flex-wrap: wrap;
   gap: 0.3rem;
   justify-content: flex-end;
 }

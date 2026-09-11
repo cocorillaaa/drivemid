@@ -4,37 +4,39 @@
 
 .dl-hero {
   position: relative;
-  padding: 8.5rem 0 5rem;
-  background: var(--dl-black);
+  padding: 5.5rem 0 5.5rem;
+  background:
+    radial-gradient(120% 90% at 78% 12%, rgba(198, 166, 84, 0.14) 0%, rgba(198, 166, 84, 0) 58%),
+    linear-gradient(160deg, var(--dl-navy-soft) 0%, var(--dl-navy) 46%, var(--dl-navy-deep) 100%);
   overflow: hidden;
 }
 
-/* Halo corporativo sutil */
+/* Halo de marca, muy contenido */
 .dl-hero__glow {
   position: absolute;
-  top: -20rem;
-  right: -12rem;
-  width: 52rem;
-  height: 52rem;
+  top: -22rem;
+  right: -14rem;
+  width: 54rem;
+  height: 54rem;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0) 68%);
+  background: radial-gradient(circle, rgba(198, 166, 84, 0.09) 0%, rgba(198, 166, 84, 0) 66%);
   pointer-events: none;
 }
 
 .dl-hero__title {
-  font-size: clamp(2rem, 3.8vw, 3rem);
+  font-size: clamp(2rem, 3.7vw, 2.9rem);
   font-weight: 600;
-  line-height: 1.1;
+  line-height: 1.12;
   letter-spacing: -0.035em;
   color: var(--dl-white);
-  margin-bottom: 1.35rem;
+  margin: 1.1rem 0 1.35rem;
 }
 
 .dl-hero__lead {
   max-width: 34rem;
   font-size: 1.0625rem;
   line-height: 1.72;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.66);
   margin-bottom: 1.85rem;
 }
 
@@ -44,20 +46,20 @@
   gap: 0.55rem 1.5rem;
   margin: 0;
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.09);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .dl-hero__assurances li {
   font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.58);
 }
 
-/* --- Logotipo, sin contenedor: se apoya directo en el fondo del hero --- */
+/* --- Logotipo: se apoya directo en el fondo, sin contenedor --- */
 .dl-hero__figure {
   position: relative;
   display: grid;
   place-items: center;
-  min-height: 22rem;
+  min-height: 20rem;
   margin: 0;
 }
 
@@ -65,9 +67,9 @@
   position: relative;
   display: block;
   width: auto;
-  max-height: 17rem;
+  max-height: 15rem;
   height: auto;
-  filter: drop-shadow(0 24px 60px rgba(0, 0, 0, 0.8));
+  filter: drop-shadow(0 22px 56px rgba(0, 0, 0, 0.55));
   transition: transform 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -75,56 +77,16 @@
   transform: scale(1.035);
 }
 
-/* --- Pilares institucionales --- */
-.dl-hero__pillars {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  margin-top: 4.5rem;
-  background: rgba(255, 255, 255, 0.09);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: var(--dl-radius);
-  overflow: hidden;
-}
-
-.dl-hero__pillar {
-  padding: 1.5rem 1.5rem 1.6rem;
-  background: var(--dl-black);
-  transition: background-color 0.35s ease;
-}
-
-.dl-hero__pillar:hover {
-  background: #161616;
-}
-
-.dl-hero__pillar-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--dl-white);
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.01em;
-}
-
-.dl-hero__pillar-text {
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.5);
-  margin: 0;
-}
-
 @media (max-width: 991.98px) {
   .dl-hero {
-    padding: 7rem 0 3.5rem;
+    padding: 3.5rem 0 3.5rem;
   }
 
-  .dl-hero__pillars {
-    grid-template-columns: repeat(2, 1fr);
-    margin-top: 3rem;
+  .dl-hero__figure {
+    min-height: 13rem;
   }
-}
 
-@media (max-width: 575.98px) {
-  .dl-hero__pillars {
-    grid-template-columns: 1fr;
+  .dl-hero__logo {
+    max-height: 11rem;
   }
 }

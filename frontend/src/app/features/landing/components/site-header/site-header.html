@@ -1,14 +1,20 @@
-<!-- Encabezado público de DemoLogistics -->
+<!-- Encabezado del sitio público -->
 <header [class]="'dl-header' + (scrolled() ? ' is-scrolled' : '')">
   <div class="container">
     <nav class="dl-header__bar" aria-label="Navegación principal">
       <!-- Marca -->
-      <a class="dl-brand" routerLink="/" (click)="closeMenu()" aria-label="DemoLogistics, inicio">
-        <img class="dl-brand__logo" src="/images/logo-claro.png" alt="" width="200" height="273" aria-hidden="true" />
-        <span class="dl-brand__text">
-          <span class="dl-brand__name">DEMO<span class="dl-brand__name-alt">LOGISTICS</span></span>
-          <span class="dl-brand__tag">Prototipo de demostración</span>
-        </span>
+      <a class="dl-brand" routerLink="/" (click)="closeMenu()" [attr.aria-label]="brandName() + ', inicio'">
+        <img
+          class="dl-logo dl-logo--sm"
+          src="images/logo-drivemid.png"
+          alt=""
+          width="512"
+          height="512"
+          aria-hidden="true"
+        />
+        @if (demoBadge(); as chip) {
+          <span class="dl-demo-chip">{{ chip }}</span>
+        }
       </a>
 
       <!-- Navegación de escritorio -->
@@ -25,9 +31,7 @@
             <span>{{ datos.phone }}</span>
           </button>
         }
-        <a class="dl-btn dl-btn--light dl-btn--sm" routerLink="/acceso">
-          Acceso a Plataforma
-        </a>
+        <a class="dl-btn dl-btn--dark dl-btn--sm" routerLink="/acceso">Acceso a Plataforma</a>
       </div>
 
       <!-- Botón de menú móvil -->
@@ -57,7 +61,7 @@
             </li>
           }
         </ul>
-        <a class="dl-btn dl-btn--light dl-btn--block" routerLink="/acceso" (click)="closeMenu()">
+        <a class="dl-btn dl-btn--dark dl-btn--block" routerLink="/acceso" (click)="closeMenu()">
           Acceso a Plataforma
         </a>
       </div>

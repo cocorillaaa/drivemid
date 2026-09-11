@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreCorporateLeadRequest;
 use App\Http\Requests\StoreDriverApplicationRequest;
-use App\Models\CorporateLead;
+use App\Http\Requests\StoreInvestorLeadRequest;
 use App\Models\DriverApplication;
+use App\Models\InvestorLead;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 /**
- * Captación de prospectos desde la landing pública:
- * solicitudes de servicio corporativo y postulaciones de conductor.
+ * Captación de prospectos desde el sitio público: interesados en invertir y
+ * postulaciones de conductor.
  */
 class LeadController extends Controller
 {
@@ -34,10 +34,10 @@ class LeadController extends Controller
 
         return response()->json([
             'data' => [
-                'corporate_leads' => CorporateLead::query()->latest()->limit(25)->get(),
+                'investor_leads' => InvestorLead::query()->latest()->limit(25)->get(),
                 'driver_applications' => DriverApplication::query()->latest()->limit(25)->get(),
                 'totals' => [
-                    'corporate_leads' => CorporateLead::count(),
+                    'investor_leads' => InvestorLead::count(),
                     'driver_applications' => DriverApplication::count(),
                 ],
             ],
@@ -45,27 +45,25 @@ class LeadController extends Controller
     }
 
     /**
-     * Registra una solicitud de servicio corporativo.
+     * Registra el interés de un inversionista.
      */
-    public function storeCorporate(StoreCorporateLeadRequest $request): JsonResponse
+    public function storeInvestor(StoreInvestorLeadRequest $request): JsonResponse
     {
-        $lead = CorporateLead::create([
+        $lead = InvestorLead::create([
             ...$request->safe()->only([
-                'company',
-                'contact_name',
+                'full_name',
                 'email',
                 'phone',
-                'service_type',
-                'units',
                 'city',
+                'capital_range',
                 'message',
             ]),
-            'reference' => $this->generateReference('COR', CorporateLead::class),
+            'reference' => $this->generateReference('INV', InvestorLead::class),
         ]);
 
         return response()->json([
             'data' => ['id' => $lead->id, 'reference' => $lead->reference],
-            'message' => 'Solicitud de servicio corporativo registrada.',
+            'message' => 'Interés en el programa registrado.',
         ], 201);
     }
 

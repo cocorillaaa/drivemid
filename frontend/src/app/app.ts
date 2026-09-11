@@ -4,7 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { ToastHostComponent } from './shared/components/toast-host/toast-host';
 
 /**
- * Componente raíz de DemoLogistics.
+ * Componente raíz del prototipo de Drive Mid.
  *
  * Sólo hospeda el `router-outlet` (landing pública o plataforma) y el
  * contenedor global de notificaciones.

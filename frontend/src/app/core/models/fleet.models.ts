@@ -1,5 +1,5 @@
 /**
- * Modelo de dominio de la plataforma DemoLogistics.
+ * Modelo de dominio de la plataforma Drive Mid.
  * Contrato único compartido entre los servicios de datos y las vistas.
  */
 
@@ -86,7 +86,7 @@ export interface DemoAccount {
 
 /** Ubicación reportada por el GPS de la unidad. */
 export interface VehicleLocation extends GeoPoint {
-  /** Etiqueta legible, p. ej. "Polanco, CDMX". */
+  /** Etiqueta legible, p. ej. "Centro, Mérida". */
   label: string;
   /** Zona / corredor operativo. */
   zone: string;
@@ -155,6 +155,13 @@ export interface Vehicle {
   driver: Driver;
   policy: InsurancePolicy;
   location: VehicleLocation;
+  /**
+   * Enlace de seguimiento de la unidad.
+   *
+   * El rastreo del cliente se consulta con un link por vehículo (no hay API
+   * que alimente el mapa), así que la ficha ofrece el acceso directo.
+   */
+  trackingUrl: string | null;
 }
 
 /** Resumen agregado de la flota (vista Superusuario). */
@@ -173,75 +180,88 @@ export interface FleetSummary {
 }
 
 /* ---------------------------------------------------------------------------
-   Landing pública
+   Sitio público
    ------------------------------------------------------------------------ */
 
-/** Pilar institucional mostrado en la landing. */
-export interface LandingPillar {
+/** Valor institucional del programa. */
+export interface ProgramValue {
   key: string;
   title: string;
   description: string;
 }
 
-/**
- * Zona comercial de cobertura.
- *
- * Son referencias geográficas de operación, no la posición de una unidad:
- * la landing es pública y no publica datos operativos.
- */
-export interface CoverageZone {
+/** Etapa del plan de trabajo. */
+export interface ProgramStep {
   key: string;
-  name: string;
-  note: string;
-  lat: number;
-  lng: number;
+  /** Número de etapa ya formateado, p. ej. "01". */
+  step: string;
+  title: string;
+  description: string;
 }
 
-/** Solución comercial mostrada en la landing. */
-export interface LandingSolution {
+/** Paso del flujo del modelo de negocio. */
+export interface BusinessFlowStep {
+  key: string;
+  title: string;
+  description: string;
+}
+
+/** Público al que se dirige el programa. */
+export interface LandingAudience {
   key: string;
   title: string;
   description: string;
   bullets: string[];
 }
 
-/** Canales de contacto institucionales. */
+/** Canal de contacto institucional. */
 export interface LandingContact {
   phone: string;
   email: string;
   address: string;
+  city: string;
   hours: string;
+  website: string;
 }
 
 /**
- * Contenido completo de la landing servido por el backend.
+ * Contenido completo del sitio público servido por el backend.
  *
  * No incluye datos de la aplicación: ni unidades, ni kilometrajes, ni
- * pólizas, ni posiciones, ni información de los conductores.
+ * pólizas, ni posiciones, ni información de los conductores. Tampoco publica
+ * cobertura ni ciudades: el negocio se presenta como un programa de
+ * inversión, no como una operación geográfica.
  */
 export interface LandingOverview {
-  brand: { name: string; tagline: string; legalName: string };
+  brand: {
+    name: string;
+    shortName: string;
+    tagline: string;
+    legalName: string;
+    demoBadge: string;
+  };
   contact: LandingContact;
-  solutions: LandingSolution[];
-  serviceTypes: string[];
-  cities: string[];
-  pillars: LandingPillar[];
-  coverageZones: CoverageZone[];
+  about: { title: string; body: string[] };
+  mission: { title: string; body: string };
+  vision: { title: string; body: string };
+  values: ProgramValue[];
+  businessModel: { title: string; body: string[]; flow: BusinessFlowStep[] };
+  workPlan: { title: string; intro: string; steps: ProgramStep[] };
+  audiences: LandingAudience[];
+  capitalRanges: string[];
 }
 
 /* ---------------------------------------------------------------------------
    Captación
    ------------------------------------------------------------------------ */
 
-/** Alta de solicitud de servicio corporativo. */
-export interface CorporateLeadPayload {
-  company: string;
-  contactName: string;
+/** Alta de interesado en el programa de inversión. */
+export interface InvestorLeadPayload {
+  fullName: string;
   email: string;
   phone: string;
-  serviceType: string;
-  units: number;
   city: string;
+  capitalRange: string;
   message?: string;
 }
 

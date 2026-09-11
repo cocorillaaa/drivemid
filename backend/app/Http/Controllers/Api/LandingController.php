@@ -6,12 +6,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 
 /**
- * Contenido público de la landing.
+ * Contenido público del sitio.
  *
  * No requiere autenticación y **no publica datos operativos**: ni unidades,
  * ni matrículas, ni kilometrajes, ni posiciones, ni información de los
  * conductores. Todo lo que expone es contenido institucional declarado en
- * `config/demologistics.php`, de modo que la landing no revela el estado
+ * `config/drivemid.php`, de modo que el sitio no revela el estado
  * interno de la aplicación.
  */
 class LandingController extends Controller
@@ -20,13 +20,16 @@ class LandingController extends Controller
     {
         return response()->json([
             'data' => [
-                'brand' => config('demologistics.brand'),
-                'contact' => config('demologistics.contact'),
-                'solutions' => config('demologistics.solutions'),
-                'service_types' => config('demologistics.service_types'),
-                'cities' => config('demologistics.cities'),
-                'pillars' => config('demologistics.pillars'),
-                'coverage_zones' => config('demologistics.coverage_zones'),
+                'brand' => config('drivemid.brand'),
+                'contact' => config('drivemid.contact'),
+                'about' => config('drivemid.about'),
+                'mission' => config('drivemid.mission'),
+                'vision' => config('drivemid.vision'),
+                'values' => config('drivemid.values'),
+                'business_model' => config('drivemid.business_model'),
+                'work_plan' => config('drivemid.work_plan'),
+                'audiences' => config('drivemid.audiences'),
+                'capital_ranges' => config('drivemid.capital_ranges'),
             ],
         ]);
     }
@@ -48,7 +51,7 @@ class LandingController extends Controller
                     'role' => $account['role'],
                     'scope' => $account['scope'],
                 ],
-                config('demologistics.demo_accounts'),
+                config('drivemid.demo_accounts'),
             )
             : [];
 

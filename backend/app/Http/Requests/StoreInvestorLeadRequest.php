@@ -6,9 +6,9 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Alta de una solicitud de servicio corporativo desde la landing pública.
+ * Alta de un interesado en el programa de inversión desde el sitio público.
  */
-class StoreCorporateLeadRequest extends FormRequest
+class StoreInvestorLeadRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -21,13 +21,11 @@ class StoreCorporateLeadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'company' => ['required', 'string', 'min:2', 'max:160'],
-            'contact_name' => ['required', 'string', 'min:3', 'max:120'],
+            'full_name' => ['required', 'string', 'min:3', 'max:120'],
             'email' => ['required', 'string', 'email:rfc', 'max:160'],
             'phone' => ['required', 'string', 'regex:/^\d{10}$/'],
-            'service_type' => ['required', 'string', 'max:80'],
-            'units' => ['required', 'integer', 'min:1', 'max:50'],
             'city' => ['required', 'string', 'max:100'],
+            'capital_range' => ['required', 'string', 'max:80'],
             'message' => ['nullable', 'string', 'max:1000'],
         ];
     }
@@ -39,8 +37,7 @@ class StoreCorporateLeadRequest extends FormRequest
     {
         return [
             'phone.regex' => 'El teléfono debe contener exactamente 10 dígitos.',
-            'units.min' => 'Debe solicitar al menos una unidad.',
-            'units.max' => 'El máximo de unidades por solicitud es 50.',
+            'capital_range.required' => 'Indique el capital que le interesa considerar.',
         ];
     }
 }

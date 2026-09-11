@@ -3,18 +3,16 @@
 }
 
 .dl-header {
-  position: fixed;
-  inset: 0 0 auto 0;
+  position: sticky;
+  top: 0;
   z-index: 1030;
-  background: transparent;
-  border-bottom: 1px solid transparent;
-  transition: background-color 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease;
+  background: var(--dl-white);
+  border-bottom: 1px solid var(--dl-line);
+  transition: box-shadow 0.25s ease;
 }
 
 .dl-header.is-scrolled {
-  background: rgba(17, 17, 17, 0.92);
-  backdrop-filter: blur(10px);
-  border-bottom-color: rgba(255, 255, 255, 0.09);
+  box-shadow: var(--dl-shadow-sm);
 }
 
 .dl-header__bar {
@@ -22,7 +20,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  height: 72px;
+  height: 74px;
 }
 
 /* --- Marca --- */
@@ -30,7 +28,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
-  color: var(--dl-white);
+  color: var(--dl-ink);
 }
 
 .dl-brand__text {
@@ -43,28 +41,20 @@
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: var(--dl-white);
+  color: var(--dl-ink);
 }
 
 .dl-brand__name-alt {
   font-weight: 300;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--dl-slate);
   margin-left: 0.28rem;
 }
 
 .dl-brand__tag {
   font-size: 0.625rem;
   letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--dl-slate);
   margin-top: 0.15rem;
-}
-
-/* --- Logotipo --- */
-.dl-brand__logo {
-  display: block;
-  width: auto;
-  height: 30px;
-  flex: 0 0 auto;
 }
 
 /* --- Navegación --- */
@@ -81,13 +71,14 @@
   padding: 0.45rem 0.8rem;
   font-size: 0.8125rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--dl-slate);
   border-radius: 7px;
+  transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .dl-nav__link:hover {
-  color: var(--dl-white);
-  background: rgba(255, 255, 255, 0.07);
+  color: var(--dl-ink);
+  background: var(--dl-surface-2);
 }
 
 .dl-header__phone {
@@ -99,14 +90,14 @@
   background: none;
   border: 0;
   cursor: pointer;
-  padding: 0.4rem 0.7rem;
   font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--dl-slate);
   letter-spacing: 0.02em;
+  transition: color 0.2s ease;
 }
 
 .dl-header__phone:hover {
-  color: var(--dl-white);
+  color: var(--dl-ink);
 }
 
 /* --- Menú móvil --- */
@@ -114,17 +105,17 @@
   appearance: none;
   padding: 0.5rem 0.9rem;
   border-radius: 9px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: var(--dl-white);
+  background: var(--dl-surface-2);
+  border: 1px solid var(--dl-line-strong);
+  color: var(--dl-ink);
   font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
 }
 
 .dl-mobile-menu {
-  background: rgba(17, 17, 17, 0.98);
-  border-top: 1px solid rgba(255, 255, 255, 0.09);
+  background: var(--dl-white);
+  border-top: 1px solid var(--dl-line);
   padding: 1.25rem 0 1.5rem;
   animation: dl-menu-in 0.2s ease;
 }
@@ -135,13 +126,8 @@
   justify-content: space-between;
   padding: 0.75rem 0;
   font-size: 0.9375rem;
-  color: rgba(255, 255, 255, 0.82);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.dl-mobile-menu__link i {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--dl-ink);
+  border-bottom: 1px solid var(--dl-line);
 }
 
 @keyframes dl-menu-in {

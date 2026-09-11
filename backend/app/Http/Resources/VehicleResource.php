@@ -63,6 +63,8 @@ class VehicleResource extends JsonResource
             'location_updated_at' => $this->location_updated_at?->toIso8601String(),
             'speed_kmh' => (int) $this->speed_kmh,
             'heading' => $this->heading,
+
+            'tracking_url' => $this->tracking_url,
         ];
     }
 }

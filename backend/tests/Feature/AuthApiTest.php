@@ -26,14 +26,14 @@ class AuthApiTest extends TestCase
     public function test_it_issues_a_token_for_valid_credentials(): void
     {
         $response = $this->postJson('/api/auth/login', [
-            'email' => 'superadmin@demologistics.mx',
+            'email' => 'superadmin@drivemid.com',
             'password' => 'admin1234',
         ])->assertOk();
 
         $this->assertNotEmpty($response->json('data.token'));
         $this->assertSame('Bearer', $response->json('data.token_type'));
 
-        $response->assertJsonPath('data.user.email', 'superadmin@demologistics.mx')
+        $response->assertJsonPath('data.user.email', 'superadmin@drivemid.com')
             ->assertJsonPath('data.user.role', User::ROLE_SUPERUSER)
             ->assertJsonPath('data.user.permissions.view_global_fleet', true)
             ->assertJsonPath('data.user.vehicle_id', null);
@@ -44,7 +44,7 @@ class AuthApiTest extends TestCase
     public function test_it_rejects_invalid_credentials(): void
     {
         $this->postJson('/api/auth/login', [
-            'email' => 'superadmin@demologistics.mx',
+            'email' => 'superadmin@drivemid.com',
             'password' => 'incorrecta',
         ])
             ->assertStatus(422)
@@ -56,7 +56,7 @@ class AuthApiTest extends TestCase
     public function test_it_rejects_an_unknown_email(): void
     {
         $this->postJson('/api/auth/login', [
-            'email' => 'desconocido@demologistics.mx',
+            'email' => 'desconocido@drivemid.com',
             'password' => 'unidad123',
         ])
             ->assertStatus(422)
@@ -73,32 +73,32 @@ class AuthApiTest extends TestCase
     public function test_the_unit_admin_profile_exposes_its_assigned_vehicle(): void
     {
         $this->postJson('/api/auth/login', [
-            'email' => 'unidad01@demologistics.mx',
+            'email' => 'unidad01@drivemid.com',
             'password' => 'unidad123',
         ])
             ->assertOk()
             ->assertJsonPath('data.user.role', User::ROLE_UNIT_ADMIN)
             ->assertJsonPath('data.user.vehicle.unit_code', 'Unidad 01')
-            ->assertJsonPath('data.user.vehicle.plates', 'ABC-123')
+            ->assertJsonPath('data.user.vehicle.plates', 'YXY-669-G')
             ->assertJsonPath('data.user.permissions.view_global_fleet', false);
     }
 
     public function test_it_returns_the_authenticated_profile(): void
     {
-        $user = User::query()->where('email', 'unidad02@demologistics.mx')->firstOrFail();
+        $user = User::query()->where('email', 'unidad01@drivemid.com')->firstOrFail();
 
         $this->actingAs($user, 'sanctum')
             ->getJson('/api/auth/me')
             ->assertOk()
-            ->assertJsonPath('data.email', 'unidad02@demologistics.mx')
-            ->assertJsonPath('data.vehicle_id', 'unit-02')
-            ->assertJsonPath('data.vehicle.unit_code', 'Unidad 02');
+            ->assertJsonPath('data.email', 'unidad01@drivemid.com')
+            ->assertJsonPath('data.vehicle_id', 'unit-01')
+            ->assertJsonPath('data.vehicle.unit_code', 'Unidad 01');
     }
 
     public function test_it_revokes_the_token_on_logout(): void
     {
         $token = $this->postJson('/api/auth/login', [
-            'email' => 'unidad01@demologistics.mx',
+            'email' => 'unidad01@drivemid.com',
             'password' => 'unidad123',
         ])->json('data.token');
 
@@ -135,7 +135,7 @@ class AuthApiTest extends TestCase
 
     public function test_the_stored_password_is_hashed(): void
     {
-        $user = User::query()->where('email', 'superadmin@demologistics.mx')->firstOrFail();
+        $user = User::query()->where('email', 'superadmin@drivemid.com')->firstOrFail();
 
         $this->assertNotSame('admin1234', $user->password);
         $this->assertTrue(Hash::check('admin1234', $user->password));

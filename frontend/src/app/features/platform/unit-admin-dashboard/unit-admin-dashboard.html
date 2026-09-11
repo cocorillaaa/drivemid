@@ -39,6 +39,17 @@
           </span>
           <span class="dl-badge dl-badge--neutral">{{ u.serviceTier }}</span>
         </div>
+
+        @if (u.trackingUrl; as url) {
+          <a
+            class="dl-btn dl-btn--ghost-light dl-btn--sm mt-3"
+            [href]="url"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Abrir seguimiento GPS
+          </a>
+        }
       </div>
     </div>
 

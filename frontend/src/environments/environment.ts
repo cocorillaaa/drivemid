@@ -6,7 +6,7 @@
  */
 export const environment = {
   production: false,
-  appName: 'DemoLogistics',
+  appName: 'Drive Mid',
   /** Base de la API REST (Laravel). */
   apiBaseUrl: 'http://127.0.0.1:8001/api',
   /** Tiempo máximo de espera de una petición (ms). */

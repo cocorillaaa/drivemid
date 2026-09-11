@@ -3,10 +3,10 @@
 }
 
 .dl-footer {
-  background: var(--dl-black);
+  background: var(--dl-navy-deep);
   color: rgba(255, 255, 255, 0.55);
   padding: 4.5rem 0 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  border-top: 1px solid rgba(198, 166, 84, 0.28);
 }
 
 .dl-footer__brand {
@@ -17,24 +17,9 @@
   color: var(--dl-white);
 }
 
-.dl-footer__logo {
-  display: block;
-  width: auto;
-  height: 26px;
-  flex: 0 0 auto;
-}
-
-.dl-footer__name {
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--dl-white);
-}
-
-.dl-footer__name span {
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.7);
-  margin-left: 0.25rem;
+/* El distintivo ya contiene el nombre de la marca, no se repite como texto */
+.dl-footer__brand .dl-logo {
+  --dl-logo-size: 56px;
 }
 
 .dl-footer__text {

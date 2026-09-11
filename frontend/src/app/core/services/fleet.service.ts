@@ -189,8 +189,8 @@ export class FleetService {
   }
 
   /** Registra una solicitud de servicio corporativo en el backend. */
-  submitCorporateLead(payload: Parameters<FleetApiService['createCorporateLead']>[0]) {
-    return this.api.createCorporateLead(payload);
+  submitInvestorLead(payload: Parameters<FleetApiService['createInvestorLead']>[0]) {
+    return this.api.createInvestorLead(payload);
   }
 
   /** Registra una postulación de conductor en el backend. */

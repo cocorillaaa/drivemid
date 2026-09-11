@@ -1,0 +1,30 @@
+<!-- A quién se dirige el programa -->
+<section class="dl-section dl-section--dark" id="participa">
+  <div class="container">
+    <div class="dl-section-head">
+      <span class="dl-eyebrow dl-eyebrow--onDark" dlReveal="up">Participa</span>
+      <h2 dlReveal="up" [dlRevealDelay]="80">Dos formas de entrar al programa</h2>
+    </div>
+
+    <div class="row g-4">
+      @for (audience of audiences(); track audience.key; let i = $index) {
+        <div class="col-lg-6" dlReveal="up" [dlRevealDelay]="120 + i * 100">
+          <article class="dl-audience h-100">
+            <h3 class="dl-audience__title">{{ audience.title }}</h3>
+            <p class="dl-audience__text">{{ audience.description }}</p>
+
+            <ul class="dl-audience__bullets list-unstyled mb-0">
+              @for (bullet of audience.bullets; track bullet) {
+                <li>{{ bullet }}</li>
+              }
+            </ul>
+
+            <a class="dl-btn dl-btn--gold dl-btn--sm mt-4" href="#contacto">
+              {{ audience.key === 'investor' ? 'Quiero invertir' : 'Quiero conducir' }}
+            </a>
+          </article>
+        </div>
+      }
+    </div>
+  </div>
+</section>

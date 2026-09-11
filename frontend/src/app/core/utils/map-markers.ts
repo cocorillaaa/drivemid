@@ -1,4 +1,4 @@
-import { CoverageZone, FleetMapMarker, Vehicle } from '../models/fleet.models';
+import { FleetMapMarker, Vehicle } from '../models/fleet.models';
 import {
   POLICY_STATUS_LABEL,
   UNIT_STATUS_LABEL,
@@ -46,24 +46,5 @@ export function toFleetMarker(
       { label: 'Reporte GPS', value: relativeTime(vehicle.location.lastUpdate) },
     ],
     accuracyRadiusM: opts.withZone ? 850 : undefined,
-  };
-}
-
-/**
- * Marcador de una zona comercial de cobertura.
- *
- * La landing no publica posiciones de unidades: el mapa muestra las zonas
- * donde se presta servicio, no dónde está cada vehículo.
- */
-export function toCoverageMarker(zone: CoverageZone): FleetMapMarker {
-  return {
-    id: zone.key,
-    title: zone.name,
-    subtitle: 'Zona de cobertura',
-    lat: zone.lat,
-    lng: zone.lng,
-    tone: 'neutral',
-    rows: [{ label: 'Cobertura', value: zone.note }],
-    accuracyRadiusM: 2200,
   };
 }

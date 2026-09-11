@@ -9,7 +9,7 @@
   justify-content: center;
   min-height: 100vh;
   padding: 3rem 1.5rem;
-  background: var(--dl-black);
+  background: var(--dl-navy-deep);
   overflow: hidden;
 }
 
@@ -21,7 +21,7 @@
   height: 52rem;
   margin-left: -26rem;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 68%);
+  background: radial-gradient(circle, rgba(198, 166, 84, 0.07) 0%, rgba(198, 166, 84, 0) 68%);
   pointer-events: none;
 }
 
@@ -47,7 +47,7 @@
 .dl-login__logo {
   display: block;
   width: auto;
-  height: 34px;
+  height: 64px;
   flex: 0 0 auto;
 }
 
@@ -57,23 +57,11 @@
   line-height: 1.15;
 }
 
-.dl-login__brand-name {
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--dl-white);
-}
-
-.dl-login__brand-name span {
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.72);
-  margin-left: 0.28rem;
-}
-
 .dl-login__brand-tag {
-  font-size: 0.625rem;
-  color: rgba(255, 255, 255, 0.45);
-  margin-top: 0.15rem;
+  max-width: 15rem;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .dl-login__title {

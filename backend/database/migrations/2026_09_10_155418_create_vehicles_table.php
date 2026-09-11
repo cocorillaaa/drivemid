@@ -54,6 +54,13 @@ return new class extends Migration
             $table->unsignedSmallInteger('speed_kmh')->default(0);
             $table->string('heading', 4)->default('N');
 
+            /*
+             * Enlace de seguimiento de la unidad. El rastreo del cliente se
+             * consulta con un link por vehículo (no hay API), así que el
+             * sistema guarda la liga y ofrece el acceso directo desde la ficha.
+             */
+            $table->string('tracking_url', 300)->nullable();
+
             $table->timestamps();
         });
     }

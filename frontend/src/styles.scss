@@ -1,7 +1,9 @@
 /* =============================================================================
-   DemoLogistics · Sistema de diseño
-   Paleta corporativa sobria: negro (#111), gris oscuro (#1e1e1e), blanco y
-   acentos mínimos sobre gris claro (#f8f9fa). Nada estridente.
+   Drive Mid · Sistema de diseño
+   Base neutra y sobria —negro (#111), gris oscuro (#1e1e1e), blanco y gris
+   claro (#f8f9fa)— sobre la que se aplica la identidad del cliente: azul
+   marino profundo y dorado, tomados de su logotipo. El dorado se usa como
+   acento medido, nunca como color de superficies grandes.
    Bootstrap 5 se usa para maquetación; esta capa aporta la identidad visual.
    ========================================================================== */
 
@@ -18,6 +20,14 @@
   --dl-surface: #f8f9fa;
   --dl-surface-2: #f1f2f4;
   --dl-white: #ffffff;
+
+  /* --- Identidad del cliente (Drive Mid) --- */
+  --dl-navy: #1b232f;
+  --dl-navy-deep: #141a23;
+  --dl-navy-soft: #232d3b;
+  --dl-gold: #c6a654;
+  --dl-gold-strong: #9a7b28;
+  --dl-gold-soft: #f7f2e6;
 
   /* --- Semánticos (uso mínimo y medido) --- */
   --dl-ok: #1f7a4d;
@@ -133,6 +143,51 @@ a {
   color: rgba(255, 255, 255, 0.6);
 }
 
+.dl-eyebrow--gold {
+  color: var(--dl-gold-strong);
+}
+
+/* --- Marca ---------------------------------------------------------------- */
+
+.dl-logo {
+  display: block;
+  width: auto;
+  height: var(--dl-logo-size, 46px);
+}
+
+.dl-logo--sm {
+  --dl-logo-size: 52px;
+}
+
+.dl-logo--lg {
+  --dl-logo-size: 64px;
+}
+
+/* Distintivo de maqueta: aclara que lo que se ve no es producción. */
+.dl-demo-chip {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--dl-gold);
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dl-gold-strong);
+  background: var(--dl-gold-soft);
+  line-height: 1.4;
+}
+
+/* Regla corta de acento, usada bajo los títulos de sección. */
+.dl-accent-rule {
+  width: 54px;
+  height: 2px;
+  border: 0;
+  margin: 1rem 0 0;
+  background: var(--dl-gold);
+  opacity: 1;
+}
+
 .dl-lead {
   font-size: 1.0625rem;
   color: var(--dl-slate);
@@ -156,6 +211,19 @@ a {
   margin: 0;
 }
 
+/*
+ * Bootstrap calcula el margen negativo de una fila con el gutter de la propia
+ * fila, pero el padding del contenedor con el suyo. Con `g-5` la fila sobresale
+ * 12 px por lado: mientras el contenedor tiene ancho máximo no se nota, pero a
+ * ancho completo (móvil) provoca scroll horizontal. Se recorta el margen sin
+ * tocar la separación interna, que la aportan las columnas.
+ */
+@media (max-width: 767.98px) {
+  .container > .row.g-5 {
+    margin-inline: -12px;
+  }
+}
+
 /* -----------------------------------------------------------------------------
    Contenedores de sección
    -------------------------------------------------------------------------- */
@@ -173,8 +241,22 @@ a {
 }
 
 .dl-section--dark {
-  background: var(--dl-black);
+  background: var(--dl-navy);
   color: rgba(255, 255, 255, 0.78);
+}
+
+/* Variante más profunda: separa dos secciones oscuras consecutivas. */
+.dl-section--deep {
+  background: var(--dl-navy-deep);
+  color: rgba(255, 255, 255, 0.78);
+  border-top: 1px solid rgba(198, 166, 84, 0.22);
+}
+
+.dl-section--deep h1,
+.dl-section--deep h2,
+.dl-section--deep h3,
+.dl-section--deep h4 {
+  color: var(--dl-white);
 }
 
 .dl-section--dark h1,
@@ -407,12 +489,38 @@ a {
   box-shadow: var(--dl-shadow-md);
 }
 
+/* Acento de marca: fondo dorado con texto oscuro, para CTA principales. */
+.dl-btn--gold {
+  background: var(--dl-gold);
+  color: var(--dl-navy-deep);
+  border-color: var(--dl-gold);
+  font-weight: 600;
+}
+
+.dl-btn--gold:hover {
+  background: #d3b566;
+  border-color: #d3b566;
+  color: var(--dl-navy-deep);
+  box-shadow: var(--dl-shadow-md);
+}
+
+.dl-btn--gold-outline {
+  background: transparent;
+  color: var(--dl-gold-strong);
+  border-color: var(--dl-gold);
+}
+
+.dl-btn--gold-outline:hover {
+  background: var(--dl-gold-soft);
+  color: var(--dl-gold-strong);
+  border-color: var(--dl-gold-strong);
+}
+
 .dl-btn--outline {
   background: transparent;
   color: var(--dl-black);
   border-color: var(--dl-line-strong);
 }
-
 .dl-btn--outline:hover {
   background: var(--dl-surface-2);
   border-color: var(--dl-graphite);

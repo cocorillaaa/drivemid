@@ -1,24 +1,22 @@
-<!-- Captación: servicio corporativo / postulación de conductor -->
-<section class="dl-section dl-section--dark" id="contacto">
+<!-- Captación: inversionistas y conductores -->
+<section class="dl-section dl-section--dark dl-section--deep" id="contacto">
   <div class="container">
     <div class="row g-5">
       <!-- Columna informativa -->
       <div class="col-lg-5" dlReveal="right">
         <span class="dl-eyebrow dl-eyebrow--onDark">Contacto</span>
-        <h2 class="mt-3 mb-3" style="font-size: clamp(1.7rem, 2.6vw, 2.25rem)">
-          Hablemos de su operación de transporte
-        </h2>
-        <p class="mb-4" style="color: rgba(255,255,255,.62); font-size: 1rem; line-height: 1.7">
-          Cuéntenos cuántas unidades necesita, en qué ciudad y con qué horarios.
-          Diseñamos el esquema operativo y le presentamos una propuesta ejecutiva
-          en menos de 24 horas hábiles.
+        <h2 class="dl-contact__title">Hablemos del programa</h2>
+        <p class="dl-contact__lead">
+          Si le interesa participar como inversionista o trabajar con una de nuestras
+          unidades, escríbanos. Le explicamos el esquema, los montos y los controles
+          antes de cualquier aportación.
         </p>
 
         @if (contact(); as datos) {
           <ul class="dl-contact-channels list-unstyled mb-4">
             <li>
               <span>
-                <em>Mesa de servicio</em>
+                <em>Teléfono</em>
                 <button type="button" class="dl-channel-action" (click)="copy(datos.phone, 'Teléfono')">
                   {{ datos.phone }}
                 </button>
@@ -26,7 +24,7 @@
             </li>
             <li>
               <span>
-                <em>Correo corporativo</em>
+                <em>Correo</em>
                 <button type="button" class="dl-channel-action" (click)="copy(datos.email, 'Correo')">
                   {{ datos.email }}
                 </button>
@@ -34,7 +32,7 @@
             </li>
             <li>
               <span>
-                <em>Oficinas corporativas</em>
+                <em>Oficinas</em>
                 {{ datos.address }}
               </span>
             </li>
@@ -49,8 +47,8 @@
 
         <div class="dl-contact-note">
           <p class="mb-0">
-            La información compartida se trata de forma confidencial y se utiliza
-            únicamente para elaborar su propuesta de servicio.
+            La información que comparta se trata de forma confidencial y se usa
+            únicamente para dar seguimiento a su solicitud.
           </p>
         </div>
       </div>
@@ -61,8 +59,6 @@
           @if (result(); as res) {
             <!-- Confirmación -->
             <div class="dl-lead-success">
-              <span class="dl-lead-success__icon">
-              </span>
               <h3 class="dl-lead-success__title">{{ res.headline }}</h3>
               <p class="dl-lead-success__text">{{ res.detail }}</p>
 
@@ -75,24 +71,21 @@
                 <button type="button" class="dl-btn dl-btn--dark" (click)="resetForm()">
                   Registrar otra solicitud
                 </button>
-                <a class="dl-btn dl-btn--outline" href="#cobertura">
-                  Ver flota en vivo
-                </a>
               </div>
             </div>
           } @else {
-            <!-- Selector de tipo de solicitud -->
+            <!-- Selector de perfil -->
             <div class="dl-lead-card__head">
-              <div class="dl-tabs d-flex w-100" role="tablist" aria-label="Tipo de solicitud">
+              <div class="dl-tabs d-flex w-100" role="tablist" aria-label="Perfil de la solicitud">
                 <button
                   type="button"
                   role="tab"
                   class="dl-tabs__item flex-fill justify-content-center"
-                  [class.is-active]="activeTab() === 'corporate'"
-                  [attr.aria-selected]="activeTab() === 'corporate'"
-                  (click)="setTab('corporate')"
+                  [class.is-active]="activeTab() === 'investor'"
+                  [attr.aria-selected]="activeTab() === 'investor'"
+                  (click)="setTab('investor')"
                 >
-                  Solicitar Servicio Corporativo
+                  Quiero invertir
                 </button>
                 <button
                   type="button"
@@ -102,162 +95,123 @@
                   [attr.aria-selected]="activeTab() === 'driver'"
                   (click)="setTab('driver')"
                 >
-                  Postularse como Conductor
+                  Quiero conducir
                 </button>
               </div>
             </div>
 
             <div class="dl-lead-card__body">
-              <!-- ============ Formulario corporativo ============ -->
-              @if (activeTab() === 'corporate') {
-                <form [formGroup]="corporateForm" (ngSubmit)="submitCorporate()" novalidate>
+              <!-- ============ Inversionistas ============ -->
+              @if (activeTab() === 'investor') {
+                <form [formGroup]="investorForm" (ngSubmit)="submitInvestor()" novalidate>
                   <div class="row g-3">
                     <div class="col-md-6">
-                      <label class="dl-label" for="co-company">Razón social *</label>
+                      <label class="dl-label" for="in-name">Nombre completo *</label>
                       <input
-                        id="co-company"
+                        id="in-name"
                         type="text"
                         class="form-control"
-                        formControlName="company"
-                        placeholder="Corporativo Delta S.A. de C.V."
-                        [class.is-invalid]="showError(corporateForm, 'company')"
+                        formControlName="fullName"
+                        placeholder="Mariana Solís Aguilar"
+                        autocomplete="name"
+                        [class.is-invalid]="showError(investorForm, 'fullName')"
                       />
-                      @if (showError(corporateForm, 'company')) {
-                        <span class="dl-error">Indique la razón social de la empresa.</span>
+                      @if (showError(investorForm, 'fullName')) {
+                        <span class="dl-error">Indique su nombre completo.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="dl-label" for="co-name">Nombre del contacto *</label>
+                      <label class="dl-label" for="in-email">Correo electrónico *</label>
                       <input
-                        id="co-name"
-                        type="text"
-                        class="form-control"
-                        formControlName="contactName"
-                        placeholder="Nombre y apellido"
-                        [class.is-invalid]="showError(corporateForm, 'contactName')"
-                      />
-                      @if (showError(corporateForm, 'contactName')) {
-                        <span class="dl-error">Indique el nombre completo del responsable.</span>
-                      }
-                    </div>
-
-                    <div class="col-md-6">
-                      <label class="dl-label" for="co-email">Correo corporativo *</label>
-                      <input
-                        id="co-email"
+                        id="in-email"
                         type="email"
                         class="form-control"
                         formControlName="email"
-                        placeholder="nombre@empresa.com"
-                        [class.is-invalid]="showError(corporateForm, 'email')"
+                        placeholder="nombre@correo.com"
+                        autocomplete="email"
+                        [class.is-invalid]="showError(investorForm, 'email')"
                       />
-                      @if (showError(corporateForm, 'email')) {
-                        <span class="dl-error">Ingrese un correo electrónico válido.</span>
+                      @if (showError(investorForm, 'email')) {
+                        <span class="dl-error">Escriba un correo electrónico válido.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="dl-label" for="co-phone">Teléfono a 10 dígitos *</label>
+                      <label class="dl-label" for="in-phone">Teléfono (10 dígitos) *</label>
                       <input
-                        id="co-phone"
-                        type="tel"
+                        id="in-phone"
+                        type="text"
                         inputmode="numeric"
                         maxlength="10"
                         class="form-control"
                         formControlName="phone"
-                        placeholder="5512345678"
-                        [class.is-invalid]="showError(corporateForm, 'phone')"
+                        placeholder="9991234567"
+                        autocomplete="tel"
+                        [class.is-invalid]="showError(investorForm, 'phone')"
                       />
-                      @if (showError(corporateForm, 'phone')) {
-                        <span class="dl-error">Capture 10 dígitos, sin espacios ni guiones.</span>
+                      @if (showError(investorForm, 'phone')) {
+                        <span class="dl-error">El teléfono debe tener 10 dígitos, sin espacios.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="dl-label" for="co-service">Línea de servicio *</label>
-                      <select
-                        id="co-service"
-                        class="form-select"
-                        formControlName="serviceType"
-                        [class.is-invalid]="showError(corporateForm, 'serviceType')"
-                      >
-                        <option value="" disabled>Seleccione una opción</option>
-                        @for (service of serviceTypes(); track service) {
-                          <option [value]="service">{{ service }}</option>
-                        }
-                      </select>
-                      @if (showError(corporateForm, 'serviceType')) {
-                        <span class="dl-error">Seleccione la línea de servicio requerida.</span>
-                      }
-                    </div>
-
-                    <div class="col-md-6">
-                      <label class="dl-label" for="co-units">Unidades requeridas *</label>
+                      <label class="dl-label" for="in-city">Ciudad *</label>
                       <input
-                        id="co-units"
-                        type="number"
-                        min="1"
-                        max="50"
+                        id="in-city"
+                        type="text"
                         class="form-control"
-                        formControlName="units"
-                        [class.is-invalid]="showError(corporateForm, 'units')"
-                      />
-                      @if (showError(corporateForm, 'units')) {
-                        <span class="dl-error">Indique entre 1 y 50 unidades.</span>
-                      }
-                    </div>
-
-                    <div class="col-md-6">
-                      <label class="dl-label" for="co-city">Ciudad de operación *</label>
-                      <select
-                        id="co-city"
-                        class="form-select"
                         formControlName="city"
-                        [class.is-invalid]="showError(corporateForm, 'city')"
-                      >
-                        <option value="" disabled>Seleccione una ciudad</option>
-                        @for (city of cities(); track city) {
-                          <option [value]="city">{{ city }}</option>
-                        }
-                      </select>
-                      @if (showError(corporateForm, 'city')) {
-                        <span class="dl-error">Seleccione la ciudad donde operará la flota.</span>
+                        placeholder="Mérida, Yucatán"
+                        [class.is-invalid]="showError(investorForm, 'city')"
+                      />
+                      @if (showError(investorForm, 'city')) {
+                        <span class="dl-error">Indique su ciudad.</span>
                       }
                     </div>
 
                     <div class="col-12">
-                      <label class="dl-label" for="co-message">Requerimientos adicionales</label>
+                      <label class="dl-label" for="in-capital">Capital que le interesa considerar *</label>
+                      <select
+                        id="in-capital"
+                        class="form-select"
+                        formControlName="capitalRange"
+                        [class.is-invalid]="showError(investorForm, 'capitalRange')"
+                      >
+                        <option value="" disabled>Seleccione una opción</option>
+                        @for (range of capitalRanges(); track range) {
+                          <option [value]="range">{{ range }}</option>
+                        }
+                      </select>
+                      @if (showError(investorForm, 'capitalRange')) {
+                        <span class="dl-error">Seleccione el capital que desea considerar.</span>
+                      }
+                    </div>
+
+                    <div class="col-12">
+                      <label class="dl-label" for="in-message">Comentarios</label>
                       <textarea
-                        id="co-message"
+                        id="in-message"
                         rows="3"
                         class="form-control"
                         formControlName="message"
-                        placeholder="Horarios, rutas recurrentes, requisitos de facturación…"
+                        placeholder="¿Qué le gustaría saber antes de decidir?"
                       ></textarea>
                     </div>
                   </div>
 
-                  <hr class="dl-hairline my-4" />
-
-                  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                    <p class="mb-0 dl-help">
-                      Respuesta de un ejecutivo de cuenta en menos de 24 horas hábiles.
+                  <div class="dl-lead-card__actions">
+                    <p class="dl-help mb-0">
+                      Un rendimiento estimado no es una garantía: depende del desempeño
+                      de la operación.
                     </p>
                     <button type="submit" class="dl-btn dl-btn--dark" [disabled]="submitting()">
-                      @if (submitting()) {
-                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                        Enviando…
-                      } @else {
-                        Enviar solicitud
-                      }
+                      {{ submitting() ? 'Enviando…' : 'Enviar solicitud' }}
                     </button>
                   </div>
                 </form>
-              }
-
-              <!-- ============ Formulario de conductor ============ -->
-              @if (activeTab() === 'driver') {
+              } @else {
+                <!-- ============ Conductores ============ -->
                 <form [formGroup]="driverForm" (ngSubmit)="submitDriver()" novalidate>
                   <div class="row g-3">
                     <div class="col-md-6">
@@ -267,7 +221,8 @@
                         type="text"
                         class="form-control"
                         formControlName="fullName"
-                        placeholder="Nombre y apellidos"
+                        placeholder="Jorge Alberto Núñez Vega"
+                        autocomplete="name"
                         [class.is-invalid]="showError(driverForm, 'fullName')"
                       />
                       @if (showError(driverForm, 'fullName')) {
@@ -283,67 +238,66 @@
                         class="form-control"
                         formControlName="email"
                         placeholder="nombre@correo.com"
+                        autocomplete="email"
                         [class.is-invalid]="showError(driverForm, 'email')"
                       />
                       @if (showError(driverForm, 'email')) {
-                        <span class="dl-error">Ingrese un correo electrónico válido.</span>
+                        <span class="dl-error">Escriba un correo electrónico válido.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="dl-label" for="dr-phone">Teléfono celular a 10 dígitos *</label>
+                      <label class="dl-label" for="dr-phone">Teléfono (10 dígitos) *</label>
                       <input
                         id="dr-phone"
-                        type="tel"
+                        type="text"
                         inputmode="numeric"
                         maxlength="10"
                         class="form-control"
                         formControlName="phone"
-                        placeholder="5512345678"
+                        placeholder="9991234567"
+                        autocomplete="tel"
                         [class.is-invalid]="showError(driverForm, 'phone')"
                       />
                       @if (showError(driverForm, 'phone')) {
-                        <span class="dl-error">Capture 10 dígitos, sin espacios ni guiones.</span>
+                        <span class="dl-error">El teléfono debe tener 10 dígitos, sin espacios.</span>
                       }
                     </div>
 
                     <div class="col-md-6">
-                      <label class="dl-label" for="dr-city">Ciudad de residencia *</label>
-                      <select
+                      <label class="dl-label" for="dr-city">Ciudad *</label>
+                      <input
                         id="dr-city"
-                        class="form-select"
+                        type="text"
+                        class="form-control"
                         formControlName="city"
+                        placeholder="Mérida, Yucatán"
                         [class.is-invalid]="showError(driverForm, 'city')"
-                      >
-                        <option value="" disabled>Seleccione una ciudad</option>
-                        @for (city of cities(); track city) {
-                          <option [value]="city">{{ city }}</option>
-                        }
-                      </select>
+                      />
                       @if (showError(driverForm, 'city')) {
-                        <span class="dl-error">Seleccione su ciudad de residencia.</span>
+                        <span class="dl-error">Indique su ciudad.</span>
                       }
                     </div>
 
-                    <div class="col-md-8">
-                      <label class="dl-label" for="dr-license">Número de licencia federal *</label>
+                    <div class="col-md-6">
+                      <label class="dl-label" for="dr-license">Licencia de conducir *</label>
                       <input
                         id="dr-license"
                         type="text"
                         class="form-control"
                         formControlName="licenseNumber"
-                        placeholder="RMOC880415HDFMRN03"
+                        placeholder="Número de licencia vigente"
                         [class.is-invalid]="showError(driverForm, 'licenseNumber')"
                       />
                       @if (showError(driverForm, 'licenseNumber')) {
-                        <span class="dl-error">Capture el número completo de su licencia federal.</span>
+                        <span class="dl-error">Indique el número de su licencia.</span>
                       }
                     </div>
 
-                    <div class="col-md-4">
-                      <label class="dl-label" for="dr-exp">Años de experiencia *</label>
+                    <div class="col-md-6">
+                      <label class="dl-label" for="dr-experience">Años de experiencia *</label>
                       <input
-                        id="dr-exp"
+                        id="dr-experience"
                         type="number"
                         min="0"
                         max="50"
@@ -364,8 +318,8 @@
                           class="form-check-input"
                           formControlName="vehicleOwned"
                         />
-                        <label class="form-check-label" for="dr-vehicle" style="font-size: .875rem">
-                          Cuento con vehículo propio en condiciones de operar
+                        <label class="form-check-label" for="dr-vehicle">
+                          Cuento con vehículo propio
                         </label>
                       </div>
                     </div>
@@ -377,24 +331,18 @@
                         rows="3"
                         class="form-control"
                         formControlName="message"
-                        placeholder="Disponibilidad de horario, zonas donde opera, referencias…"
+                        placeholder="Disponibilidad, zona donde trabaja, experiencia en plataformas…"
                       ></textarea>
                     </div>
                   </div>
 
-                  <hr class="dl-hairline my-4" />
-
-                  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                    <p class="mb-0 dl-help">
-                      Revisión de expediente en un máximo de 5 días hábiles.
+                  <div class="dl-lead-card__actions">
+                    <p class="dl-help mb-0">
+                      Revisamos identificación, licencia y referencias antes de asignar
+                      una unidad.
                     </p>
                     <button type="submit" class="dl-btn dl-btn--dark" [disabled]="submitting()">
-                      @if (submitting()) {
-                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-                        Enviando…
-                      } @else {
-                        Enviar postulación
-                      }
+                      {{ submitting() ? 'Enviando…' : 'Enviar postulación' }}
                     </button>
                   </div>
                 </form>

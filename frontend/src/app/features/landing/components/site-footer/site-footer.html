@@ -1,37 +1,40 @@
-<!-- Pie de página institucional -->
+<!-- Pie de página -->
 <footer class="dl-footer">
   <div class="container">
     <div class="row g-4 g-lg-5 pb-5">
       <!-- Marca -->
       <div class="col-lg-4">
-        <a class="dl-footer__brand" routerLink="/" aria-label="DemoLogistics, inicio">
-          <img class="dl-footer__logo" src="/images/logo-claro.png" alt="" width="200" height="273" aria-hidden="true" />
-          <span class="dl-footer__name">DEMO<span>LOGISTICS</span></span>
+        <a class="dl-footer__brand" routerLink="/" [attr.aria-label]="brandName() + ', inicio'">
+          <img
+            class="dl-logo"
+            src="images/logo-drivemid.png"
+            alt=""
+            width="512"
+            height="512"
+            aria-hidden="true"
+          />
         </a>
 
         <p class="dl-footer__text">
-          Operador de movilidad ejecutiva y gestión integral de flotillas corporativas
-          en el Valle de México. Unidades propias, conductores verificados y control
-          operativo en una sola plataforma.
+          Programa de inversión en movilidad. Captamos capital e invertimos en unidades
+          que operan en Mérida, con controles, reservas de riesgo y reporte periódico
+          por vehículo.
         </p>
-
-        <div class="d-flex gap-2">
-        </div>
       </div>
 
-      <!-- Soluciones -->
+      <!-- Programa -->
       <div class="col-6 col-lg-2">
-        <h4 class="dl-footer__heading">Soluciones</h4>
+        <h4 class="dl-footer__heading">Programa</h4>
         <ul class="dl-footer__list list-unstyled">
-          @for (item of solutions(); track item) {
-            <li><a href="#soluciones">{{ item }}</a></li>
+          @for (item of program; track item.href) {
+            <li><a [href]="item.href">{{ item.label }}</a></li>
           }
         </ul>
       </div>
 
-      <!-- Plataforma -->
+      <!-- Participa -->
       <div class="col-6 col-lg-2">
-        <h4 class="dl-footer__heading">Plataforma</h4>
+        <h4 class="dl-footer__heading">Participa</h4>
         <ul class="dl-footer__list list-unstyled">
           @for (item of platform; track item.label) {
             <li><a [routerLink]="item.href">{{ item.label }}</a></li>
@@ -44,9 +47,7 @@
         <h4 class="dl-footer__heading">Contacto</h4>
         @if (contact(); as datos) {
           <ul class="dl-footer__list list-unstyled">
-            <li class="dl-footer__contact">
-              {{ datos.address }}
-            </li>
+            <li class="dl-footer__contact">{{ datos.address }}</li>
             <li class="dl-footer__contact">
               <button type="button" class="dl-footer__action" (click)="copy(datos.phone, 'Teléfono')">
                 {{ datos.phone }}
@@ -57,9 +58,7 @@
                 {{ datos.email }}
               </button>
             </li>
-            <li class="dl-footer__contact">
-              {{ datos.hours }}
-            </li>
+            <li class="dl-footer__contact">{{ datos.hours }}</li>
           </ul>
         }
       </div>
@@ -69,8 +68,8 @@
 
     <div class="dl-footer__bottom">
       <p class="mb-0">
-        © {{ year }} DemoLogistics · Prototipo de demostración con datos simulados.
-        No corresponde a una empresa real.
+        © {{ year }} {{ brandLegal() }} · Prototipo de demostración.
+        Los datos operativos que muestra la plataforma son de ejemplo.
       </p>
       <p class="mb-0">
         <a href="#inicio">Aviso de privacidad</a>

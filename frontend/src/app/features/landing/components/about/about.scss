@@ -1,0 +1,97 @@
+:host {
+  display: block;
+}
+
+.dl-about__title {
+  font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+  margin: 0.9rem 0 0;
+}
+
+.dl-about__text {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--dl-slate);
+  margin: 1.35rem 0 0;
+}
+
+.dl-about__text:first-of-type {
+  margin-top: 1.5rem;
+}
+
+/* --- Misión y visión --- */
+.dl-purpose {
+  height: 100%;
+  padding: 1.6rem 1.75rem;
+  border: 1px solid var(--dl-line);
+  border-left: 3px solid var(--dl-gold);
+  border-radius: var(--dl-radius-sm);
+  background: var(--dl-white);
+}
+
+.dl-purpose__title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dl-gold-strong);
+  margin-bottom: 0.7rem;
+}
+
+.dl-purpose__text {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--dl-ink);
+  margin: 0;
+}
+
+/* --- Valores --- */
+.dl-values {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  margin-top: 4rem;
+  background: var(--dl-line);
+  border: 1px solid var(--dl-line);
+  border-radius: var(--dl-radius);
+  overflow: hidden;
+}
+
+.dl-values__item {
+  padding: 1.6rem 1.6rem 1.75rem;
+  background: var(--dl-white);
+  transition: background-color 0.3s ease;
+}
+
+.dl-values__item:hover {
+  background: var(--dl-gold-soft);
+}
+
+.dl-values__title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--dl-ink);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.dl-values__text {
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: var(--dl-slate);
+  margin: 0;
+}
+
+@media (max-width: 991.98px) {
+  .dl-values {
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: 3rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .dl-values {
+    grid-template-columns: 1fr;
+  }
+}

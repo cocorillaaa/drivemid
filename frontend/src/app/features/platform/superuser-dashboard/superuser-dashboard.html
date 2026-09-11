@@ -4,7 +4,7 @@
     <span class="dl-eyebrow">Superusuario · Vista global de flota</span>
     <h1 class="dl-page-head__title">Panel de control de flota</h1>
     <p class="dl-page-head__sub">
-      Monitoreo de las {{ summary()?.totalUnits ?? '—' }} unidades ejecutivas:
+      Monitoreo de la flota: 
       kilometraje semanal, vigencia de pólizas, conductor asignado y última ubicación reportada.
     </p>
   </div>
@@ -24,7 +24,7 @@
         [accent]="true"
         label="Vehículos activos"
         [value]="resumen.activeUnits"
-        [hint]="'de ' + resumen.totalUnits + ' unidades registradas · ' + resumen.onServiceUnits + ' en servicio'"
+        [hint]="'de ' + resumen.totalUnits + plural(resumen.totalUnits, ' unidad registrada', ' unidades registradas') + ' · ' + resumen.onServiceUnits + ' en servicio'"
       />
     </div>
 
@@ -41,7 +41,7 @@
       <dl-stat-card
         label="Alertas de pólizas"
         [value]="resumen.policyAlerts"
-        [hint]="resumen.expiredPolicies + ' vencida(s) · ' + resumen.expiringPolicies + ' por vencer'"
+        [hint]="resumen.expiredPolicies + plural(resumen.expiredPolicies, ' vencida', ' vencidas') + ' · ' + resumen.expiringPolicies + ' por vencer'"
       />
     </div>
 
@@ -50,7 +50,7 @@
         label="Cobertura de seguro"
         [value]="resumen.insuranceCoveragePct"
         unit="%"
-        [hint]="(resumen.totalUnits - resumen.expiredPolicies) + ' de ' + resumen.totalUnits + ' unidades con póliza vigente'"
+        [hint]="(resumen.totalUnits - resumen.expiredPolicies) + ' de ' + resumen.totalUnits + plural(resumen.totalUnits, ' unidad con póliza vigente', ' unidades con póliza vigente')"
       />
     </div>
   </section>
@@ -59,7 +59,7 @@
   <section class="dl-card mb-4">
     <div class="dl-card__head flex-wrap">
       <div>
-        <h2 class="dl-card__title">Flota ejecutiva · {{ visibleRows().length }} de {{ rows().length }} unidades</h2>
+        <h2 class="dl-card__title">Flota · {{ visibleRows().length }} de {{ rows().length }} {{ rows().length === 1 ? 'unidad' : 'unidades' }}</h2>
       </div>
 
       <div class="dl-tabs" role="group" aria-label="Filtro de la tabla">
@@ -219,6 +219,17 @@
                   >
                     Ficha
                   </button>
+                  @if (row.vehicle.trackingUrl) {
+                    <a
+                      class="dl-btn dl-btn--outline dl-btn--sm"
+                      [href]="row.vehicle.trackingUrl"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      [attr.aria-label]="'Abrir el seguimiento GPS de ' + row.vehicle.unitCode"
+                    >
+                      Seguimiento
+                    </a>
+                  }
                   <button
                     type="button"
                     class="dl-btn dl-btn--dark dl-btn--sm"
@@ -249,7 +260,7 @@
       <section class="dl-card h-100 overflow-hidden">
         <div class="dl-card__head">
           <div>
-            <h2 class="dl-card__title">Mapa de la flota · Zona Metropolitana del Valle de México</h2>
+            <h2 class="dl-card__title">Mapa de la flota · Mérida, Yucatán</h2>
             <p class="dl-card__subtitle">
               {{ markers().length }} marcadores activos · telemetría GPS
             </p>

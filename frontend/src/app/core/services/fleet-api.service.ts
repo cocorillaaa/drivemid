@@ -5,7 +5,7 @@ import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   ApiResponse,
-  CorporateLeadPayload,
+  InvestorLeadPayload,
   DriverApplicationPayload,
   FleetSummary,
   UnitUpdatePayload,
@@ -60,17 +60,15 @@ export class FleetApiService {
       .pipe(map((res) => mapVehicle(res.data)));
   }
 
-  /** Alta de solicitud de servicio corporativo desde la landing. */
-  createCorporateLead(payload: CorporateLeadPayload): Observable<{ reference: string }> {
+  /** Alta de interesado en el programa de inversión desde el sitio público. */
+  createInvestorLead(payload: InvestorLeadPayload): Observable<{ reference: string }> {
     return this.http
-      .post<ApiResponse<{ id: number; reference: string }>>(`${this.baseUrl}/leads/corporate`, {
-        company: payload.company,
-        contact_name: payload.contactName,
+      .post<ApiResponse<{ id: number; reference: string }>>(`${this.baseUrl}/leads/investors`, {
+        full_name: payload.fullName,
         email: payload.email,
         phone: payload.phone,
-        service_type: payload.serviceType,
-        units: payload.units,
         city: payload.city,
+        capital_range: payload.capitalRange,
         message: payload.message?.trim() ? payload.message : null,
       })
       .pipe(map((res) => ({ reference: res.data.reference })));

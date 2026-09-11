@@ -1,27 +1,31 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
 import { LandingService } from '../../core/services/landing.service';
-import { CoverageComponent } from './components/coverage/coverage';
+import { AboutComponent } from './components/about/about';
+import { AudiencesComponent } from './components/audiences/audiences';
 import { HeroComponent } from './components/hero/hero';
 import { LeadFormComponent } from './components/lead-form/lead-form';
+import { ModelComponent } from './components/model/model';
 import { SiteFooterComponent } from './components/site-footer/site-footer';
 import { SiteHeaderComponent } from './components/site-header/site-header';
-import { SolutionsComponent } from './components/solutions/solutions';
+import { WorkPlanComponent } from './components/work-plan/work-plan';
 
 /**
- * Landing pública de DemoLogistics.
+ * Sitio público del programa de inversión en movilidad.
  *
- * Todo el contenido (soluciones, catálogos, contacto, indicadores y la flota
- * publicada) proviene de `/api/public/overview`: el frontend sólo se encarga
- * de la presentación.
+ * Todo el contenido (quiénes somos, modelo de negocio, plan de trabajo,
+ * públicos, catálogos y contacto) proviene de `/api/public/overview`: el
+ * frontend sólo se encarga de la presentación.
  */
 @Component({
   selector: 'dl-landing-page',
   imports: [
     SiteHeaderComponent,
     HeroComponent,
-    SolutionsComponent,
-    CoverageComponent,
+    AboutComponent,
+    ModelComponent,
+    WorkPlanComponent,
+    AudiencesComponent,
     LeadFormComponent,
     SiteFooterComponent,
   ],

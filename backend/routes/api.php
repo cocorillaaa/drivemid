@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API de DemoLogistics (puerto 8001)
+| API de Drive Mid (puerto 8001)
 |--------------------------------------------------------------------------
 |
-| Endpoints públicos (landing):
+| Endpoints públicos (sitio):
 |
 |   GET    /api/health                     Estado del servicio
-|   GET    /api/public/overview            Contenido y flota pública de la landing
-|   POST   /api/leads/corporate            Solicitud de servicio corporativo
+|   GET    /api/public/overview            Contenido del sitio público
+|   POST   /api/leads/investors            Interés en el programa de inversión
 |   POST   /api/leads/drivers              Postulación de conductor
 |
 | Autenticación por token (Sanctum):
@@ -30,14 +30,14 @@ use Illuminate\Support\Facades\Route;
 |   GET    /api/vehicles/{vehicle}         Detalle (autorizado por política)
 |   PATCH  /api/vehicles/{vehicle}/telemetry  Km semanales y teléfono de contacto
 |   GET    /api/fleet/summary              Métricas globales (sólo Superusuario)
-|   GET    /api/leads                      Bandeja de solicitudes (sólo Superusuario)
+|   GET    /api/leads                      Bandeja de prospectos (sólo Superusuario)
 |
 */
 
 Route::get('/health', fn () => response()->json([
     'data' => [
         'status' => 'ok',
-        'service' => 'demologistics-api',
+        'service' => 'drivemid-api',
         'version' => app()->version(),
         'php' => PHP_VERSION,
         'timestamp' => now()->toIso8601String(),
@@ -53,7 +53,7 @@ Route::get('/health', fn () => response()->json([
 Route::get('/public/overview', [LandingController::class, 'overview']);
 Route::get('/public/demo-accounts', [LandingController::class, 'demoAccounts']);
 
-Route::post('/leads/corporate', [LeadController::class, 'storeCorporate']);
+Route::post('/leads/investors', [LeadController::class, 'storeInvestor']);
 Route::post('/leads/drivers', [LeadController::class, 'storeDriver']);
 
 /*

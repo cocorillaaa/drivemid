@@ -83,7 +83,7 @@ export class FleetMapComponent implements AfterViewInit, OnDestroy {
     const host = this.canvasRef().nativeElement;
 
     this.map = L.map(host, {
-      center: [19.415, -99.175],
+      center: [20.9674, -89.5926],
       zoom: this.zoom(),
       zoomControl: true,
       scrollWheelZoom: false,

@@ -150,6 +150,23 @@
               <dd>{{ relativeTime(vehicle().location.lastUpdate) }}</dd>
             </div>
           </dl>
+
+          <h4 class="dl-modal__section mt-4">Seguimiento GPS</h4>
+          @if (vehicle().trackingUrl; as url) {
+            <a
+              class="dl-btn dl-btn--outline dl-btn--sm"
+              [href]="url"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Abrir seguimiento de la unidad
+            </a>
+            <p class="dl-help mt-2 mb-0">
+              El rastreo se consulta con el enlace del proveedor: se abre en otra pestaña.
+            </p>
+          } @else {
+            <p class="dl-help mb-0">Esta unidad aún no tiene enlace de seguimiento registrado.</p>
+          }
         </div>
       </div>
     </div>

@@ -1,0 +1,49 @@
+<!-- Quiénes somos, misión, visión y valores -->
+<section class="dl-section" id="nosotros">
+  <div class="container">
+    <div class="row g-5">
+      <!-- Quiénes somos -->
+      <div class="col-lg-6">
+        <span class="dl-eyebrow dl-eyebrow--gold" dlReveal="up">
+          {{ about()?.title ?? 'Quiénes somos' }}
+        </span>
+        <h2 class="dl-about__title" dlReveal="up" [dlRevealDelay]="80">
+          Gestión y administración estratégica de recursos
+        </h2>
+        <hr class="dl-accent-rule" />
+
+        @for (paragraph of aboutBody(); track paragraph; let i = $index) {
+          <p class="dl-about__text" dlReveal="up" [dlRevealDelay]="140 + i * 70">
+            {{ paragraph }}
+          </p>
+        }
+      </div>
+
+      <!-- Misión y visión -->
+      <div class="col-lg-6">
+        <div class="row g-4">
+          @for (block of purpose(); track block.title) {
+            <div class="col-md-6 col-lg-12" dlReveal="right" [dlRevealDelay]="$index * 90">
+              <article class="dl-purpose">
+                <h3 class="dl-purpose__title">{{ block.title }}</h3>
+                <p class="dl-purpose__text">{{ block.body }}</p>
+              </article>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Valores -->
+    @if (values().length) {
+      <div class="dl-values">
+        @for (value of values(); track value.key; let i = $index) {
+          <article class="dl-values__item" dlReveal="up" [dlRevealDelay]="120 + i * 80">
+            <h3 class="dl-values__title">{{ value.title }}</h3>
+            <p class="dl-values__text">{{ value.description }}</p>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>

@@ -3,19 +3,20 @@ import { catchError, finalize, of, tap, timeout } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import {
-  CoverageZone,
+  BusinessFlowStep,
+  LandingAudience,
   LandingContact,
   LandingOverview,
-  LandingPillar,
-  LandingSolution,
+  ProgramStep,
+  ProgramValue,
 } from '../models/fleet.models';
 import { LandingApiService } from './landing-api.service';
 
 /**
- * Contenido de la landing pública.
+ * Contenido del sitio público.
  *
  * Todo lo que se muestra proviene de `/api/public/overview` y es contenido
- * institucional: la landing no expone datos operativos de la aplicación.
+ * institucional: el sitio no expone datos operativos de la aplicación.
  */
 @Injectable({ providedIn: 'root' })
 export class LandingService {
@@ -25,7 +26,7 @@ export class LandingService {
   private readonly _loading = signal(false);
   private readonly _error = signal<string | null>(null);
 
-  /** Contenido completo de la landing. */
+  /** Contenido completo del sitio. */
   readonly overview = this._overview.asReadonly();
 
   /** `true` durante la carga. */
@@ -37,25 +38,47 @@ export class LandingService {
   /** `true` cuando el contenido ya está disponible. */
   readonly loaded = computed(() => this._overview() !== null);
 
-  /** Soluciones comerciales. */
-  readonly solutions = computed<LandingSolution[]>(() => this._overview()?.solutions ?? []);
+  /** Identidad de la marca. */
+  readonly brand = computed(() => this._overview()?.brand ?? null);
 
-  /** Pilares institucionales. */
-  readonly pillars = computed<LandingPillar[]>(() => this._overview()?.pillars ?? []);
+  /** Quiénes somos. */
+  readonly about = computed(() => this._overview()?.about ?? null);
 
-  /** Zonas comerciales de cobertura. */
-  readonly coverageZones = computed<CoverageZone[]>(() => this._overview()?.coverageZones ?? []);
+  /** Misión del programa. */
+  readonly mission = computed(() => this._overview()?.mission ?? null);
+
+  /** Visión del programa. */
+  readonly vision = computed(() => this._overview()?.vision ?? null);
+
+  /** Valores institucionales. */
+  readonly values = computed<ProgramValue[]>(() => this._overview()?.values ?? []);
+
+  /** Modelo de negocio y su flujo de capital. */
+  readonly businessModel = computed(() => this._overview()?.businessModel ?? null);
+
+  /** Plan de trabajo por etapas. */
+  readonly workPlan = computed(() => this._overview()?.workPlan ?? null);
+
+  /** Etapas del plan de trabajo. */
+  readonly workPlanSteps = computed<ProgramStep[]>(
+    () => this._overview()?.workPlan.steps ?? [],
+  );
+
+  /** Público al que se dirige el programa. */
+  readonly audiences = computed<LandingAudience[]>(() => this._overview()?.audiences ?? []);
+
+  /** Pasos del flujo del modelo de negocio. */
+  readonly businessFlow = computed<BusinessFlowStep[]>(
+    () => this._overview()?.businessModel.flow ?? [],
+  );
 
   /** Canales de contacto. */
   readonly contact = computed<LandingContact | null>(() => this._overview()?.contact ?? null);
 
-  /** Catálogo de líneas de servicio del formulario. */
-  readonly serviceTypes = computed<string[]>(() => this._overview()?.serviceTypes ?? []);
+  /** Catálogo de capitales del formulario de inversionistas. */
+  readonly capitalRanges = computed<string[]>(() => this._overview()?.capitalRanges ?? []);
 
-  /** Catálogo de ciudades del formulario. */
-  readonly cities = computed<string[]>(() => this._overview()?.cities ?? []);
-
-  /** Carga el contenido de la landing. */
+  /** Carga el contenido del sitio. */
   load(): void {
     this._loading.set(true);
 

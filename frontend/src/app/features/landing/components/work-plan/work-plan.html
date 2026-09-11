@@ -1,0 +1,22 @@
+<!-- Plan de trabajo por etapas -->
+<section class="dl-section" id="plan">
+  <div class="container">
+    <div class="dl-section-head">
+      <span class="dl-eyebrow dl-eyebrow--gold" dlReveal="up">
+        {{ workPlan()?.title ?? 'Plan de trabajo' }}
+      </span>
+      <h2 dlReveal="up" [dlRevealDelay]="80">Cómo se ejecuta el programa</h2>
+      <p class="dl-lead mb-0" dlReveal="up" [dlRevealDelay]="140">{{ workPlan()?.intro }}</p>
+    </div>
+
+    <ol class="dl-plan list-unstyled mb-0">
+      @for (step of steps(); track step.key; let i = $index) {
+        <li class="dl-plan__step" dlReveal="up" [dlRevealDelay]="80 + i * 70">
+          <span class="dl-plan__number" aria-hidden="true">{{ step.step }}</span>
+          <h3 class="dl-plan__title">{{ step.title }}</h3>
+          <p class="dl-plan__text">{{ step.description }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>

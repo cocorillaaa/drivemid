@@ -1,66 +1,50 @@
-<!-- Hero público: propuesta de valor ejecutiva -->
+<!-- Portada: el programa de inversión, no una operación geográfica -->
 <section class="dl-hero" id="inicio">
   <div class="dl-hero__glow" aria-hidden="true"></div>
 
   <div class="container position-relative">
     <div class="row align-items-center g-5">
       <!-- Columna de mensaje -->
-      <div class="col-lg-5">
+      <div class="col-lg-6">
+        <span class="dl-eyebrow dl-eyebrow--onDark" dlReveal="up">Programa de inversión en movilidad</span>
+
         <h1 class="dl-hero__title" dlReveal="up" [dlRevealDelay]="80">
-          Movilidad ejecutiva para operaciones<br class="d-none d-md-block" />
-          que no se detienen.
+          Invertir en movilidad,<br class="d-none d-md-block" />
+          con control sobre cada unidad.
         </h1>
 
         <p class="dl-hero__lead" dlReveal="up" [dlRevealDelay]="180">
-          Administramos flotillas corporativas de principio a fin: asignación de unidades,
-          conductores verificados, control de pólizas, kilometraje y telemetría en una sola
-          plataforma ejecutiva.
+          Captamos capital e invertimos directamente en unidades que trabajan en Mérida.
+          Nosotros nos hacemos cargo de la adquisición, el conductor, el seguro, el
+          mantenimiento y el monitoreo; usted recibe el reporte de cada vehículo.
         </p>
 
         <div class="d-flex flex-wrap gap-2 mb-4" dlReveal="up" [dlRevealDelay]="280">
-          <a class="dl-btn dl-btn--light" href="#contacto">Solicitar servicio corporativo</a>
+          <a class="dl-btn dl-btn--gold" href="#contacto">Quiero participar</a>
           <a class="dl-btn dl-btn--ghost-light" routerLink="/acceso">Acceso a Plataforma</a>
         </div>
 
         <ul class="dl-hero__assurances list-unstyled" dlReveal="up" [dlRevealDelay]="360">
-          <li>Conductores con licencia federal vigente</li>
-          <li>Unidades con póliza de cobertura amplia</li>
-          <li>Monitoreo satelital y asistencia 24/7</li>
+          @for (item of assurances; track item) {
+            <li>{{ item }}</li>
+          }
         </ul>
       </div>
 
-      <!-- Ilustración -->
-      <div class="col-lg-7">
+      <!-- Marca -->
+      <div class="col-lg-6">
         <figure class="dl-hero__figure" dlReveal="zoom" [dlRevealDelay]="200">
           <img
             class="dl-hero__logo"
-            [src]="heroImage"
-            width="200"
-            height="273"
-            alt="DemoLogistics"
+            src="images/logo-drivemid-oro.png"
+            width="840"
+            height="840"
+            [alt]="brandName()"
             loading="eager"
             decoding="async"
           />
         </figure>
       </div>
-    </div>
-
-    <!-- Pilares institucionales -->
-    <div class="dl-hero__pillars">
-      @for (pillar of pillars(); track pillar.key; let i = $index) {
-        <article class="dl-hero__pillar" dlReveal="up" [dlRevealDelay]="120 + i * 90">
-          <h2 class="dl-hero__pillar-title">{{ pillar.title }}</h2>
-          <p class="dl-hero__pillar-text">{{ pillar.description }}</p>
-        </article>
-      } @empty {
-        @for (placeholder of [1, 2, 3, 4]; track placeholder) {
-          <div class="dl-hero__pillar">
-            <span class="dl-skeleton d-block mb-2" style="width: 45%; height: 0.9rem"></span>
-            <span class="dl-skeleton d-block" style="width: 100%; height: 0.7rem"></span>
-            <span class="dl-skeleton d-block mt-2" style="width: 80%; height: 0.7rem"></span>
-          </div>
-        }
-      }
     </div>
   </div>
 </section>

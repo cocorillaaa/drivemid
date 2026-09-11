@@ -59,6 +59,11 @@ export class SuperuserDashboard {
   private readonly toast = inject(ToastService);
   private readonly clipboard = inject(ClipboardService);
 
+  /** Elige el texto según la cantidad: la flota puede tener una sola unidad. */
+  plural(count: number, singular: string, plural: string): string {
+    return count === 1 ? singular : plural;
+  }
+
   /** Resumen agregado de la flota. */
   readonly summary = this.fleet.summary;
 
@@ -230,7 +235,7 @@ export class SuperuserDashboard {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `demo-logistics-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `drivemid-flota-${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
 

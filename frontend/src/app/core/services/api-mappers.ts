@@ -1,12 +1,13 @@
 import {
   AssignedVehicle,
   AuthUser,
-  CoverageZone,
+  BusinessFlowStep,
   FleetSummary,
+  LandingAudience,
   LandingContact,
   LandingOverview,
-  LandingPillar,
-  LandingSolution,
+  ProgramStep,
+  ProgramValue,
   UserRole,
   Vehicle,
 } from '../models/fleet.models';
@@ -133,6 +134,7 @@ export interface RawVehicle {
   location_updated_at: string;
   speed_kmh: number;
   heading: string;
+  tracking_url: string | null;
 }
 
 export function mapVehicle(raw: RawVehicle): Vehicle {
@@ -181,6 +183,7 @@ export function mapVehicle(raw: RawVehicle): Vehicle {
       speedKmh: num(raw.speed_kmh),
       heading: (raw.heading ?? 'N') as Vehicle['location']['heading'],
     },
+    trackingUrl: raw.tracking_url ?? null,
   };
 }
 
@@ -215,35 +218,45 @@ export function mapFleetSummary(raw: RawFleetSummary): FleetSummary {
 }
 
 /* ---------------------------------------------------------------------------
-   Landing pública
+   Sitio público
    ------------------------------------------------------------------------ */
 
 export interface RawLandingOverview {
-  brand: { name: string; tagline: string; legal_name: string };
+  brand: {
+    name: string;
+    short_name: string;
+    tagline: string;
+    legal_name: string;
+    demo_badge: string;
+  };
   contact: LandingContact;
-  solutions: LandingSolution[];
-  service_types: string[];
-  cities: string[];
-  pillars: LandingPillar[];
-  coverage_zones: CoverageZone[];
+  about: { title: string; body: string[] };
+  mission: { title: string; body: string };
+  vision: { title: string; body: string };
+  values: ProgramValue[];
+  business_model: { title: string; body: string[]; flow: BusinessFlowStep[] };
+  work_plan: { title: string; intro: string; steps: ProgramStep[] };
+  audiences: LandingAudience[];
+  capital_ranges: string[];
 }
 
 export function mapLandingOverview(raw: RawLandingOverview): LandingOverview {
   return {
     brand: {
       name: raw.brand.name,
+      shortName: raw.brand.short_name,
       tagline: raw.brand.tagline,
       legalName: raw.brand.legal_name,
+      demoBadge: raw.brand.demo_badge,
     },
     contact: raw.contact,
-    solutions: raw.solutions,
-    serviceTypes: raw.service_types,
-    cities: raw.cities,
-    pillars: raw.pillars,
-    coverageZones: raw.coverage_zones.map((zone) => ({
-      ...zone,
-      lat: num(zone.lat),
-      lng: num(zone.lng),
-    })),
+    about: raw.about,
+    mission: raw.mission,
+    vision: raw.vision,
+    values: raw.values,
+    businessModel: raw.business_model,
+    workPlan: raw.work_plan,
+    audiences: raw.audiences,
+    capitalRanges: raw.capital_ranges,
   };
 }

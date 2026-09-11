@@ -1,0 +1,42 @@
+<!-- Modelo de negocio: cómo el capital se convierte en operación -->
+<section class="dl-section dl-section--surface" id="programa">
+  <div class="container">
+    <div class="dl-section-head">
+      <span class="dl-eyebrow dl-eyebrow--gold" dlReveal="up">
+        {{ businessModel()?.title ?? 'Modelo de negocio' }}
+      </span>
+      <h2 dlReveal="up" [dlRevealDelay]="80">Del capital a la unidad que trabaja</h2>
+      <p class="dl-lead mb-0" dlReveal="up" [dlRevealDelay]="140">
+        Cada aportación se convierte en una unidad revisada, asegurada y monitoreada.
+        Este esquema genera valor para los socios, para las empresas aliadas y para la
+        comunidad.
+      </p>
+    </div>
+
+    <div class="row g-5 align-items-start">
+      <!-- Texto -->
+      <div class="col-lg-5">
+        @for (paragraph of businessBody(); track paragraph; let i = $index) {
+          <p class="dl-model__text" dlReveal="up" [dlRevealDelay]="120 + i * 70">
+            {{ paragraph }}
+          </p>
+        }
+      </div>
+
+      <!-- Flujo del capital -->
+      <div class="col-lg-7">
+        <ol class="dl-flow list-unstyled mb-0">
+          @for (item of flow(); track item.key; let i = $index) {
+            <li class="dl-flow__item" dlReveal="right" [dlRevealDelay]="100 + i * 90">
+              <span class="dl-flow__index" aria-hidden="true">{{ (i + 1).toString().padStart(2, '0') }}</span>
+              <div class="dl-flow__body">
+                <h3 class="dl-flow__title">{{ item.title }}</h3>
+                <p class="dl-flow__text">{{ item.description }}</p>
+              </div>
+            </li>
+          }
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>

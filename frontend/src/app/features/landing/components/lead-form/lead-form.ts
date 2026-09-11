@@ -1,15 +1,15 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 
-import { FleetService } from '../../../../core/services/fleet.service';
 import { ClipboardService } from '../../../../core/services/clipboard.service';
+import { FleetService } from '../../../../core/services/fleet.service';
 import { LandingService } from '../../../../core/services/landing.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { RevealDirective } from '../../../../shared/directives/reveal.directive';
 
 /** Pestañas disponibles en el formulario de captación. */
-export type LeadTab = 'corporate' | 'driver';
+export type LeadTab = 'investor' | 'driver';
 
 /** Confirmación mostrada tras un envío exitoso. */
 interface SubmissionResult {
@@ -20,14 +20,14 @@ interface SubmissionResult {
 }
 
 /**
- * Formulario de captación de la landing.
+ * Captación del sitio público.
  *
  * Dos pestañas sobre el mismo componente:
- *  - "Solicitar Servicio Corporativo" (empresas).
- *  - "Postularse como Conductor" (operadores).
+ *  - "Quiero invertir": interesados en el programa de inversión.
+ *  - "Quiero conducir": postulaciones de conductor.
  *
- * Los catálogos de ciudades y líneas de servicio llegan del backend, y el
- * envío registra la solicitud en la API, que devuelve el folio de seguimiento.
+ * El catálogo de capitales llega del backend y el envío registra la solicitud
+ * en la API, que devuelve el folio de seguimiento.
  */
 @Component({
   selector: 'dl-lead-form',
@@ -43,15 +43,14 @@ export class LeadFormComponent {
   private readonly toast = inject(ToastService);
   private readonly clipboard = inject(ClipboardService);
 
-  /** Catálogos servidos por la API. */
-  readonly cities = this.landing.cities;
-  readonly serviceTypes = this.landing.serviceTypes;
+  /** Catálogo de capitales servido por la API. */
+  readonly capitalRanges = this.landing.capitalRanges;
 
   /** Canales de contacto institucionales. */
   readonly contact = this.landing.contact;
 
   /** Pestaña activa. */
-  readonly activeTab = signal<LeadTab>('corporate');
+  readonly activeTab = signal<LeadTab>('investor');
 
   /** `true` mientras se envía el formulario. */
   readonly submitting = signal(false);
@@ -59,20 +58,13 @@ export class LeadFormComponent {
   /** Resultado del último envío (null = formulario visible). */
   readonly result = signal<SubmissionResult | null>(null);
 
-  /** `true` mientras los catálogos se cargan. */
-  readonly catalogsPending = computed(
-    () => this.cities().length === 0 || this.serviceTypes().length === 0,
-  );
-
-  /** Formulario de servicio corporativo. */
-  readonly corporateForm: FormGroup = this.fb.nonNullable.group({
-    company: ['', [Validators.required, Validators.minLength(2)]],
-    contactName: ['', [Validators.required, Validators.minLength(3)]],
+  /** Formulario de inversionistas. */
+  readonly investorForm: FormGroup = this.fb.nonNullable.group({
+    fullName: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
     phone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-    serviceType: ['', [Validators.required]],
-    units: [2, [Validators.required, Validators.min(1), Validators.max(50)]],
     city: ['', [Validators.required]],
+    capitalRange: ['', [Validators.required]],
     message: [''],
   });
 
@@ -110,15 +102,13 @@ export class LeadFormComponent {
     const tab = this.result()?.tab ?? this.activeTab();
     this.result.set(null);
 
-    if (tab === 'corporate') {
-      this.corporateForm.reset({
-        company: '',
-        contactName: '',
+    if (tab === 'investor') {
+      this.investorForm.reset({
+        fullName: '',
         email: '',
         phone: '',
-        serviceType: '',
-        units: 2,
         city: '',
+        capitalRange: '',
         message: '',
       });
     } else {
@@ -135,32 +125,32 @@ export class LeadFormComponent {
     }
   }
 
-  /** Envía la solicitud de servicio corporativo. */
-  submitCorporate(): void {
-    if (this.corporateForm.invalid) {
-      this.corporateForm.markAllAsTouched();
+  /** Envía el interés de un inversionista. */
+  submitInvestor(): void {
+    if (this.investorForm.invalid) {
+      this.investorForm.markAllAsTouched();
       this.toast.warning('Revise el formulario', 'Hay campos obligatorios pendientes.');
       return;
     }
 
-    const value = this.corporateForm.getRawValue();
-    const payload = { ...value, phone: digitsOnly(value.phone), units: Number(value.units) };
+    const value = this.investorForm.getRawValue();
+    const payload = { ...value, phone: digitsOnly(value.phone) };
 
     this.submitting.set(true);
     this.fleet
-      .submitCorporateLead(payload)
+      .submitInvestorLead(payload)
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         next: ({ reference }) => {
           this.result.set({
-            tab: 'corporate',
+            tab: 'investor',
             reference,
             headline: 'Solicitud recibida',
-            detail: `Gracias, ${payload.contactName}. Un ejecutivo de cuenta contactará a ${payload.company} en menos de 24 horas hábiles.`,
+            detail: `Gracias, ${payload.fullName}. Le contactaremos para explicarle el esquema y los controles del programa antes de cualquier aportación.`,
           });
           this.toast.success(
-            'Solicitud corporativa registrada',
-            `Folio ${reference} · ${payload.units} unidad(es) en ${payload.city}.`,
+            'Interés registrado',
+            `Folio ${reference} · ${payload.capitalRange}.`,
           );
         },
         error: (error: unknown) => {
@@ -194,7 +184,7 @@ export class LeadFormComponent {
             tab: 'driver',
             reference,
             headline: 'Postulación recibida',
-            detail: `Gracias, ${payload.fullName}. Revisaremos su documentación y le contactaremos para agendar la entrevista técnica.`,
+            detail: `Gracias, ${payload.fullName}. Revisaremos su documentación y le contactaremos para agendar la entrevista.`,
           });
           this.toast.success('Postulación registrada', `Folio ${reference} · expediente en revisión.`);
         },
