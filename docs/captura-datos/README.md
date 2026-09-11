@@ -2,11 +2,43 @@
 
 Material para pasar la plataforma de datos de ejemplo a datos reales del cliente.
 
-| Archivo | Para qué |
-|---|---|
-| `plantilla sistema.xlsx` | Libro que se envía al cliente para capturar la unidad y confirmar los datos de contacto |
+| Archivo | Para qué | Estado |
+|---|---|---|
+| `plantilla sistema.xlsx` | Captura la unidad y confirma los datos de contacto | Enviado y devuelto por el cliente |
+| `plantilla datos completos.xlsx` | Pide lo que quedó pendiente para que el sistema deje de estimar | Listo para enviar |
 
-## Contenido del libro
+## `plantilla datos completos.xlsx`
+
+El segundo libro existe por una razón concreta: el sistema ya funciona con la unidad real del
+cliente, pero los indicadores de inversionista —retorno, flujo neto, utilización, costo por
+kilómetro— se calculan con cifras de ejemplo, porque no hay ninguna cifra financiera suya. Este
+libro pide exactamente eso, y nada más.
+
+| Pestaña | Qué recoge | ¿Indispensable? |
+|---|---|---|
+| **Instrucciones** | Por qué otra hoja, cómo llenarla y de dónde sale cada dato | — |
+| **1. Unidad** | Lo que falta del auto: VIN y kilometrajes | Sí, el VIN |
+| **2. Dinero del contrato** | Capital invertido, renta semanal, reserva, depósito, costos fijos mensuales y fecha de alta, una fila por unidad | Sí |
+| **3. Cortes semanales** | Trece semanas de operación: km, días en servicio y en taller, ingreso facturado y cobrado, costos y conductor | Sí |
+| **4. Póliza y conductor** | Lo que hoy se muestra como ejemplo en la ficha de la unidad | Opcional |
+| **5. Accesos y pendientes** | Quién entra a la plataforma y lo que no cabe en una hoja (logotipo vectorial, avisos legales) | Opcional |
+
+**Cómo se corresponde con el esquema**: la pestaña 2 llena las columnas económicas de `vehicles`
+(`capital_invested`, `weekly_fee`, `maintenance_reserve`, `security_deposit`,
+`monthly_insurance_cost`, `monthly_tracking_cost`, `monthly_admin_cost`, `acquired_on`); la
+pestaña 3 llena `unit_periods`, que es la única fuente de histórico del sistema; la pestaña 4
+llena los campos de póliza y conductor de `vehicles`.
+
+La pestaña **3. Cortes semanales** trae las trece fechas ya puestas (los lunes del trimestre), una
+fila de totales con fórmulas y formato condicional que pinta en verde cuando los días en servicio
+y en taller suman siete, y en rojo cuando no: así el cliente detecta un error de captura sin
+llamarnos. Se le ofrece además la salida de mandar los estados de cuenta y los reportes de la
+plataforma para que los vaciemos nosotros.
+
+**Regenerarlo**: igual que el primer libro, el generador vive fuera del repositorio, en
+`/tmp/gen-plantilla3.py`.
+
+## Contenido del libro anterior
 
 | Pestaña | Qué recoge |
 |---|---|
