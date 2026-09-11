@@ -21,6 +21,9 @@ src/app/
     ├── auth/              Pantalla de acceso
     ├── landing/           Sitio público (portada, quiénes somos, modelo, plan, públicos, contacto)
     └── platform/          Shell con la sesión + dashboards por rol
+        ├── superuser-dashboard/   Panel de flota + panel de rendimiento
+        ├── performance-report/    Reporte de rendimiento imprimible
+        └── unit-admin-dashboard/  Vista de la unidad asignada
 ```
 
 ## Rutas
@@ -29,7 +32,8 @@ src/app/
 |---|---|
 | `/` | Sitio público del programa, con los formularios de captación |
 | `/acceso` | Pantalla de credenciales (Laravel Sanctum) |
-| `/plataforma/flota` | Panel de flota · Superusuario (vista global) |
+| `/plataforma/flota` | Panel de flota y rendimiento · Superusuario (vista global) |
+| `/plataforma/rendimiento/:id` | Reporte de rendimiento de una unidad · Superusuario |
 | `/plataforma/unidad` | Mi unidad · Administrador de Unidad (sólo la asignada) |
 
 ## Sesión
@@ -41,6 +45,21 @@ sesión ante un `401`.
 
 Credenciales del seeder: `superadmin@drivemid.com` / `admin1234` y
 `unidad01@drivemid.com` / `unidad123`.
+
+## Rendimiento
+
+El panel de rendimiento sale de los cortes semanales que el backend guarda en
+`unit_periods`, no de una foto del estado actual: por eso puede calcular
+utilización, flujo neto, días fuera de servicio, mora y costo por kilómetro. El
+reporte de `/plataforma/rendimiento/:id` está pensado para imprimirse o
+guardarse en PDF y entregarse a un inversionista; sus estilos de impresión
+retiran la barra de sesión, la navegación y los avisos, y evitan que las
+tarjetas se recorten entre páginas.
+
+Tanto el panel como el reporte advierten en pantalla cuando las cifras son de
+ejemplo: la bandera se calcula sobre el dato, de modo que basta con que los
+importes del contrato o los cortes provengan del sembrado para que el aviso
+aparezca.
 
 ## Identidad gráfica
 
