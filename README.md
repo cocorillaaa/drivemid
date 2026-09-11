@@ -1,9 +1,9 @@
-> **Prototipo de demostración.** El repositorio se llama *DemoLogistics*: es el nombre del
-> ejercicio técnico, no una empresa. El contenido, la marca y el logotipo son del cliente —
-> **Drive Mid**, un programa de inversión en movilidad en Mérida, Yucatán—. Los datos
-> operativos que muestra la plataforma son de ejemplo y se generan con seeders.
+> **Prototipo de demostración.** *Drive Mid* es el cliente: un programa de inversión en
+> movilidad en Mérida, Yucatán. La plataforma es una maqueta funcional, no un sistema en
+> producción, y los datos operativos que muestra —salvo la identidad del vehículo— son de
+> ejemplo y se generan con seeders.
 
-# DemoLogistics · Plataforma de gestión de flota
+# Drive Mid · Plataforma de gestión de flota
 
 Aplicación para un **programa de inversión en movilidad**: el sitio público presenta el programa
 (quiénes somos, misión, visión, valores, modelo de negocio, plan de trabajo y sus dos públicos,
@@ -62,7 +62,7 @@ de roles: el alcance se deriva del token.
 ## 2. Arquitectura
 
 ```
-DemoLogistics/
+drivemid/
 ├── frontend/                                       Angular 22 · :4201
 │   └── src/
 │       ├── environments/environment.ts             URL de la API, intervalos de refresco
@@ -135,8 +135,8 @@ cd backend
 composer install
 cp .env.example .env && php artisan key:generate
 
-mysql -u root -p -e "CREATE DATABASE demologistics CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-# Ajustar credenciales en .env (DB_DATABASE=demologistics, DB_USERNAME, DB_PASSWORD)
+mysql -u root -p -e "CREATE DATABASE drivemid CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+# Ajustar credenciales en .env (DB_DATABASE=drivemid, DB_USERNAME, DB_PASSWORD)
 
 php artisan migrate:fresh --seed
 php artisan serve --host=127.0.0.1 --port=8001
@@ -453,9 +453,12 @@ actuales se derivan del archivo de mapa de bits de la maqueta.
 
 ## 11. Notas
 
-**DemoLogistics es el nombre del repositorio, no una marca.** El contenido, la marca y el
-logotipo son del cliente (**Drive Mid**), y el proyecto es un prototipo de demostración: salvo la
-identidad del vehículo —marca, modelo, año, placas, color y capacidad, capturados por el
-cliente—, los nombres, teléfonos, pólizas, VIN, kilometrajes y coordenadas son de ejemplo. Las
-contraseñas del seeder son deliberadamente simples y la lista de cuentas sólo se publica con
-`APP_DEBUG` activo.
+**El proyecto es un prototipo de demostración.** La marca, el logotipo y el contenido son del
+cliente (**Drive Mid**); el sistema se construyó como maqueta funcional. Salvo la identidad del
+vehículo —marca, modelo, año, placas, color y capacidad, capturados por el cliente—, los
+nombres, teléfonos, pólizas, VIN, kilometrajes y coordenadas son de ejemplo. Las contraseñas del
+seeder son deliberadamente simples y la lista de cuentas sólo se publica con `APP_DEBUG` activo.
+
+**El enlace de rastreo real no se versiona.** El seguimiento de la unidad es un enlace externo
+que da acceso a su ubicación; el repositorio y el seeder llevan un marcador, y el enlace real
+vive únicamente en la base de datos local.

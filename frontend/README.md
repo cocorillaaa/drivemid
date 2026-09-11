@@ -1,8 +1,8 @@
-# DemoLogistics · Frontend
+# Drive Mid · Frontend
 
-Aplicación Angular 22 (standalone, zoneless, Signals) para la plataforma ejecutiva de
-gestión de flota. La documentación completa del proyecto está en el
-[README raíz](../README.md).
+Aplicación Angular 22 (standalone, zoneless, Signals) del sistema del programa de inversión
+en movilidad: el sitio público que presenta el programa y la plataforma que administra las
+unidades. La documentación completa del proyecto está en el [README raíz](../README.md).
 
 ```bash
 npm install
@@ -16,10 +16,10 @@ npx ng test --watch=false                    # pruebas unitarias (vitest)
 ```
 src/app/
 ├── core/                  Modelos, servicios (Signals), guards, interceptor y mappers
-├── shared/components/     toast-host · stat-card · fleet-map · unit-detail-modal
+├── shared/components/     toast-host · stat-card · fleet-map · ficha técnica · contacto
 └── features/
     ├── auth/              Pantalla de acceso
-    ├── landing/           Landing pública (header, hero, soluciones, flota, captación, footer)
+    ├── landing/           Sitio público (portada, quiénes somos, modelo, plan, públicos, contacto)
     └── platform/          Shell con la sesión + dashboards por rol
 ```
 
@@ -27,7 +27,7 @@ src/app/
 
 | Ruta | Vista |
 |---|---|
-| `/` | Landing pública con formulario de captación |
+| `/` | Sitio público del programa, con los formularios de captación |
 | `/acceso` | Pantalla de credenciales (Laravel Sanctum) |
 | `/plataforma/flota` | Panel de flota · Superusuario (vista global) |
 | `/plataforma/unidad` | Mi unidad · Administrador de Unidad (sólo la asignada) |
@@ -39,8 +39,16 @@ El rol y la unidad asignada provienen de `GET /api/auth/me`; el cliente nunca lo
 `authInterceptor` adjunta el token `Bearer`, fuerza `Accept: application/json` y cierra la
 sesión ante un `401`.
 
-Credenciales del seeder: `superadmin@demologistics.mx` / `admin1234` y
-`unidad0N@demologistics.mx` / `unidad123` (N = 1…4).
+Credenciales del seeder: `superadmin@drivemid.com` / `admin1234` y
+`unidad01@drivemid.com` / `unidad123`.
+
+## Identidad gráfica
+
+La base neutra del sistema de diseño (`src/styles.scss`) lleva encima la identidad del
+cliente: azul marino `#1b232f` y dorado `#c6a654`, tomados de su logotipo. El logotipo se
+extrajo de la maqueta que entregó el cliente y vive en `public/images/` en dos variantes,
+el distintivo completo (`logo-drivemid.png`) y la versión dorada sin círculo
+(`logo-drivemid-oro.png`) para fondos oscuros.
 
 ## Configuración
 

@@ -38,9 +38,6 @@ export class SiteHeaderComponent implements OnInit, OnDestroy {
   /** Nombre de la marca (servido por la API). */
   readonly brandName = computed(() => this.landing.brand()?.name ?? 'Drive Mid');
 
-  /** Distintivo de maqueta. */
-  readonly demoBadge = computed(() => this.landing.brand()?.demoBadge ?? 'Demo');
-
   /** Canales de contacto institucionales (servidos por la API). */
   readonly contact = this.landing.contact;
 
