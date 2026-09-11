@@ -17,7 +17,7 @@ import { roleGuard } from './core/guards/role.guard';
 export const routes: Routes = [
   {
     path: '',
-    title: 'Drive Mid · Prototipo de demostración',
+    title: 'Drive Mid',
     loadComponent: () => import('./features/landing/landing-page').then((m) => m.LandingPage),
   },
   {

@@ -24,7 +24,7 @@ export class SiteFooterComponent {
 
   /** Identidad legal mostrada en el aviso de pie. */
   readonly brandLegal = computed(
-    () => this.landing.brand()?.legalName ?? 'Drive Mid · Prototipo de demostración',
+    () => this.landing.brand()?.legalName ?? 'Drive Mid',
   );
 
   /** Canales de contacto institucionales (servidos por la API). */

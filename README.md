@@ -1,4 +1,4 @@
-> **Prototipo de demostración.** *Drive Mid* es el cliente: un programa de inversión en
+> *Drive Mid* es el cliente: un programa de inversión en
 > movilidad en Mérida, Yucatán. La plataforma es una maqueta funcional, no un sistema en
 > producción, y los datos operativos que muestra —salvo la identidad del vehículo— son de
 > ejemplo y se generan con seeders.
@@ -544,7 +544,7 @@ actuales se derivan del archivo de mapa de bits de la maqueta.
 
 ## 11. Notas
 
-**El proyecto es un prototipo de demostración.** La marca, el logotipo y el contenido son del
+La marca, el logotipo y el contenido son del
 cliente (**Drive Mid**); el sistema se construyó como maqueta funcional. Salvo la identidad del
 vehículo —marca, modelo, año, placas, color y capacidad, capturados por el cliente—, los
 nombres, teléfonos, pólizas, VIN, kilometrajes y coordenadas son de ejemplo. Las contraseñas del

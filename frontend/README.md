@@ -11,6 +11,21 @@ npx ng build                                 # build de producción → dist/fro
 npx ng test --watch=false                    # pruebas unitarias (vitest)
 ```
 
+### Publicar la demo por un túnel
+
+Para enseñar el sistema fuera de la máquina hay una configuración `demo` que sirve la
+aplicación con la API **en el mismo origen**:
+
+```bash
+npx ng serve --configuration demo --port 4201 --host 127.0.0.1
+cloudflared tunnel --url http://127.0.0.1:4201
+```
+
+`environment.demo.ts` deja `apiBaseUrl` en `/api` y `proxy.demo.json` reenvía esa ruta a
+Laravel en `127.0.0.1:8001`. Así el cliente recibe **un solo enlace** y no hay que abrir
+CORS a un dominio de túnel que cambia en cada arranque. La configuración acepta cualquier
+host porque el servidor sólo escucha en `127.0.0.1` y se llega a él por el túnel.
+
 ## Estructura
 
 ```

@@ -18,7 +18,7 @@ return [
         'name' => 'Drive Mid',
         'short_name' => 'Drive Mid',
         'tagline' => 'Inversión en movilidad',
-        'legal_name' => 'Drive Mid · Prototipo de demostración',
+        'legal_name' => 'Drive Mid',
         'demo_badge' => 'Demo',
     ],
 
